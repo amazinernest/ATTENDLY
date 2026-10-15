@@ -98,6 +98,7 @@ export async function GET(
         matricNumber: student.matricNumber,
         department: student.department,
         hasStudentPin: !!student.studentPin,
+        devStudentPin: process.env.NODE_ENV === "development" ? student.studentPin : undefined,
       },
       alreadyRecorded,
       checkInTime: alreadyRecorded ? existingRecord.checkInTime : null,

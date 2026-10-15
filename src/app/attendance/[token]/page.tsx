@@ -14,6 +14,9 @@ import {
   UserCheck,
   ShieldCheck,
   RotateCcw,
+  Lock,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -37,6 +40,7 @@ interface StudentLookupState {
   matricNumber?: string;
   department?: string;
   hasStudentPin?: boolean;
+  devStudentPin?: string;
   alreadyRecorded?: boolean;
   formattedCheckInTime?: string;
   error?: string;
@@ -56,6 +60,7 @@ function StudentCheckInContent() {
   const [matricNumber, setMatricNumber] = useState("");
   const [sessionPin, setSessionPin] = useState(pinFromUrl);
   const [studentPin, setStudentPin] = useState("");
+  const [showStudentPin, setShowStudentPin] = useState(false);
   const [otpCode, setOtpCode] = useState("");
 
   // Student identification state
@@ -145,6 +150,7 @@ function StudentCheckInContent() {
             matricNumber: data.student.matricNumber,
             department: data.student.department,
             hasStudentPin: data.student.hasStudentPin,
+            devStudentPin: data.student.devStudentPin,
             alreadyRecorded: data.alreadyRecorded,
             formattedCheckInTime: data.formattedCheckInTime,
           });
@@ -525,23 +531,46 @@ function StudentCheckInContent() {
                 </div>
               )}
 
-              {/* Student Personal PIN (Only show if this specific student has an assigned PIN) */}
-              {session.verificationMethod === "STUDENT_PIN" && studentLookup.hasStudentPin && (
+              {/* Student Personal PIN */}
+              {session.verificationMethod === "STUDENT_PIN" && (
                 <div>
-                  <label className="block text-xs font-bold text-slate-700">
-                    Personal Student Security PIN *
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    maxLength={6}
-                    value={studentPin}
-                    onChange={(e) => setStudentPin(e.target.value)}
-                    placeholder="Enter assigned PIN"
-                    className="mt-1 block w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg font-mono focus:outline-none focus:ring-2 focus:ring-sky-700"
-                  />
-                  <span className="text-[11px] text-slate-400">
-                    Confidential personal PIN assigned for this course
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-700">
+                      Personal Student Security PIN *
+                    </label>
+                    {studentLookup.devStudentPin && (
+                      <span className="text-[10px] font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-mono">
+                        Dev / Test PIN: {studentLookup.devStudentPin}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-1 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <input
+                      type={showStudentPin ? "text" : "password"}
+                      required
+                      maxLength={6}
+                      value={studentPin}
+                      onChange={(e) => setStudentPin(e.target.value)}
+                      placeholder="Enter your personal 4-digit PIN"
+                      className="block w-full pl-9 pr-10 py-2.5 text-base border border-slate-300 rounded-lg font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-sky-700 bg-white"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowStudentPin(!showStudentPin)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+                    >
+                      {showStudentPin ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                  <span className="text-[11px] text-slate-400 block mt-1">
+                    Confidential personal PIN assigned on course roster
                   </span>
                 </div>
               )}

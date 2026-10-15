@@ -8,6 +8,7 @@ export interface StudentAttendanceSummary {
   email: string | null;
   department: string | null;
   level: string | null;
+  studentPin?: string | null;
   enrolmentStatus: string;
   eligibleSessions: number;
   attendedSessions: number;
@@ -175,6 +176,7 @@ export async function calculateCourseAttendance(
       email: student.email,
       department: student.department,
       level: student.level,
+      studentPin: student.studentPin,
       enrolmentStatus: enrolment.status,
       eligibleSessions,
       attendedSessions: attended,

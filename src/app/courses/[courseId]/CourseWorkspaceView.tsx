@@ -549,6 +549,7 @@ export function CourseWorkspaceView({
                     <th className="px-4 py-3">Matriculation No.</th>
                     <th className="px-4 py-3">Full Name</th>
                     <th className="px-4 py-3">Department</th>
+                    <th className="px-4 py-3 text-center">Security PIN</th>
                     <th className="px-4 py-3 text-center">Attended / Eligible</th>
                     <th className="px-4 py-3 text-center">Attendance %</th>
                     <th className="px-4 py-3 text-center">Status</th>
@@ -558,7 +559,7 @@ export function CourseWorkspaceView({
                 <tbody className="divide-y divide-slate-100">
                   {filteredStudents.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="text-center py-12 text-slate-400">
+                      <td colSpan={9} className="text-center py-12 text-slate-400">
                         No students match the current filters.
                       </td>
                     </tr>
@@ -571,6 +572,15 @@ export function CourseWorkspaceView({
                         </td>
                         <td className="px-4 py-3 text-slate-900 font-medium">{s.fullName}</td>
                         <td className="px-4 py-3 text-slate-500">{s.department || "—"}</td>
+                        <td className="px-4 py-3 text-center">
+                          {s.studentPin ? (
+                            <span className="font-mono font-bold text-[11px] bg-slate-100 text-slate-800 px-2 py-0.5 rounded border border-slate-200">
+                              {s.studentPin}
+                            </span>
+                          ) : (
+                            <span className="text-slate-400 text-[11px]">—</span>
+                          )}
+                        </td>
                         <td className="px-4 py-3 text-center text-slate-700">
                           <strong>{s.attendedSessions}</strong> / {s.eligibleSessions}
                         </td>
