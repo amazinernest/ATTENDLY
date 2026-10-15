@@ -1,0 +1,238 @@
+// Prisma schema for ClassMark - University Attendance Management Platform
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CourseStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum EnrolmentStatus {
+  ACTIVE
+  WITHDRAWN
+}
+
+enum SessionStatus {
+  OPEN
+  CLOSED
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  EXCUSED
+  LATE
+}
+
+enum VerificationMethod {
+  EMAIL_OTP
+  STUDENT_PIN
+  OPEN_CHECKIN
+}
+
+model User {
+  id                      String    @id @default(cuid())
+  email                   String    @unique
+  passwordHash            String
+  fullName                String
+  institution             String?
+  department              String?
+  isEmailVerified         Boolean   @default(false)
+  timeZone                String    @default("Africa/Lagos")
+  defaultThreshold        Float     @default(75.0)
+  defaultSessionDuration  Int       @default(30) // in minutes
+  defaultVerificationMethod VerificationMethod @default(STUDENT_PIN)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  courses                 Course[]
+  emailVerificationTokens EmailVerificationToken[]
+  passwordResetTokens     PasswordResetToken[]
+  auditLogs               AuditLog[]
+
+  @@map("users")
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("email_verification_tokens")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
+}
+
+model Course {
+  id                  String       @id @default(cuid())
+  lecturerId          String
+  lecturer            User         @relation(fields: [lecturerId], references: [id], onDelete: Cascade)
+  code                String       // e.g. CSC 201
+  title               String       // e.g. Data Structures & Algorithms
+  department          String?
+  faculty             String?
+  session             String       // e.g. 2026/2027
+  semester            String       // e.g. First Semester
+  classGroup          String?
+  description         String?
+  expectedSessions    Int?
+  attendanceThreshold Float        @default(75.0)
+  status              CourseStatus @default(ACTIVE)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  enrolments          CourseEnrolment[]
+  attendanceSessions  AttendanceSession[]
+  auditLogs           AuditLog[]
+
+  @@unique([lecturerId, code, session, semester])
+  @@index([lecturerId])
+  @@map("courses")
+}
+
+model Student {
+  id           String   @id @default(cuid())
+  matricNumber String   @unique // Primary unique identifier
+  fullName     String
+  email        String?
+  department   String?
+  faculty      String?
+  level        String?  // 100, 200, 300, etc.
+  studentPin   String?  // Optional lecturer-managed 4-6 digit PIN
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  enrolments   CourseEnrolment[]
+  otps         StudentVerificationOTP[]
+
+  @@index([matricNumber])
+  @@map("students")
+}
+
+model CourseEnrolment {
+  id          String          @id @default(cuid())
+  courseId    String
+  studentId   String
+  status      EnrolmentStatus @default(ACTIVE)
+  enrolledAt  DateTime        @default(now())
+  withdrawnAt DateTime?
+
+  course      Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student     Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  records     AttendanceRecord[]
+
+  @@unique([courseId, studentId])
+  @@index([courseId])
+  @@index([studentId])
+  @@map("course_enrolments")
+}
+
+model AttendanceSession {
+  id                 String             @id @default(cuid())
+  courseId           String
+  sessionDate        DateTime           @default(now())
+  topic              String?
+  token              String             @unique // Cryptographic public check-in token
+  sessionPin         String?            // In-class attendance PIN displayed on board/screen
+  status             SessionStatus      @default(OPEN)
+  startTime          DateTime           @default(now())
+  endTime            DateTime?
+  expiresAt          DateTime
+  verificationMethod VerificationMethod @default(STUDENT_PIN)
+  allowLateCheckin   Boolean            @default(false)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  course             Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  records            AttendanceRecord[]
+  otps               StudentVerificationOTP[]
+  auditLogs          AuditLog[]
+
+  @@index([courseId])
+  @@index([token])
+  @@map("attendance_sessions")
+}
+
+model AttendanceRecord {
+  id                   String             @id @default(cuid())
+  sessionId            String
+  enrolmentId          String
+  status               AttendanceStatus   @default(PRESENT)
+  verificationMethod   VerificationMethod
+  verificationStatus   String             @default("VERIFIED") // VERIFIED, MANUAL_OVERRIDE, EXCUSED
+  checkInTime          DateTime           @default(now())
+  ipAddress            String?
+  userAgent            String?
+  isManualOverride     Boolean            @default(false)
+  overrideReason       String?
+  overrideByLecturerId String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  session              AttendanceSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  enrolment            CourseEnrolment    @relation(fields: [enrolmentId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, enrolmentId]) // Guarantees single attendance entry per student per session
+  @@index([sessionId])
+  @@index([enrolmentId])
+  @@map("attendance_records")
+}
+
+model StudentVerificationOTP {
+  id         String            @id @default(cuid())
+  sessionId  String
+  studentId  String
+  otpHash    String
+  email      String
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  attempts   Int               @default(0)
+  createdAt  DateTime          @default(now())
+
+  session    AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student    Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, studentId])
+  @@map("student_verification_otps")
+}
+
+model AuditLog {
+  id         String             @id @default(cuid())
+  userId     String
+  courseId   String?
+  sessionId  String?
+  action     String             // e.g. "MANUAL_OVERRIDE", "COURSE_ARCHIVED", "ROSTER_IMPORTED"
+  details    String             // JSON serialized audit information
+  ipAddress  String?
+  createdAt  DateTime           @default(now())
+
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course     Course?            @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  session    AttendanceSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([sessionId])
+  @@map("audit_logs")
+}
