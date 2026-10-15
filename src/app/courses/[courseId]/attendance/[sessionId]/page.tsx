@@ -91,8 +91,9 @@ export default function LiveAttendanceSessionPage() {
   }, [data]);
 
   const handleCopyLink = () => {
-    if (!data?.checkInUrl) return;
-    navigator.clipboard.writeText(data.checkInUrl);
+    const urlToCopy = data?.qrTargetUrl || data?.checkInUrl;
+    if (!urlToCopy) return;
+    navigator.clipboard.writeText(urlToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
@@ -304,7 +305,7 @@ export default function LiveAttendanceSessionPage() {
                 <input
                   type="text"
                   readOnly
-                  value={data.checkInUrl}
+                  value={data.qrTargetUrl || data.checkInUrl}
                   className="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded text-slate-600 font-mono truncate"
                 />
                 <button

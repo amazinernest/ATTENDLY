@@ -51,13 +51,17 @@ export async function GET(
     });
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const qrTargetUrl = session.sessionPin
+      ? `${appUrl}/attendance/${session.token}?pin=${encodeURIComponent(session.sessionPin)}`
+      : `${appUrl}/attendance/${session.token}`;
     const checkInUrl = `${appUrl}/attendance/${session.token}`;
-    const qrCodeDataUrl = await generateQrCodeDataUrl(checkInUrl);
+    const qrCodeDataUrl = await generateQrCodeDataUrl(qrTargetUrl);
 
     return NextResponse.json({
       success: true,
       session,
       checkInUrl,
+      qrTargetUrl,
       qrCodeDataUrl,
       totalEnrolled: activeEnrolments.length,
       presentCount: session.records.filter((r) => r.status === "PRESENT" || r.status === "LATE").length,

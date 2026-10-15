@@ -28,7 +28,7 @@ export async function POST(
     }
 
     const { matricNumber, sessionPin, studentPin, otpCode } = result.data;
-    const cleanMatric = matricNumber.trim().toUpperCase();
+    const cleanMatric = matricNumber.trim().toUpperCase().replace(/\\/g, "/");
 
     // 1. Verify session exists and is OPEN
     const session = await prisma.attendanceSession.findUnique({
@@ -64,7 +64,7 @@ export async function POST(
     }
 
     // 3. Find student enrolment
-    const student = await prisma.student.findUnique({
+    let student = await prisma.student.findUnique({
       where: { matricNumber: cleanMatric },
       include: {
         enrolments: {
@@ -75,6 +75,23 @@ export async function POST(
         },
       },
     });
+
+    if (!student || student.enrolments.length === 0) {
+      // Case-insensitive fallback
+      student = await prisma.student.findFirst({
+        where: {
+          matricNumber: { equals: cleanMatric, mode: "insensitive" },
+        },
+        include: {
+          enrolments: {
+            where: {
+              courseId: session.courseId,
+              status: "ACTIVE",
+            },
+          },
+        },
+      });
+    }
 
     if (!student || student.enrolments.length === 0) {
       return NextResponse.json(
@@ -102,6 +119,9 @@ export async function POST(
             existingRecord.checkInTime
           )}. Duplicate check-ins are not permitted.`,
           alreadyRecorded: true,
+          studentName: student.fullName,
+          matricNumber: student.matricNumber,
+          courseCode: session.course.code,
           checkInTime: existingRecord.checkInTime,
         },
         { status: 409 }

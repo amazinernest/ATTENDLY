@@ -17,6 +17,11 @@ export async function GET(
             title: true,
             session: true,
             semester: true,
+            lecturer: {
+              select: {
+                fullName: true,
+              },
+            },
           },
         },
       },
@@ -36,6 +41,7 @@ export async function GET(
       success: true,
       courseCode: session.course.code,
       courseTitle: session.course.title,
+      lecturerName: session.course.lecturer?.fullName || "Course Lecturer",
       academicSession: session.course.session,
       semester: session.course.semester,
       topic: session.topic || "Lecture Attendance",

@@ -14,7 +14,7 @@ export default function NewAttendanceSessionPage() {
   const [course, setCourse] = useState<{ code: string; title: string } | null>(null);
   const [topic, setTopic] = useState("");
   const [durationMinutes, setDurationMinutes] = useState(30);
-  const [verificationMethod, setVerificationMethod] = useState<"STUDENT_PIN" | "EMAIL_OTP" | "OPEN_CHECKIN">("STUDENT_PIN");
+  const [verificationMethod, setVerificationMethod] = useState<"STUDENT_PIN" | "EMAIL_OTP" | "OPEN_CHECKIN">("OPEN_CHECKIN");
   const [sessionPin, setSessionPin] = useState(() => Math.floor(1000 + Math.random() * 9000).toString());
   const [enableInClassPin, setEnableInClassPin] = useState(true);
 
@@ -154,15 +154,35 @@ export default function NewAttendanceSessionPage() {
                   <input
                     type="radio"
                     name="verificationMethod"
+                    value="OPEN_CHECKIN"
+                    checked={verificationMethod === "OPEN_CHECKIN"}
+                    onChange={() => setVerificationMethod("OPEN_CHECKIN")}
+                    className="mt-0.5 text-sky-800 focus:ring-sky-700"
+                  />
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                      <span>In-Class QR Code & PIN</span>
+                      <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-semibold">Recommended</span>
+                    </span>
+                    <span className="text-[11px] text-slate-500 leading-relaxed block">
+                      Fastest & most seamless. Scanning the classroom QR code auto-verifies physical presence and pre-fills the PIN for students.
+                    </span>
+                  </div>
+                </label>
+
+                <label className="flex items-start gap-3 p-3 border rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
+                  <input
+                    type="radio"
+                    name="verificationMethod"
                     value="STUDENT_PIN"
                     checked={verificationMethod === "STUDENT_PIN"}
                     onChange={() => setVerificationMethod("STUDENT_PIN")}
                     className="mt-0.5 text-sky-800 focus:ring-sky-700"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-900 block">Student PIN (Recommended)</span>
+                    <span className="text-xs font-bold text-slate-900 block">Personal Student PIN</span>
                     <span className="text-[11px] text-slate-500 leading-relaxed block">
-                      Students verify with their assigned confidential student PIN along with matric number.
+                      Requires students to enter an individual security PIN previously assigned to their matriculation number.
                     </span>
                   </div>
                 </label>
@@ -180,23 +200,6 @@ export default function NewAttendanceSessionPage() {
                     <span className="text-xs font-bold text-slate-900 block">Institutional Email Passcode (OTP)</span>
                     <span className="text-[11px] text-slate-500 leading-relaxed block">
                       Dispatches a single-use numeric code to the student&apos;s registered institutional inbox.
-                    </span>
-                  </div>
-                </label>
-
-                <label className="flex items-start gap-3 p-3 border rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
-                  <input
-                    type="radio"
-                    name="verificationMethod"
-                    value="OPEN_CHECKIN"
-                    checked={verificationMethod === "OPEN_CHECKIN"}
-                    onChange={() => setVerificationMethod("OPEN_CHECKIN")}
-                    className="mt-0.5 text-sky-800 focus:ring-sky-700"
-                  />
-                  <div>
-                    <span className="text-xs font-bold text-slate-900 block">In-Class PIN Only</span>
-                    <span className="text-[11px] text-slate-500 leading-relaxed block">
-                      Students enter the 4-digit in-class PIN projected on the classroom board to authenticate presence.
                     </span>
                   </div>
                 </label>
