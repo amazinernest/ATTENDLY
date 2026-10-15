@@ -62,8 +62,7 @@ export default function NewCoursePage() {
         return;
       }
 
-      router.push(`/courses/${data.course.id}`);
-      router.refresh();
+      window.location.href = `/courses/${data.course.id}`;
     } catch {
       setErrorMessage("Network error occurred. Please try again.");
     } finally {

@@ -65,7 +65,7 @@ export function Sidebar({ user }: SidebarProps) {
   };
 
   return (
-    <aside className="w-64 border-r border-slate-200 bg-white flex flex-col h-screen sticky top-0 shrink-0">
+    <aside className="hidden lg:flex w-64 border-r border-slate-200 bg-white flex-col h-screen sticky top-0 shrink-0">
       {/* Brand Header */}
       <div className="p-5 border-b border-slate-200">
         <Link href="/dashboard" className="flex items-center gap-3">

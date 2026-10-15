@@ -22,7 +22,12 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successInfo, setSuccessInfo] = useState<string | null>(null);
+  const [registeredUser, setRegisteredUser] = useState<{
+    fullName: string;
+    email: string;
+    institution?: string;
+  } | null>(null);
+  const [countdown, setCountdown] = useState(6);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -30,6 +35,10 @@ export default function RegisterPage() {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const enterPortal = () => {
+    window.location.href = "/dashboard";
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,29 +77,39 @@ export default function RegisterPage() {
         return;
       }
 
-      setSuccessInfo(data.message || "Registration successful! Loading your dashboard...");
+      setRegisteredUser({
+        fullName: formData.fullName,
+        email: formData.email,
+        institution: formData.institution,
+      });
 
-      // Automatically redirect to dashboard
-      setTimeout(() => {
-        router.push("/dashboard");
-        router.refresh();
+      // Start countdown to redirect
+      let count = 5;
+      setCountdown(count);
+      const interval = setInterval(() => {
+        count -= 1;
+        setCountdown(count);
+        if (count <= 0) {
+          clearInterval(interval);
+          window.location.href = "/dashboard";
+        }
       }, 1000);
     } catch {
-      setErrorMessage("Network error occurred. Please try again.");
+      setErrorMessage("Network error occurred. Please check your connection and try again.");
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-10 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex items-center justify-center gap-3">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-8 px-4 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <Link href="/" className="inline-flex items-center justify-center gap-3">
           <div className="w-10 h-10 rounded-md bg-sky-800 text-white flex items-center justify-center font-bold shadow-xs">
             <GraduationCap className="w-6 h-6" />
           </div>
           <span className="text-2xl font-bold tracking-tight text-slate-900">ClassMark</span>
-        </div>
-        <h2 className="mt-6 text-center text-xl font-semibold tracking-tight text-slate-900">
+        </Link>
+        <h2 className="mt-4 text-center text-xl font-bold tracking-tight text-slate-900">
           Create Lecturer Account
         </h2>
         <p className="mt-1 text-center text-xs text-slate-500">
@@ -98,21 +117,74 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg px-4">
-        <div className="bg-white py-8 px-6 shadow-xs border border-slate-200 rounded-lg sm:px-8">
-          {successInfo ? (
-            <div className="py-6 text-center space-y-4">
-              <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto animate-bounce" />
-              <h3 className="text-base font-semibold text-slate-900">Account Created Successfully!</h3>
-              <p className="text-xs text-emerald-700">{successInfo}</p>
-              <div className="pt-2">
-                <Button
-                  variant="primary"
-                  className="w-full"
-                  onClick={() => router.push("/dashboard")}
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-lg">
+        <div className="bg-white py-8 px-6 shadow-sm border border-slate-200 rounded-xl sm:px-8">
+          {registeredUser ? (
+            <div className="py-2 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center shadow-inner">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+              </div>
+
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-semibold rounded-full border border-emerald-200 mb-2">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Registration Successful
+                </span>
+                <h3 className="text-xl font-bold text-slate-900">
+                  Welcome to ClassMark, {registeredUser.fullName}!
+                </h3>
+                <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-sm mx-auto leading-relaxed">
+                  You are successfully registered! Your academic lecturer account has been created and verified. You now have full access to your lecturer workspace.
+                </p>
+              </div>
+
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-left text-xs space-y-2">
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500 font-medium">Lecturer Name:</span>
+                  <span className="font-semibold text-slate-900">{registeredUser.fullName}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500 font-medium">Institutional Email:</span>
+                  <span className="font-semibold text-slate-900">{registeredUser.email}</span>
+                </div>
+                {registeredUser.institution && (
+                  <div className="flex justify-between py-1 border-b border-slate-200">
+                    <span className="text-slate-500 font-medium">Institution:</span>
+                    <span className="font-semibold text-slate-900">{registeredUser.institution}</span>
+                  </div>
+                )}
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-500 font-medium">Session Status:</span>
+                  <span className="font-semibold text-emerald-700 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                    Verified & Logged In
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-2 space-y-3">
+                <button
+                  type="button"
+                  onClick={enterPortal}
+                  className="w-full py-3 px-4 bg-sky-800 hover:bg-sky-900 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Go to Dashboard
-                </Button>
+                  <span>Enter the Portal</span>
+                  <span className="text-xs bg-sky-700 px-2 py-0.5 rounded font-mono">Dashboard →</span>
+                </button>
+
+                <p className="text-[11px] text-slate-400">
+                  Entering portal automatically in {countdown}s, or click the button above to enter immediately.
+                </p>
+
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-4 text-xs text-slate-500">
+                  <Link href="/login" className="text-sky-700 hover:text-sky-900 font-medium hover:underline">
+                    Sign In Screen
+                  </Link>
+                  <span>•</span>
+                  <Link href="/courses/new" className="text-sky-700 hover:text-sky-900 font-medium hover:underline">
+                    Create Course Directly
+                  </Link>
+                </div>
               </div>
             </div>
           ) : (
