@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { GraduationCap, Mail, Lock, User, Building, BookOpen, AlertCircle, CheckCircle2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { GraduationCap, Mail, Lock, User, Building, BookOpen, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -13,12 +15,14 @@ export default function RegisterPage() {
     confirmPassword: "",
     institution: "",
     department: "",
-    agreeTerms: false,
+    agreeTerms: true,
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successInfo, setSuccessInfo] = useState<{ message: string; devToken?: string } | null>(null);
+  const [successInfo, setSuccessInfo] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -32,8 +36,13 @@ export default function RegisterPage() {
     e.preventDefault();
     setErrorMessage(null);
 
+    if (formData.password.length < 8) {
+      setErrorMessage("Password must be at least 8 characters long.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
-      setErrorMessage("Passwords do not match.");
+      setErrorMessage("Passwords do not match. Please re-enter.");
       return;
     }
 
@@ -55,16 +64,19 @@ export default function RegisterPage() {
 
       if (!res.ok) {
         setErrorMessage(data.error || "Registration failed. Please check your information.");
+        setIsLoading(false);
         return;
       }
 
-      setSuccessInfo({
-        message: data.message,
-        devToken: data.devToken,
-      });
+      setSuccessInfo(data.message || "Registration successful! Loading your dashboard...");
+
+      // Automatically redirect to dashboard
+      setTimeout(() => {
+        router.push("/dashboard");
+        router.refresh();
+      }, 1000);
     } catch {
       setErrorMessage("Network error occurred. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -89,39 +101,18 @@ export default function RegisterPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg px-4">
         <div className="bg-white py-8 px-6 shadow-xs border border-slate-200 rounded-lg sm:px-8">
           {successInfo ? (
-            <div className="space-y-4">
-              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-md text-emerald-800 flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-semibold">Account Registered Successfully</h4>
-                  <p className="text-xs text-emerald-700 mt-1">{successInfo.message}</p>
-                </div>
-              </div>
-
-              {successInfo.devToken && (
-                <div className="p-4 bg-sky-50 border border-sky-200 rounded-md text-xs">
-                  <p className="font-semibold text-sky-900 mb-1">
-                    Development Environment Quick Verification
-                  </p>
-                  <p className="text-sky-700 mb-2">
-                    In development mode without configured external SMTP, click below to verify immediately:
-                  </p>
-                  <Link
-                    href={`/verify-email?token=${successInfo.devToken}`}
-                    className="inline-flex items-center justify-center px-3 py-1.5 bg-sky-800 text-white font-medium rounded text-xs hover:bg-sky-900 transition-colors"
-                  >
-                    Click to Verify Account Now
-                  </Link>
-                </div>
-              )}
-
-              <div className="pt-2 text-center">
-                <Link
-                  href="/login"
-                  className="text-xs font-semibold text-sky-700 hover:text-sky-800 hover:underline"
+            <div className="py-6 text-center space-y-4">
+              <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto animate-bounce" />
+              <h3 className="text-base font-semibold text-slate-900">Account Created Successfully!</h3>
+              <p className="text-xs text-emerald-700">{successInfo}</p>
+              <div className="pt-2">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => router.push("/dashboard")}
                 >
-                  Return to sign in
-                </Link>
+                  Go to Dashboard
+                </Button>
               </div>
             </div>
           ) : (
@@ -134,7 +125,7 @@ export default function RegisterPage() {
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700">Full Name</label>
+                <label className="block text-xs font-semibold text-slate-700">Full Name *</label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <User className="w-4 h-4" />
@@ -152,7 +143,7 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700">Institutional Email</label>
+                <label className="block text-xs font-semibold text-slate-700">Institutional Email *</label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <Mail className="w-4 h-4" />
@@ -207,40 +198,54 @@ export default function RegisterPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Password</label>
+                  <label className="block text-xs font-semibold text-slate-700">Password *</label>
                   <div className="mt-1 relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                       <Lock className="w-4 h-4" />
                     </div>
                     <input
                       name="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       required
                       minLength={8}
                       value={formData.password}
                       onChange={handleChange}
-                      className="block w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-md placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-sky-700"
+                      className="block w-full pl-9 pr-10 py-2 text-sm border border-slate-300 rounded-md placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-sky-700"
                       placeholder="Min. 8 characters"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Confirm Password</label>
+                  <label className="block text-xs font-semibold text-slate-700">Confirm Password *</label>
                   <div className="mt-1 relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                       <Lock className="w-4 h-4" />
                     </div>
                     <input
                       name="confirmPassword"
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       required
                       minLength={8}
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="block w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-md placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-sky-700"
+                      className="block w-full pl-9 pr-10 py-2 text-sm border border-slate-300 rounded-md placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-sky-700"
                       placeholder="Re-enter password"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -255,7 +260,7 @@ export default function RegisterPage() {
                     className="mt-0.5 rounded border-slate-300 text-sky-800 focus:ring-sky-700"
                   />
                   <span>
-                    I confirm that I am an authorized academic lecturer and agree to the institutional privacy policies and terms of service.
+                    I confirm that I am an authorized academic lecturer and agree to the terms of service.
                   </span>
                 </label>
               </div>

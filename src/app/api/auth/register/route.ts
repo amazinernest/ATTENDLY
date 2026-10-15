@@ -2,19 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import crypto from "crypto";
 import prisma from "@/lib/db";
-import { hashPassword } from "@/lib/auth";
+import { hashPassword, createSessionToken, setSessionCookie } from "@/lib/auth";
 import { sendVerificationEmail } from "@/lib/email";
 
 const registerSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters").max(100),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  email: z.string().email("Please provide a valid institutional email address"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
   confirmPassword: z.string(),
   institution: z.string().max(150).optional(),
   department: z.string().max(100).optional(),
-  agreeTerms: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms and privacy policy",
-  }),
+  agreeTerms: z.boolean().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
@@ -26,8 +24,16 @@ export async function POST(req: NextRequest) {
     const result = registerSchema.safeParse(body);
 
     if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      const firstError =
+        fieldErrors.confirmPassword?.[0] ||
+        fieldErrors.password?.[0] ||
+        fieldErrors.email?.[0] ||
+        fieldErrors.fullName?.[0] ||
+        "Please check your input details and try again.";
+
       return NextResponse.json(
-        { error: "Validation failed", details: result.error.flatten().fieldErrors },
+        { error: firstError, details: fieldErrors },
         { status: 400 }
       );
     }
@@ -41,14 +47,18 @@ export async function POST(req: NextRequest) {
     });
 
     if (existing) {
-      // In line with security standards, give a message that does not leak internal data
       return NextResponse.json(
-        { error: "An account with this email address already exists." },
+        { error: "An account with this email address already exists. Please sign in instead." },
         { status: 409 }
       );
     }
 
     const passwordHash = await hashPassword(password);
+
+    // If SMTP is not configured or in development mode, automatically verify email
+    // so the lecturer can access their workspace immediately without being blocked
+    const isSmtpConfigured = !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASSWORD);
+    const shouldAutoVerify = !isSmtpConfigured || process.env.NODE_ENV !== "production";
 
     // Create user in database
     const user = await prisma.user.create({
@@ -58,7 +68,7 @@ export async function POST(req: NextRequest) {
         fullName: fullName.trim(),
         institution: institution?.trim() || null,
         department: department?.trim() || null,
-        isEmailVerified: false,
+        isEmailVerified: shouldAutoVerify,
       },
     });
 
@@ -74,15 +84,27 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Send verification email (will log to console in development if SMTP is not configured)
+    // Dispatch verification email (or log to server console in dev)
     await sendVerificationEmail(normalizedEmail, token);
+
+    // Immediately establish the session cookie so user is logged in
+    const sessionToken = await createSessionToken({
+      userId: user.id,
+      email: user.email,
+      fullName: user.fullName,
+    });
+    await setSessionCookie(sessionToken);
 
     return NextResponse.json(
       {
         success: true,
-        message: "Registration successful. Please verify your email to activate your account.",
-        verificationRequired: true,
-        devToken: process.env.NODE_ENV !== "production" ? token : undefined,
+        message: "Account registered successfully! Redirecting to your dashboard...",
+        autoVerified: shouldAutoVerify,
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+        },
       },
       { status: 201 }
     );
