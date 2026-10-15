@@ -1,13 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { GraduationCap, Eye, EyeOff, Lock, Mail, AlertCircle, CheckCircle2, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from") || "/dashboard";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -44,8 +47,8 @@ export default function LoginPage() {
       setSuccessMessage("Authentication successful! Entering your lecturer portal...");
       // Reliable full document redirect ensures session cookie is immediately active
       setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 400);
+        window.location.href = from;
+      }, 350);
     } catch {
       setErrorMessage("Network error occurred. Please check your connection and try again.");
       setIsLoading(false);
@@ -194,5 +197,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center text-xs text-slate-400">Loading portal...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

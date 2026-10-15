@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import crypto from "crypto";
 import prisma from "@/lib/db";
-import { hashPassword, createSessionToken, setSessionCookie } from "@/lib/auth";
+import { hashPassword, createSessionToken, setSessionCookie, attachSessionCookie } from "@/lib/auth";
 import { sendVerificationEmail } from "@/lib/email";
 
 const registerSchema = z.object({
@@ -93,9 +93,7 @@ export async function POST(req: NextRequest) {
       email: user.email,
       fullName: user.fullName,
     });
-    await setSessionCookie(sessionToken);
-
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: true,
         message: "Account registered successfully! Redirecting to your dashboard...",
@@ -108,6 +106,11 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
+
+    attachSessionCookie(response, sessionToken);
+    await setSessionCookie(sessionToken);
+
+    return response;
   } catch (error) {
     console.error("[Register Error]:", error);
     return NextResponse.json(

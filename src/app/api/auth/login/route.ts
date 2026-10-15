@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "@/lib/db";
-import { verifyPassword, createSessionToken, setSessionCookie } from "@/lib/auth";
+import { verifyPassword, createSessionToken, setSessionCookie, attachSessionCookie } from "@/lib/auth";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -69,9 +69,7 @@ export async function POST(req: NextRequest) {
       fullName: user.fullName,
     });
 
-    await setSessionCookie(token);
-
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       user: {
         id: user.id,
@@ -80,6 +78,11 @@ export async function POST(req: NextRequest) {
         institution: user.institution,
       },
     });
+
+    attachSessionCookie(response, token);
+    await setSessionCookie(token);
+
+    return response;
   } catch (error) {
     console.error("[Login Error]:", error);
     return NextResponse.json(

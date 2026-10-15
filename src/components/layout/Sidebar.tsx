@@ -57,9 +57,9 @@ export function Sidebar({ user }: SidebarProps) {
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      router.push("/login");
-      router.refresh();
     } catch {
+      // Ignore
+    } finally {
       window.location.href = "/login";
     }
   };
