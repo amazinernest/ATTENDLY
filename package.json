@@ -36,12 +36,16 @@
     "react-hook-form": "^7.90.0",
     "react-router": "^8.4.0",
     "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4",
+    "vite": "^7.3.7",
+    "vite-tsconfig-paths": "^6.1.1",
+    "@react-router/dev": "^8.4.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "prisma": "^7.10.0",
     "xlsx": "^0.18.5",
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@react-router/dev": "^8.4.0",
-    "@tailwindcss/vite": "^4.3.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22",
     "@types/nodemailer": "^8.0.2",
@@ -51,11 +55,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "prisma": "^7.10.0",
-    "tailwindcss": "^4",
     "typescript": "^5",
-    "vite": "^7.3.7",
-    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^3.0.7"
   }
 }
