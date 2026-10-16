@@ -13,6 +13,8 @@ import {
   Smartphone,
   CheckCircle2,
   Sparkles,
+  LogIn,
+  UserPlus,
 } from "lucide-react";
 import { getUser } from "@/lib/session.server";
 
@@ -50,6 +52,18 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Auto-close menu when viewport is resized to desktop width (lg: 1024px+)
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const handleMediaChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        setMobileMenuOpen(false);
+      }
+    };
+    mediaQuery.addEventListener("change", handleMediaChange);
+    return () => mediaQuery.removeEventListener("change", handleMediaChange);
+  }, []);
+
   const closeMenu = () => setMobileMenuOpen(false);
 
   return (
@@ -58,20 +72,23 @@ export default function HomePage() {
       <header className="border-b border-slate-200 bg-white sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Logo Brand */}
-          <Link to="/" className="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-sky-700 rounded-lg p-1 -ml-1">
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-sky-700 rounded-lg p-1 -ml-1"
+          >
             <div className="w-9 h-9 rounded-md bg-sky-800 text-white flex items-center justify-center font-bold shadow-xs">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-slate-900 tracking-tight text-lg">ClassMark</span>
-              <span className="hidden md:inline-block text-[11px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">
+              <span className="hidden xl:inline-block text-[11px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">
                 University Attendance System
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-600">
+          {/* Desktop Navigation Links (lg and larger: 1024px+) */}
+          <nav className="hidden lg:flex items-center gap-6 text-xs font-semibold text-slate-600">
             <a href="#features" className="hover:text-sky-800 transition-colors">
               Features
             </a>
@@ -83,31 +100,24 @@ export default function HomePage() {
             </a>
           </nav>
 
-          {/* Desktop Actions */}
-          <div className="hidden sm:flex items-center gap-3">
+          {/* Desktop Action Buttons (lg and larger: 1024px+) */}
+          <div className="hidden lg:flex items-center gap-3">
             <Link
               to="/login"
-              className="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3 py-2 rounded-md hover:bg-slate-100 transition-colors"
+              className="text-xs font-semibold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-md hover:bg-slate-100 transition-colors"
             >
               Lecturer Sign In
             </Link>
             <Link
               to="/register"
-              className="text-xs font-semibold text-white bg-sky-800 hover:bg-sky-900 px-3.5 py-2 rounded-md shadow-xs transition-colors"
+              className="text-xs font-semibold text-white bg-sky-800 hover:bg-sky-900 px-4 py-2 rounded-md shadow-xs transition-colors"
             >
-              Register Account
+              Create Account
             </Link>
           </div>
 
-          {/* Mobile Right Controls: Quick Sign In + Hamburger Toggle */}
-          <div className="flex sm:hidden items-center gap-2">
-            <Link
-              to="/login"
-              className="text-xs font-semibold text-slate-700 hover:text-slate-900 px-2.5 py-1.5 rounded-md hover:bg-slate-100 transition-colors"
-            >
-              Sign In
-            </Link>
-
+          {/* Mobile & Tablet Hamburger Button (< lg: 1024px) */}
+          <div className="flex lg:hidden items-center">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -115,24 +125,24 @@ export default function HomePage() {
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Navigation Drawer Overlay */}
+      {/* Mobile & Tablet Navigation Drawer Overlay (< lg: 1024px) */}
       {mobileMenuOpen && (
-        <div className="sm:hidden fixed inset-0 z-50 flex">
-          {/* Backdrop */}
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          {/* Backdrop with smooth blur */}
           <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-in fade-in"
+            className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity animate-in fade-in"
             onClick={closeMenu}
           />
 
           {/* Drawer Sheet */}
-          <div className="relative ml-auto w-72 max-w-[85vw] bg-white shadow-2xl flex flex-col h-full z-10 animate-in slide-in-from-right duration-200">
-            {/* Drawer Header */}
+          <div className="relative ml-auto w-80 max-w-[88vw] bg-white shadow-2xl flex flex-col h-full z-10 animate-in slide-in-from-right duration-200">
+            {/* Drawer Top Header */}
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-md bg-sky-800 text-white flex items-center justify-center font-bold shadow-xs">
@@ -148,15 +158,41 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={closeMenu}
-                className="p-1.5 rounded-md text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors cursor-pointer"
+                className="p-2 rounded-md text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors cursor-pointer"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Navigation Links */}
-            <div className="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
+            {/* Lecturer Access Action Buttons - Prominently Displayed */}
+            <div className="p-4 bg-gradient-to-b from-sky-50/70 to-white border-b border-slate-100 space-y-2.5">
+              <p className="text-[11px] font-bold text-sky-900 uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-sky-800" />
+                <span>Lecturer Portal Access</span>
+              </p>
+
+              <Link
+                to="/register"
+                onClick={closeMenu}
+                className="flex items-center justify-center gap-2 w-full py-3 px-4 text-xs font-bold text-white bg-sky-800 hover:bg-sky-900 active:bg-sky-950 rounded-xl shadow-xs transition-colors"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Create Lecturer Account</span>
+              </Link>
+
+              <Link
+                to="/login"
+                onClick={closeMenu}
+                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 active:bg-slate-200 border border-slate-300 rounded-xl shadow-2xs transition-colors"
+              >
+                <LogIn className="w-4 h-4 text-slate-500" />
+                <span>Lecturer Sign In</span>
+              </Link>
+            </div>
+
+            {/* Platform Navigation Links */}
+            <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
               <p className="px-2 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 Explore Platform
               </p>
@@ -164,58 +200,52 @@ export default function HomePage() {
               <a
                 href="#features"
                 onClick={closeMenu}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
-                <UploadCloud className="w-4 h-4 text-sky-800" />
-                <span>Features & Roster Import</span>
+                <span className="flex items-center gap-3">
+                  <UploadCloud className="w-4 h-4 text-sky-800" />
+                  <span>Features & Roster Import</span>
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
               </a>
 
               <a
                 href="#workflow"
                 onClick={closeMenu}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
-                <QrCode className="w-4 h-4 text-sky-800" />
-                <span>How It Works</span>
+                <span className="flex items-center gap-3">
+                  <QrCode className="w-4 h-4 text-sky-800" />
+                  <span>How It Works (4 Steps)</span>
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
               </a>
 
               <a
                 href="#security"
                 onClick={closeMenu}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Anti-Proxy Security</span>
+                <span className="flex items-center gap-3">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>Anti-Proxy Security</span>
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
               </a>
+            </nav>
 
-              <div className="pt-4 border-t border-slate-100 mt-4 space-y-2.5">
-                <p className="px-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  Lecturer Account
-                </p>
-
-                <Link
-                  to="/register"
-                  onClick={closeMenu}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs font-bold text-white bg-sky-800 hover:bg-sky-900 rounded-lg shadow-xs transition-colors"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Register Lecturer Account</span>
-                </Link>
-
-                <Link
-                  to="/login"
-                  onClick={closeMenu}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-lg transition-colors"
-                >
-                  <span>Lecturer Sign In</span>
-                </Link>
+            {/* Drawer Footer Details */}
+            <div className="p-4 border-t border-slate-200 bg-slate-50 text-[11px] text-slate-500 space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-slate-700">ClassMark Attendance</span>
+                <span className="flex items-center gap-1 text-emerald-700 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                  Online
+                </span>
               </div>
-            </div>
-
-            {/* Drawer Footer */}
-            <div className="p-4 border-t border-slate-200 bg-slate-50 text-[11px] text-slate-500 text-center space-y-1">
-              <p className="font-semibold text-slate-700">Nigerian Tertiary Institution Standard</p>
-              <p className="text-slate-400">Official Academic Attendance Records</p>
+              <p className="text-slate-400">
+                Official Attendance Platform for Nigerian Tertiary Institutions.
+              </p>
             </div>
           </div>
         </div>
