@@ -126,11 +126,18 @@ export async function action({ request }: { request: Request }) {
         },
       }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("[Register Action Error]:", error);
-    return Response.json(
-      { error: "Registration failed due to a server error. Please try again." },
-      { status: 500 }
-    );
+    if (error?.code === "P2002") {
+      return Response.json(
+        { error: "An account with this email address already exists. Please sign in instead." },
+        { status: 409 }
+      );
+    }
+    const message =
+      process.env.NODE_ENV !== "production" && error?.message
+        ? `Registration error: ${error.message}`
+        : "Registration failed due to a server error. Please try again.";
+    return Response.json({ error: message }, { status: 500 });
   }
 }
