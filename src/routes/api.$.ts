@@ -1018,69 +1018,67 @@ export async function action({ request, params }: ActionFunctionArgs) {
       let addedCount = 0;
       let updatedCount = 0;
 
-      await prisma.$transaction(async (tx) => {
-        for (const s of students) {
-          const cleanMatric = s.matricNumber.trim().toUpperCase();
-          const cleanName = s.fullName.trim();
-          const cleanEmail = s.email ? s.email.trim().toLowerCase() : null;
+      for (const s of students) {
+        const cleanMatric = s.matricNumber.trim().toUpperCase();
+        const cleanName = s.fullName.trim();
+        const cleanEmail = s.email ? s.email.trim().toLowerCase() : null;
 
-          const student = await tx.student.upsert({
-            where: { matricNumber: cleanMatric },
-            create: {
-              matricNumber: cleanMatric,
-              fullName: cleanName,
-              email: cleanEmail,
-              department: s.department?.trim() || null,
-              faculty: s.faculty?.trim() || null,
-              level: s.level?.trim() || null,
-              studentPin: s.studentPin?.trim() || null,
-            },
-            update:
-              actionOnExisting === "update"
-                ? {
-                    fullName: cleanName,
-                    email: cleanEmail || undefined,
-                    department: s.department?.trim() || undefined,
-                    faculty: s.faculty?.trim() || undefined,
-                    level: s.level?.trim() || undefined,
-                    studentPin: s.studentPin?.trim() || undefined,
-                  }
-                : {},
-          });
+        const student = await prisma.student.upsert({
+          where: { matricNumber: cleanMatric },
+          create: {
+            matricNumber: cleanMatric,
+            fullName: cleanName,
+            email: cleanEmail,
+            department: s.department?.trim() || null,
+            faculty: s.faculty?.trim() || null,
+            level: s.level?.trim() || null,
+            studentPin: s.studentPin?.trim() || null,
+          },
+          update:
+            actionOnExisting === "update"
+              ? {
+                  fullName: cleanName,
+                  email: cleanEmail || undefined,
+                  department: s.department?.trim() || undefined,
+                  faculty: s.faculty?.trim() || undefined,
+                  level: s.level?.trim() || undefined,
+                  studentPin: s.studentPin?.trim() || undefined,
+                }
+              : {},
+        });
 
-          await tx.courseEnrolment.upsert({
-            where: {
-              courseId_studentId: {
-                courseId: course.id,
-                studentId: student.id,
-              },
-            },
-            create: {
+        await prisma.courseEnrolment.upsert({
+          where: {
+            courseId_studentId: {
               courseId: course.id,
               studentId: student.id,
-              status: "ACTIVE",
             },
-            update: {
-              status: "ACTIVE",
-            },
-          });
-
-          addedCount++;
-        }
-
-        await tx.auditLog.create({
-          data: {
-            userId: user.id,
+          },
+          create: {
             courseId: course.id,
-            action: "ROSTER_IMPORTED",
-            details: JSON.stringify({
-              totalProcessed: students.length,
-              addedCount,
-              updatedCount,
-              actionOnExisting,
-            }),
+            studentId: student.id,
+            status: "ACTIVE",
+          },
+          update: {
+            status: "ACTIVE",
           },
         });
+
+        addedCount++;
+      }
+
+      await prisma.auditLog.create({
+        data: {
+          userId: user.id,
+          courseId: course.id,
+          action: "ROSTER_IMPORTED",
+          details: JSON.stringify({
+            totalProcessed: students.length,
+            addedCount,
+            updatedCount,
+            actionOnExisting,
+          }),
+        },
       });
 
       return Response.json({
@@ -1089,9 +1087,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
         addedCount,
         updatedCount,
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error("[Commit Roster Error]:", err);
-      return Response.json({ error: "Failed to save student records to course roster." }, { status: 500 });
+      const errorMessage =
+        err?.message || "Failed to save student records to course roster. Please verify file format.";
+      return Response.json({ error: errorMessage }, { status: 500 });
     }
   }
 

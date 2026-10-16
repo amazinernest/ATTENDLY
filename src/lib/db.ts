@@ -3,7 +3,9 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
 const connectionString =
-  process.env.DATABASE_URL || "postgresql://mac@localhost:5432/classmark?schema=public";
+  process.env.DIRECT_URL ||
+  process.env.DATABASE_URL ||
+  "postgresql://mac@localhost:5432/classmark?schema=public";
 
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
