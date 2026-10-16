@@ -1,0 +1,27 @@
+import { type RouteConfig, index, route } from "@react-router/dev/routes";
+
+export default [
+  index("routes/home.tsx"),
+  route("login", "routes/login.tsx"),
+  route("register", "routes/register.tsx"),
+  route("forgot-password", "routes/forgot-password.tsx"),
+  route("reset-password", "routes/reset-password.tsx"),
+  route("verify-email", "routes/verify-email.tsx"),
+  route("dashboard", "routes/dashboard.tsx"),
+  route("courses", "routes/courses.tsx"),
+  route("courses/new", "routes/courses.new.tsx"),
+  route("courses/:courseId", "routes/courses.$courseId.tsx"),
+  route("courses/:courseId/attendance/new", "routes/courses.$courseId.attendance.new.tsx"),
+  route("courses/:courseId/attendance/:sessionId", "routes/courses.$courseId.attendance.$sessionId.tsx"),
+  route("students/:studentId", "routes/students.$studentId.tsx"),
+  route("attendance/:token", "routes/attendance.$token.tsx"),
+  route("settings", "routes/settings.tsx"),
+  route("api/auth/login", "routes/api.auth.login.ts"),
+  route("api/auth/register", "routes/api.auth.register.ts"),
+  route("api/auth/me", "routes/api.auth.me.ts"),
+  route("api/auth/logout", "routes/api.auth.logout.ts"),
+  route("api/auth/forgot-password", "routes/api.auth.forgot-password.ts"),
+  route("api/auth/reset-password", "routes/api.auth.reset-password.ts"),
+  route("api/auth/verify-email", "routes/api.auth.verify-email.ts"),
+  route("api/*", "routes/api.$.ts"),
+] satisfies RouteConfig;

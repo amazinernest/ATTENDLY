@@ -1,6 +1,4 @@
-"use client";
-
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 export interface AuthUser {
   id: string;
@@ -22,7 +20,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  isLoading: true,
+  isLoading: false,
   isAuthenticated: false,
   logout: async () => {},
   refresh: async () => {},
@@ -36,11 +34,10 @@ export function AuthProvider({
   initialUser?: AuthUser | null;
 }) {
   const [user, setUser] = useState<AuthUser | null>(initialUser);
-  const [isLoading, setIsLoading] = useState<boolean>(!initialUser);
 
-  const refresh = useCallback(async () => {
+  const refresh = async () => {
     try {
-      const res = await fetch("/api/auth/me", { cache: "no-store" });
+      const res = await fetch("/api/auth/me");
       if (res.ok) {
         const data = await res.json();
         if (data.authenticated && data.user) {
@@ -50,20 +47,11 @@ export function AuthProvider({
       }
       setUser(null);
     } catch {
-      // Network error or unauthenticated
       setUser(null);
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+  };
 
-  useEffect(() => {
-    if (!initialUser) {
-      refresh();
-    }
-  }, [initialUser, refresh]);
-
-  const logout = useCallback(async () => {
+  const logout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
     } catch (e) {
@@ -72,13 +60,13 @@ export function AuthProvider({
       setUser(null);
       window.location.href = "/login";
     }
-  }, []);
+  };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isLoading,
+        isLoading: false,
         isAuthenticated: !!user,
         logout,
         refresh,

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { hashPassword, verifyPassword, createSessionToken, verifySessionToken } from "../auth";
+import { hashPassword, verifyPassword } from "../auth";
+import { sessionStorage } from "../session.server";
 
 describe("Authentication Utilities", () => {
   it("hashes password and verifies correctly", async () => {
@@ -11,26 +12,20 @@ describe("Authentication Utilities", () => {
     expect(await verifyPassword("WrongPassword123", hash)).toBe(false);
   });
 
-  it("creates and verifies a valid JWT session token", async () => {
-    const payload = {
-      userId: "user_test_123",
-      email: "lecturer@university.edu.ng",
-      fullName: "Dr. Adaeze Okafor",
-    };
+  it("creates and verifies a valid cookie session", async () => {
+    const session = await sessionStorage.getSession();
+    session.set("userId", "user_test_123");
+    const cookieHeader = await sessionStorage.commitSession(session);
 
-    const token = await createSessionToken(payload);
-    expect(typeof token).toBe("string");
+    expect(typeof cookieHeader).toBe("string");
+    expect(cookieHeader).toContain("classmark_session=");
 
-    const verified = await verifySessionToken(token);
-    expect(verified).not.toBeNull();
-    expect(verified?.userId).toBe(payload.userId);
-    expect(verified?.email).toBe(payload.email);
-    expect(verified?.fullName).toBe(payload.fullName);
+    const readSession = await sessionStorage.getSession(cookieHeader);
+    expect(readSession.get("userId")).toBe("user_test_123");
   });
 
-  it("returns null for malformed or tampered token", async () => {
-    const invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.malformed.payload";
-    const result = await verifySessionToken(invalidToken);
-    expect(result).toBeNull();
+  it("handles empty or tampered cookie session gracefully", async () => {
+    const readSession = await sessionStorage.getSession("classmark_session=tampered.fake.cookie");
+    expect(readSession.get("userId")).toBeUndefined();
   });
 });

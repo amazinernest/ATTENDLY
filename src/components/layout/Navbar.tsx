@@ -1,15 +1,11 @@
-"use client";
-
 import React, { useState } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { Link, useLocation, useNavigate } from "react-router";
 import {
   Menu,
   X,
   GraduationCap,
   Clock,
   LogOut,
-  User,
   Settings,
   BookOpen,
   LayoutDashboard,
@@ -28,15 +24,15 @@ interface NavbarProps {
 
 export function Navbar({ user }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const pathname = usePathname();
-  const router = useRouter();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      window.location.href = "/login";
+      navigate("/login");
     } catch {
-      window.location.href = "/login";
+      navigate("/login");
     }
   };
 
@@ -54,7 +50,7 @@ export function Navbar({ user }: NavbarProps) {
           {/* Hamburger button on screens smaller than lg */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-sky-700"
+            className="lg:hidden p-2 text-slate-700 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-sky-700 cursor-pointer"
             aria-label="Toggle navigation menu"
             aria-expanded={mobileOpen}
           >
@@ -79,7 +75,7 @@ export function Navbar({ user }: NavbarProps) {
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Quick Create Course shortcut on medium+ screens */}
           <Link
-            href="/courses/new"
+            to="/courses/new"
             className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-800 hover:bg-sky-900 text-white text-xs font-semibold rounded-md shadow-xs transition-colors"
           >
             <span>+ Create Course</span>
@@ -107,7 +103,7 @@ export function Navbar({ user }: NavbarProps) {
             <button
               onClick={handleLogout}
               title="Sign out"
-              className="text-slate-400 hover:text-rose-600 p-1.5 rounded-md hover:bg-rose-50 transition-colors"
+              className="text-slate-400 hover:text-rose-600 p-1.5 rounded-md hover:bg-rose-50 transition-colors cursor-pointer"
               aria-label="Sign out"
             >
               <LogOut className="w-4 h-4" />
@@ -126,7 +122,7 @@ export function Navbar({ user }: NavbarProps) {
           />
 
           {/* Drawer content */}
-          <div className="relative w-72 max-w-[85vw] bg-white shadow-2xl flex flex-col h-full z-10 animate-in slide-in-from-left duration-200">
+          <div className="relative w-72 max-w-[85vw] bg-white shadow-2xl flex flex-col h-full z-10">
             {/* Drawer Header */}
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2.5">
@@ -142,7 +138,7 @@ export function Navbar({ user }: NavbarProps) {
               </div>
               <button
                 onClick={() => setMobileOpen(false)}
-                className="p-1.5 rounded-md text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors"
+                className="p-1.5 rounded-md text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors cursor-pointer"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5" />
@@ -172,7 +168,7 @@ export function Navbar({ user }: NavbarProps) {
             {/* Quick Action in Mobile Menu */}
             <div className="p-3 border-b border-slate-100">
               <Link
-                href="/courses/new"
+                to="/courses/new"
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center justify-center gap-2 w-full py-2.5 px-3 text-xs font-bold text-white bg-sky-800 hover:bg-sky-900 rounded-md shadow-xs transition-colors"
               >
@@ -191,7 +187,7 @@ export function Navbar({ user }: NavbarProps) {
                 return (
                   <Link
                     key={item.label}
-                    href={item.href}
+                    to={item.href}
                     onClick={() => setMobileOpen(false)}
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
@@ -222,7 +218,7 @@ export function Navbar({ user }: NavbarProps) {
 
               <button
                 onClick={handleLogout}
-                className="flex items-center justify-center gap-2 w-full py-2.5 px-3 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-md transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-2.5 px-3 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-md transition-colors cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sign Out of Portal</span>

@@ -1,13 +1,9 @@
-"use client";
-
 import React from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { Link, useLocation, useNavigate } from "react-router";
 import {
   GraduationCap,
   LayoutDashboard,
   BookOpen,
-  QrCode,
   FileSpreadsheet,
   Settings,
   LogOut,
@@ -24,8 +20,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ user }: SidebarProps) {
-  const pathname = usePathname();
-  const router = useRouter();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
     {
@@ -60,7 +56,7 @@ export function Sidebar({ user }: SidebarProps) {
     } catch {
       // Ignore
     } finally {
-      window.location.href = "/login";
+      navigate("/login");
     }
   };
 
@@ -68,7 +64,7 @@ export function Sidebar({ user }: SidebarProps) {
     <aside className="hidden lg:flex w-64 border-r border-slate-200 bg-white flex-col h-screen sticky top-0 shrink-0">
       {/* Brand Header */}
       <div className="p-5 border-b border-slate-200">
-        <Link href="/dashboard" className="flex items-center gap-3">
+        <Link to="/dashboard" className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-md bg-sky-800 text-white flex items-center justify-center font-bold shadow-xs">
             <GraduationCap className="w-5 h-5" />
           </div>
@@ -86,7 +82,7 @@ export function Sidebar({ user }: SidebarProps) {
       {/* Primary Action */}
       <div className="px-4 py-3">
         <Link
-          href="/courses/new"
+          to="/courses/new"
           className="flex items-center justify-center gap-2 w-full py-2 px-3 text-xs font-semibold text-white bg-sky-800 hover:bg-sky-900 rounded-md shadow-xs transition-colors"
         >
           <PlusCircle className="w-4 h-4" />
@@ -104,7 +100,7 @@ export function Sidebar({ user }: SidebarProps) {
           return (
             <Link
               key={item.label}
-              href={item.href}
+              to={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                 item.active
@@ -138,7 +134,7 @@ export function Sidebar({ user }: SidebarProps) {
           <button
             onClick={handleLogout}
             title="Sign out"
-            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
           </button>

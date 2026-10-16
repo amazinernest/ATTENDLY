@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import prisma from "@/lib/db";
-import { hashPassword, verifyPassword, createSessionToken, verifySessionToken } from "@/lib/auth";
+import { hashPassword, verifyPassword } from "@/lib/auth";
+import { sessionStorage } from "@/lib/session.server";
 import { parseExcelBuffer } from "@/lib/importers";
 import * as XLSX from "xlsx";
 import { createAttendanceSession, closeAttendanceSession, generateQrCodeDataUrl } from "@/lib/attendance";
@@ -75,15 +76,13 @@ describe("Definition of Done: Complete Academic Workflow E2E", () => {
     const isMatch = await verifyPassword("StrongP@ssw0rd2026!", lecturer1.passwordHash);
     expect(isMatch).toBe(true);
 
-    const sessionCookieToken = await createSessionToken({
-      userId: lecturer1.id,
-      email: lecturer1.email,
-      fullName: lecturer1.fullName,
-    });
-    expect(typeof sessionCookieToken).toBe("string");
+    const session = await sessionStorage.getSession();
+    session.set("userId", lecturer1.id);
+    const cookieHeader = await sessionStorage.commitSession(session);
+    expect(typeof cookieHeader).toBe("string");
 
-    const payload = await verifySessionToken(sessionCookieToken);
-    expect(payload?.userId).toBe(lecturer1.id);
+    const readSession = await sessionStorage.getSession(cookieHeader);
+    expect(readSession.get("userId")).toBe(lecturer1.id);
   });
 
   it("Step 4: Lecturer creates a course", async () => {
