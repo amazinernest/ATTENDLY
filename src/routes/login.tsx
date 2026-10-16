@@ -8,7 +8,6 @@ import {
   Mail,
   AlertCircle,
   CheckCircle2,
-  KeyRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { getUser } from "@/lib/session.server";
@@ -66,12 +65,6 @@ export default function LoginPage() {
       setErrorMessage("Network error occurred. Please check your connection and try again.");
       setIsLoading(false);
     }
-  };
-
-  const handleFillDemo = () => {
-    setEmail("o.adeleke@university.edu.ng");
-    setPassword("Password123!");
-    setErrorMessage(null);
   };
 
   return (
@@ -181,19 +174,10 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="pt-2 space-y-2">
+            <div className="pt-2">
               <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
                 Sign In to Portal
               </Button>
-
-              <button
-                type="button"
-                onClick={handleFillDemo}
-                className="w-full py-2 px-3 text-xs font-semibold text-sky-800 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <KeyRound className="w-3.5 h-3.5" />
-                <span>Fill Test Credentials (Dr. Oluwaseun Adeleke)</span>
-              </button>
             </div>
           </form>
 
