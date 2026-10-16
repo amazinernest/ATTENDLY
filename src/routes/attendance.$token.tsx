@@ -231,6 +231,15 @@ function StudentCheckInContent() {
 
     const cleanMatric = matricNumber.trim().toUpperCase().replace(/\\/g, "/");
 
+    let deviceFingerprint = "";
+    try {
+      deviceFingerprint = localStorage.getItem("classmark_device_id") || "";
+      if (!deviceFingerprint) {
+        deviceFingerprint = "dev_" + Math.random().toString(36).substring(2) + Date.now().toString(36);
+        localStorage.setItem("classmark_device_id", deviceFingerprint);
+      }
+    } catch {}
+
     try {
       const res = await fetch(`/api/attendance/${token}/check-in`, {
         method: "POST",
@@ -240,6 +249,7 @@ function StudentCheckInContent() {
           sessionPin: sessionPin.trim(),
           studentPin: studentPin.trim(),
           otpCode: otpCode.trim(),
+          deviceId: deviceFingerprint,
         }),
       });
 

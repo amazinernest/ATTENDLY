@@ -102,6 +102,7 @@ const checkInSchema = z.object({
   sessionPin: z.string().optional(),
   studentPin: z.string().optional(),
   otpCode: z.string().optional(),
+  deviceId: z.string().optional(),
 });
 
 const settingsSchema = z.object({
@@ -1190,7 +1191,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
         return Response.json({ error: "Validation failed", details: result.error.flatten() }, { status: 400 });
       }
 
-      const { matricNumber, sessionPin, studentPin, otpCode } = result.data;
+      const { matricNumber, sessionPin, studentPin, otpCode, deviceId } = result.data;
       const cleanMatric = matricNumber.trim().toUpperCase().replace(/\\/g, "/");
 
       const session = await prisma.attendanceSession.findUnique({
@@ -1313,8 +1314,34 @@ export async function action({ request, params }: ActionFunctionArgs) {
         });
       }
 
+      // Anti-Proxy Check: Prevent buddy punching by blocking multiple check-ins from the exact same device
+      if (deviceId && deviceId.trim().length > 0) {
+        const deviceConflict = await prisma.attendanceRecord.findFirst({
+          where: {
+            sessionId: session.id,
+            enrolmentId: { not: enrolment.id },
+            userAgent: { contains: `[device:${deviceId.trim()}]` },
+          },
+          include: {
+            enrolment: { include: { student: true } },
+          },
+        });
+
+        if (deviceConflict) {
+          return Response.json(
+            {
+              error: `Proxy Attendance Prevented: This device was already used to check in ${deviceConflict.enrolment.student.fullName} (${deviceConflict.enrolment.student.matricNumber}). Submitting attendance for absent students from the same phone is blocked.`,
+            },
+            { status: 403 }
+          );
+        }
+      }
+
       const ipAddress = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
-      const userAgent = request.headers.get("user-agent") || "unknown";
+      const rawUserAgent = request.headers.get("user-agent") || "unknown";
+      const userAgentWithDevice = deviceId && deviceId.trim().length > 0
+        ? `${rawUserAgent} [device:${deviceId.trim()}]`
+        : String(rawUserAgent);
 
       const record = await prisma.attendanceRecord.create({
         data: {
@@ -1325,7 +1352,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
           verificationStatus: "VERIFIED",
           checkInTime: now,
           ipAddress: String(ipAddress),
-          userAgent: String(userAgent),
+          userAgent: userAgentWithDevice,
           isManualOverride: false,
         },
       });
