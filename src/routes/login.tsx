@@ -8,6 +8,7 @@ import {
   Mail,
   AlertCircle,
   CheckCircle2,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { getUser } from "@/lib/session.server";
@@ -68,39 +69,42 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-10 h-10 rounded-md bg-sky-800 text-white flex items-center justify-center font-bold shadow-xs">
-            <GraduationCap className="w-6 h-6" />
+    <div className="min-h-screen bg-[#faf9f5] text-[#161616] font-sans flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-[#d7f837] selection:text-black">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
+        <Link to="/" className="inline-flex items-center gap-2.5 focus:outline-none group">
+          <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm shadow-xs group-hover:scale-105 transition-transform">
+            <GraduationCap className="w-5 h-5 text-[#d7f837]" />
           </div>
-          <span className="text-2xl font-bold tracking-tight text-slate-900">ClassMark</span>
-        </div>
-        <h2 className="mt-6 text-center text-xl font-semibold tracking-tight text-slate-900">
+          <span className="font-extrabold text-[#111111] tracking-tight text-2xl">
+            CLASSMARK
+          </span>
+          <span className="w-2 h-2 rounded-full bg-[#d7f837]"></span>
+        </Link>
+        <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#111111]">
           Lecturer Portal Sign In
         </h2>
-        <p className="mt-1 text-center text-xs text-slate-500">
-          Sign in to manage course registers, QR attendance, and reports
+        <p className="text-xs sm:text-sm text-stone-500 font-medium max-w-xs mx-auto">
+          Manage university course registers, anti-proxy QR sessions, and semester reports
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <div className="bg-white py-8 px-6 shadow-xs border border-slate-200 rounded-lg sm:px-8">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-6 sm:px-9 shadow-sm border border-black/[0.06] rounded-[28px] sm:rounded-[32px]">
           {successMessage && (
-            <div className="mb-6 p-3.5 bg-emerald-50 border border-emerald-200 rounded-md text-sm text-emerald-800 flex items-center gap-2.5">
+            <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-sm text-emerald-800 flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
               <div className="flex-1 text-xs font-semibold">{successMessage}</div>
             </div>
           )}
 
           {errorMessage && (
-            <div className="mb-6 p-3.5 bg-rose-50 border border-rose-200 rounded-md text-sm text-rose-800 flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-sm text-rose-800 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
               <div className="flex-1 text-xs leading-relaxed">
                 <p className="font-semibold">{errorMessage}</p>
                 {unverifiedEmail && (
-                  <p className="mt-1.5 text-slate-600">
-                    If you haven&apos;t verified your email yet, check your inbox or click the link provided upon registration.
+                  <p className="mt-1.5 text-stone-600 font-medium">
+                    Please check your institutional email inbox for your verification link.
                   </p>
                 )}
                 <p className="mt-2 text-rose-700">
@@ -115,11 +119,11 @@ export default function LoginPage() {
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-xs font-semibold text-slate-700">
+              <label htmlFor="email" className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
                 Institutional Email
               </label>
               <div className="mt-1.5 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
@@ -130,7 +134,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-md placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-sky-700 bg-white"
+                  className="block w-full pl-10 pr-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 transition-all font-medium"
                   placeholder="lecturer@university.edu.ng"
                 />
               </div>
@@ -138,18 +142,18 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-xs font-semibold text-slate-700">
+                <label htmlFor="password" className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
                   Password
                 </label>
                 <Link
                   to="/forgot-password"
-                  className="text-xs font-medium text-sky-700 hover:text-sky-800 hover:underline"
+                  className="text-xs font-semibold text-stone-600 hover:text-black hover:underline"
                 >
                   Forgot password?
                 </Link>
               </div>
               <div className="mt-1.5 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -160,13 +164,13 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-9 pr-10 py-2 text-sm border border-slate-300 rounded-md placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-700 focus:border-sky-700 bg-white"
+                  className="block w-full pl-10 pr-11 py-2.5 text-sm border border-black/[0.1] rounded-xl placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 transition-all font-medium"
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-stone-400 hover:text-stone-700 cursor-pointer"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -175,20 +179,27 @@ export default function LoginPage() {
             </div>
 
             <div className="pt-2">
-              <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
-                Sign In to Portal
+              <Button type="submit" variant="primary" className="w-full py-3" isLoading={isLoading}>
+                <span>Sign In to Portal</span>
+                <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </div>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-slate-200 text-center">
-            <p className="text-xs text-slate-500">
+          <div className="mt-6 pt-6 border-t border-black/[0.06] text-center">
+            <p className="text-xs text-stone-500 font-medium">
               New lecturer on ClassMark?{" "}
-              <Link to="/register" className="font-semibold text-sky-700 hover:text-sky-800 hover:underline">
+              <Link to="/register" className="font-bold text-[#111111] hover:underline">
                 Create an account
               </Link>
             </p>
           </div>
+        </div>
+        
+        <div className="mt-6 text-center">
+          <Link to="/" className="text-xs font-semibold text-stone-500 hover:text-black transition-colors">
+            ← Return to Home
+          </Link>
         </div>
       </div>
     </div>

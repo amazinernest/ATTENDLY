@@ -45,28 +45,28 @@ export function Modal({
   }[maxWidth];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-150">
       <div
-        className={`w-full ${maxWidthClass} bg-white rounded-lg border border-slate-200 shadow-xl overflow-hidden animate-in zoom-in-95 duration-150`}
+        className={`w-full ${maxWidthClass} bg-white rounded-[28px] border border-[#e7e5df] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#e7e5df] bg-[#faf9f5]">
           <div>
-            <h3 id="modal-title" className="text-base font-semibold text-slate-900">
+            <h3 id="modal-title" className="text-base font-bold text-[#111111] tracking-tight">
               {title}
             </h3>
             {description && (
-              <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+              <p className="text-xs text-[#666660] mt-0.5">{description}</p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition-colors"
+            className="w-8 h-8 rounded-full bg-[#edebe4] text-[#444440] hover:bg-[#111111] hover:text-[#d7f837] flex items-center justify-center transition-all"
             aria-label="Close dialog"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
         <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>

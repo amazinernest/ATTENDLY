@@ -23,6 +23,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>ClassMark | University Attendance Platform</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -65,18 +68,21 @@ export function ErrorBoundary({ error }: { error: unknown }) {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg border border-slate-200 p-8 text-center">
-        <h1 className="text-2xl font-bold text-slate-900 mb-2">{message}</h1>
-        <p className="text-slate-600 mb-6">{details}</p>
+    <main className="min-h-screen flex items-center justify-center p-6 bg-[#faf9f5]">
+      <div className="max-w-md w-full bg-white rounded-[28px] shadow-sm border border-[#e7e5df] p-8 text-center">
+        <div className="w-12 h-12 rounded-full bg-[#111111] text-[#d7f837] flex items-center justify-center mx-auto mb-4 font-bold text-lg">
+          !
+        </div>
+        <h1 className="text-2xl font-extrabold text-[#111111] tracking-tight mb-2">{message}</h1>
+        <p className="text-[#666660] text-sm mb-6 leading-relaxed">{details}</p>
         {stack && (
-          <pre className="text-left text-xs bg-slate-100 p-4 rounded overflow-x-auto mb-6 text-red-600">
+          <pre className="text-left text-xs bg-[#edebe4] p-4 rounded-xl overflow-x-auto mb-6 text-red-600 font-mono">
             {stack}
           </pre>
         )}
         <a
           href="/"
-          className="inline-block px-4 py-2 bg-sky-700 text-white rounded-lg font-medium hover:bg-sky-800 transition"
+          className="inline-flex items-center justify-center px-6 py-2.5 bg-[#111111] text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#d7f837] hover:text-black transition-all shadow-sm"
         >
           Return Home
         </a>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, BookOpen, AlertCircle } from "lucide-react";
+import { ArrowLeft, BookOpen, AlertCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface NewCourseFormProps {
@@ -83,36 +83,36 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
       <div className="mb-2">
         <Link
           to="/courses"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-bold text-stone-500 hover:text-black transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Courses</span>
         </Link>
         <div className="mt-3 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-md bg-sky-800 text-white flex items-center justify-center font-bold shadow-xs">
-            <BookOpen className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-bold shadow-xs">
+            <BookOpen className="w-5 h-5 text-[#d7f837]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Create New Academic Course</h1>
-            <p className="text-xs text-slate-500">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#111111] tracking-tight">Create New Academic Course</h1>
+            <p className="text-xs text-stone-500 font-medium">
               Configure course metadata, academic session, and attendance requirements
             </p>
           </div>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-lg p-5 sm:p-7 shadow-xs">
+      <div className="bg-white border border-black/[0.06] rounded-[28px] p-6 sm:p-8 shadow-xs">
         {errorMessage && (
-          <div className="mb-5 p-3.5 bg-rose-50 border border-rose-200 rounded-md text-xs text-rose-800 flex items-start gap-2">
+          <div className="mb-5 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 flex items-start gap-2.5">
             <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-            <span>{errorMessage}</span>
+            <span className="font-medium leading-relaxed">{errorMessage}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-1">
-              <label className="block text-xs font-semibold text-slate-700">Course Code *</label>
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Course Code *</label>
               <input
                 type="text"
                 name="code"
@@ -120,12 +120,12 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
                 value={formData.code}
                 onChange={handleChange}
                 placeholder="CSC 201"
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md uppercase font-mono placeholder:normal-case placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl uppercase font-mono placeholder:normal-case placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-bold"
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-700">Course Title *</label>
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Course Title *</label>
               <input
                 type="text"
                 name="title"
@@ -133,14 +133,14 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Data Structures and Algorithms"
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-medium"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700">Academic Session *</label>
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Academic Session *</label>
               <input
                 type="text"
                 name="session"
@@ -148,18 +148,18 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
                 value={formData.session}
                 onChange={handleChange}
                 placeholder="2026/2027"
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700">Semester *</label>
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Semester *</label>
               <select
                 name="semester"
                 required
                 value={formData.semester}
                 onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl bg-stone-50/50 focus:outline-none focus:ring-2 focus:ring-black focus:border-black font-medium"
               >
                 <option value="First Semester">First Semester</option>
                 <option value="Second Semester">Second Semester</option>
@@ -170,35 +170,35 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700">Department (Optional)</label>
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Department (Optional)</label>
               <input
                 type="text"
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
                 placeholder="Computer Science"
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700">Faculty (Optional)</label>
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Faculty (Optional)</label>
               <input
                 type="text"
                 name="faculty"
                 value={formData.faculty}
                 onChange={handleChange}
                 placeholder="Faculty of Science"
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-medium"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700">
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
                 Expected Teaching Sessions
               </label>
               <input
@@ -209,13 +209,13 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
                 value={formData.expectedSessions}
                 onChange={handleChange}
                 placeholder="14"
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-medium"
               />
-              <span className="text-[11px] text-slate-400">Total planned lectures for the semester</span>
+              <span className="text-[11px] text-stone-400 mt-1 block font-medium">Total planned lectures for the semester</span>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700">
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
                 Required Attendance Threshold (%)
               </label>
               <input
@@ -226,33 +226,34 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
                 value={formData.attendanceThreshold}
                 onChange={handleChange}
                 placeholder="75"
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-medium"
               />
-              <span className="text-[11px] text-slate-400">Standard benchmark (e.g. 75% for exam eligibility)</span>
+              <span className="text-[11px] text-stone-400 mt-1 block font-medium">Standard NUC benchmark (e.g. 75% for exam eligibility)</span>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700">Course Description (Optional)</label>
+            <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">Course Description (Optional)</label>
             <textarea
               name="description"
               rows={2}
               value={formData.description}
               onChange={handleChange}
               placeholder="Brief course objectives and lecture outline..."
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-medium"
             />
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-black/[0.06] flex items-center justify-end gap-3">
             <Link
               to="/courses"
-              className="px-4 py-2 border border-slate-300 text-xs font-semibold text-slate-700 rounded-md hover:bg-slate-50 transition-colors"
+              className="px-5 py-2.5 border border-black/10 text-xs font-bold text-stone-700 rounded-full hover:bg-black/5 transition-colors"
             >
               Cancel
             </Link>
-            <Button type="submit" variant="primary" isLoading={isLoading}>
-              Create Course Workspace
+            <Button type="submit" variant="primary" className="py-2.5 px-6" isLoading={isLoading}>
+              <span>Create Course Workspace</span>
+              <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </div>
         </form>

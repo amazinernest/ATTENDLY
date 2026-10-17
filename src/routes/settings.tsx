@@ -17,10 +17,10 @@ export default function SettingsPage() {
     <DashboardLayout user={user}>
       <div className="max-w-4xl space-y-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#111111]">
             Account & System Settings
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-[#777770] mt-1 font-medium">
             Configure your lecturer profile, default attendance rules, and security preferences
           </p>
         </div>

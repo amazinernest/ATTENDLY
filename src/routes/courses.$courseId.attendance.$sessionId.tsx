@@ -169,20 +169,20 @@ export default function LiveAttendanceSessionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <RefreshCw className="w-8 h-8 text-sky-800 animate-spin" />
+      <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center">
+        <RefreshCw className="w-8 h-8 text-[#111111] animate-spin" />
       </div>
     );
   }
 
   if (!data?.session) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <AlertCircle className="w-10 h-10 text-rose-600 mx-auto mb-2" />
-          <h2 className="text-base font-bold text-slate-800">Attendance Session Not Found</h2>
-          <Link to={`/courses/${courseId}`} className="text-xs text-sky-800 underline mt-2 block">
-            Return to course
+      <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center p-4">
+        <div className="text-center bg-white p-8 rounded-[28px] border border-[#e7e5df] shadow-sm max-w-sm">
+          <AlertCircle className="w-10 h-10 text-rose-600 mx-auto mb-3" />
+          <h2 className="text-base font-extrabold text-[#111111]">Attendance Session Not Found</h2>
+          <Link to={`/courses/${courseId}`} className="text-xs font-bold text-[#111111] underline mt-3 block hover:text-black">
+            Return to course workspace
           </Link>
         </div>
       </div>
@@ -196,38 +196,38 @@ export default function LiveAttendanceSessionPage() {
   const percentPresent = totalEnrolled > 0 ? Math.round((presentCount / totalEnrolled) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16">
+    <div className="min-h-screen bg-[#faf9f5] text-[#111111] pb-16">
       {/* Top Bar */}
-      <div className="border-b border-slate-200 bg-white sticky top-0 z-30 px-4 sm:px-8 py-3.5 flex items-center justify-between">
+      <div className="border-b border-[#e7e5df] bg-white sticky top-0 z-30 px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
             to={`/courses/${courseId}`}
-            className="p-1.5 rounded-md text-slate-500 hover:text-slate-800 hover:bg-slate-100 cursor-pointer"
+            className="w-9 h-9 rounded-full bg-[#edebe4] text-[#444440] hover:bg-[#111111] hover:text-[#d7f837] flex items-center justify-center transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-900 text-sm sm:text-base font-mono">
+            <div className="flex items-center gap-2.5">
+              <span className="font-extrabold text-[#111111] text-sm sm:text-base font-mono">
                 {session.course?.code}
               </span>
               <Badge variant={isSessionClosed ? "slate" : "success"}>
                 {isSessionClosed ? "CLOSED" : "ACTIVE SESSION"}
               </Badge>
             </div>
-            <p className="text-xs text-slate-500 truncate max-w-sm">
+            <p className="text-xs text-[#777770] font-medium truncate max-w-sm">
               {session.topic || "Lecture Attendance Session"}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {!isSessionClosed && (
             <>
               <button
                 onClick={handleExtendSession}
                 disabled={extending}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 border border-slate-300 rounded text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50 cursor-pointer"
+                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 border border-[#e7e5df] rounded-full text-xs font-bold text-[#111111] bg-white hover:bg-[#faf9f5] disabled:opacity-50 transition-all cursor-pointer shadow-xs"
               >
                 <Clock className="w-3.5 h-3.5" />
                 <span>+10 Mins</span>
@@ -235,7 +235,7 @@ export default function LiveAttendanceSessionPage() {
               <button
                 onClick={handleCloseSession}
                 disabled={closing}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-700 hover:bg-rose-800 text-white rounded text-xs font-semibold shadow-xs disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-rose-700 hover:bg-rose-800 text-white rounded-full text-xs font-bold shadow-xs disabled:opacity-50 transition-all cursor-pointer"
               >
                 <PowerOff className="w-3.5 h-3.5" />
                 <span>Close Attendance</span>
@@ -260,16 +260,16 @@ export default function LiveAttendanceSessionPage() {
           {/* Left Column: Projector QR Code & Check-in Controls */}
           <div className="lg:col-span-5 space-y-5">
             {/* Projector-Ready QR Box */}
-            <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs text-center flex flex-col items-center">
-              <div className="w-full flex items-center justify-between pb-3 border-b border-slate-100 text-xs">
-                <span className="font-semibold text-slate-500 uppercase tracking-wider">
+            <div className="bg-white border border-[#e7e5df] rounded-[28px] p-7 shadow-xs text-center flex flex-col items-center">
+              <div className="w-full flex items-center justify-between pb-3.5 border-b border-[#edebe4] text-xs">
+                <span className="font-bold text-[#777770] uppercase tracking-wider">
                   Classroom QR Code
                 </span>
-                <span className="font-semibold text-sky-800">{timeLeft}</span>
+                <span className="font-bold text-[#111111] bg-[#faf9f5] px-3 py-1 rounded-full border border-[#e7e5df]">{timeLeft}</span>
               </div>
 
               {/* Large QR image */}
-              <div className="my-5 p-3 bg-white border border-slate-200 rounded-lg shadow-xs inline-block">
+              <div className="my-5 p-4 bg-white border border-[#e7e5df] rounded-2xl shadow-xs inline-block">
                 {data.qrCodeDataUrl ? (
                   <img
                     src={data.qrCodeDataUrl}
@@ -277,7 +277,7 @@ export default function LiveAttendanceSessionPage() {
                     className="w-64 h-64 sm:w-72 sm:h-72 mx-auto"
                   />
                 ) : (
-                  <div className="w-64 h-64 flex items-center justify-center text-xs text-slate-400">
+                  <div className="w-64 h-64 flex items-center justify-center text-xs text-[#888880]">
                     Generating QR code...
                   </div>
                 )}
@@ -285,11 +285,11 @@ export default function LiveAttendanceSessionPage() {
 
               {/* In-Class PIN Display */}
               {session.sessionPin && (
-                <div className="w-full bg-slate-50 border border-slate-200 rounded-md p-3 mb-4">
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase block tracking-wider">
+                <div className="w-full bg-[#faf9f5] border border-[#e7e5df] rounded-2xl p-4 mb-4">
+                  <span className="text-[11px] font-bold text-[#777770] uppercase block tracking-wider">
                     In-Class Attendance PIN
                   </span>
-                  <span className="text-3xl font-mono font-extrabold tracking-widest text-sky-950 mt-1 block">
+                  <span className="text-3xl font-mono font-extrabold tracking-widest text-[#111111] mt-1 block">
                     {session.sessionPin}
                   </span>
                 </div>
@@ -301,11 +301,11 @@ export default function LiveAttendanceSessionPage() {
                   type="text"
                   readOnly
                   value={data.qrTargetUrl || data.checkInUrl}
-                  className="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded text-slate-600 font-mono truncate"
+                  className="flex-1 px-4 py-2 text-xs bg-[#faf9f5] border border-[#e7e5df] rounded-full text-[#555550] font-mono truncate"
                 />
                 <button
                   onClick={handleCopyLink}
-                  className="px-3 py-1.5 text-xs font-semibold bg-sky-800 text-white rounded hover:bg-sky-900 flex items-center gap-1 shrink-0 cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold bg-[#111111] hover:bg-[#d7f837] hover:text-black text-white rounded-full flex items-center gap-1.5 shrink-0 cursor-pointer transition-all shadow-xs"
                 >
                   {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copied ? "Copied" : "Copy Link"}</span>
@@ -314,23 +314,23 @@ export default function LiveAttendanceSessionPage() {
             </div>
 
             {/* Attendance Stats Capsule */}
-            <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-xs">
-              <div className="flex items-center justify-between text-xs mb-2">
-                <span className="font-semibold text-slate-500 uppercase">Live Attendance Rate</span>
-                <span className="font-bold text-sky-900">{percentPresent}% Present</span>
+            <div className="bg-white border border-[#e7e5df] rounded-[28px] p-6 shadow-xs">
+              <div className="flex items-center justify-between text-xs mb-2.5">
+                <span className="font-bold text-[#777770] uppercase">Live Attendance Rate</span>
+                <span className="font-extrabold text-[#111111]">{percentPresent}% Present</span>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+              <div className="w-full bg-[#edebe4] rounded-full h-3 overflow-hidden">
                 <div
-                  className="bg-sky-800 h-2.5 rounded-full transition-all duration-500"
+                  className="bg-[#111111] h-3 rounded-full transition-all duration-500"
                   style={{ width: `${percentPresent}%` }}
                 ></div>
               </div>
-              <div className="flex justify-between items-center text-xs text-slate-600 mt-3 pt-3 border-t border-slate-100">
+              <div className="flex justify-between items-center text-xs text-[#555550] mt-4 pt-3 border-t border-[#edebe4] font-medium">
                 <span>
-                  Present: <strong>{presentCount}</strong> students
+                  Present: <strong className="text-[#111111]">{presentCount}</strong> students
                 </span>
                 <span>
-                  Total Enrolled: <strong>{totalEnrolled}</strong>
+                  Total Enrolled: <strong className="text-[#111111]">{totalEnrolled}</strong>
                 </span>
               </div>
             </div>
@@ -338,63 +338,63 @@ export default function LiveAttendanceSessionPage() {
 
           {/* Right Column: Live Attendance Register Table */}
           <div className="lg:col-span-7">
-            <div className="bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden flex flex-col h-full">
-              <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+            <div className="bg-white border border-[#e7e5df] rounded-[28px] shadow-xs overflow-hidden flex flex-col h-full">
+              <div className="px-6 py-5 border-b border-[#edebe4] flex items-center justify-between bg-[#faf9f5]">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">
+                  <h3 className="text-sm font-bold text-[#111111]">
                     Live Session Register ({session.records.length})
                   </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-[#777770] mt-0.5">
                     Real-time check-in entries verified by ClassMark attendance server
                   </p>
                 </div>
-                <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div className="flex items-center gap-1.5 text-[11px] text-[#777770] font-semibold">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#d7f837] border border-black animate-pulse"></span>
                   <span>Polling Active</span>
                 </div>
               </div>
 
               <div className="overflow-x-auto flex-1 max-h-[600px] overflow-y-auto">
                 {session.records.length === 0 ? (
-                  <div className="py-16 text-center text-slate-400">
-                    <Users className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-xs font-medium">No student check-ins recorded yet</p>
-                    <p className="text-[11px] mt-1 text-slate-400">
+                  <div className="py-20 text-center text-[#888880]">
+                    <Users className="w-10 h-10 mx-auto mb-3 opacity-40 text-[#111111]" />
+                    <p className="text-xs font-bold text-[#111111]">No student check-ins recorded yet</p>
+                    <p className="text-[11px] mt-1 text-[#777770] max-w-xs mx-auto">
                       As students scan the QR code and verify identity, entries will appear here instantly.
                     </p>
                   </div>
                 ) : (
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 sticky top-0">
+                    <thead className="bg-[#faf9f5] text-[#555550] font-bold border-b border-[#edebe4] sticky top-0">
                       <tr>
-                        <th className="px-4 py-2.5">S/N</th>
-                        <th className="px-4 py-2.5">Matriculation No</th>
-                        <th className="px-4 py-2.5">Student Name</th>
-                        <th className="px-4 py-2.5">Check-In Time</th>
-                        <th className="px-4 py-2.5">Status</th>
-                        <th className="px-4 py-2.5">Verification</th>
+                        <th className="px-4 py-3">S/N</th>
+                        <th className="px-4 py-3">Matriculation No</th>
+                        <th className="px-4 py-3">Student Name</th>
+                        <th className="px-4 py-3">Check-In Time</th>
+                        <th className="px-4 py-3">Status</th>
+                        <th className="px-4 py-3">Verification</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-[#edebe4]">
                       {session.records.map((rec: any, idx: number) => {
                         const student = rec.enrolment?.student;
                         return (
-                          <tr key={rec.id} className="hover:bg-slate-50/60 transition-colors">
-                            <td className="px-4 py-2 text-slate-400">{idx + 1}</td>
-                            <td className="px-4 py-2 font-mono font-bold text-slate-900">
+                          <tr key={rec.id} className="hover:bg-[#faf9f5] transition-colors">
+                            <td className="px-4 py-2.5 text-[#999990]">{idx + 1}</td>
+                            <td className="px-4 py-2.5 font-mono font-bold text-[#111111]">
                               {student?.matricNumber}
                             </td>
-                            <td className="px-4 py-2 text-slate-800 font-medium">
+                            <td className="px-4 py-2.5 text-[#222220] font-medium">
                               {student?.fullName}
                             </td>
-                            <td className="px-4 py-2 text-slate-500">
+                            <td className="px-4 py-2.5 text-[#777770]">
                               {new Date(rec.checkInTime).toLocaleTimeString([], {
                                 hour: "2-digit",
                                 minute: "2-digit",
                                 second: "2-digit",
                               })}
                             </td>
-                            <td className="px-4 py-2">
+                            <td className="px-4 py-2.5">
                               <Badge
                                 variant={
                                   rec.status === "PRESENT"
@@ -407,13 +407,13 @@ export default function LiveAttendanceSessionPage() {
                                 {rec.status}
                               </Badge>
                             </td>
-                            <td className="px-4 py-2 text-slate-500">
+                            <td className="px-4 py-2.5 text-[#555550]">
                               {rec.isManualOverride ? (
-                                <span className="text-[11px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 font-semibold">
+                                <span className="text-[11px] text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-bold">
                                   Manual Override
                                 </span>
                               ) : (
-                                <span className="text-[11px] text-emerald-700 font-medium">
+                                <span className="text-[11px] text-emerald-700 font-semibold">
                                   Verified ({rec.verificationMethod})
                                 </span>
                               )}
@@ -440,18 +440,18 @@ export default function LiveAttendanceSessionPage() {
       >
         <form onSubmit={handleManualOverride} className="space-y-4">
           {overrideError && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-md text-xs text-rose-800">
+            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800">
               {overrideError}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700">Select Student *</label>
+            <label className="block text-xs font-bold text-[#111111]">Select Student *</label>
             <select
               required
               value={selectedEnrolmentId}
               onChange={(e) => setSelectedEnrolmentId(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#111111] font-medium"
             >
               <option value="">-- Choose enrolled student --</option>
               {data?.enrolledStudents?.map((s: any) => (
@@ -463,11 +463,11 @@ export default function LiveAttendanceSessionPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700">Attendance Status *</label>
+            <label className="block text-xs font-bold text-[#111111]">Attendance Status *</label>
             <select
               value={overrideStatus}
               onChange={(e: any) => setOverrideStatus(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#111111] font-medium"
             >
               <option value="PRESENT">PRESENT</option>
               <option value="EXCUSED">EXCUSED ABSENCE</option>
@@ -477,7 +477,7 @@ export default function LiveAttendanceSessionPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-bold text-[#111111]">
               Reason for Override / Adjustment *
             </label>
             <textarea
@@ -486,18 +486,18 @@ export default function LiveAttendanceSessionPage() {
               value={overrideReason}
               onChange={(e) => setOverrideReason(e.target.value)}
               placeholder="e.g. Student present in class; mobile device battery depleted / official medical excuse."
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700 bg-white"
+              className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-[#888880] mt-1 block">
               Required for institutional audit trail. Logged with your lecturer ID.
             </span>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+          <div className="pt-4 border-t border-[#edebe4] flex items-center justify-end gap-2.5">
             <button
               type="button"
               onClick={() => setOverrideModalOpen(false)}
-              className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-800 cursor-pointer"
+              className="px-4 py-2 text-xs font-bold text-[#777770] hover:text-[#111111] cursor-pointer"
             >
               Cancel
             </button>

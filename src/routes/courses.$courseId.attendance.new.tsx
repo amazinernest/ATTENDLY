@@ -71,47 +71,47 @@ export default function NewAttendanceSessionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-sky-800 animate-spin" />
+      <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[#111111] animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#faf9f5] py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-xl mx-auto">
         <div className="mb-6">
           <Link
             to={`/courses/${courseId}`}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#777770] hover:text-[#111111] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Course Workspace</span>
           </Link>
-          <div className="mt-3 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-md bg-sky-800 text-white flex items-center justify-center font-bold shadow-xs">
+          <div className="mt-4 flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-[#111111] text-[#d7f837] flex items-center justify-center font-bold shadow-xs">
               <QrCode className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-900">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-[#111111] tracking-tight">
                 Start Lecture Attendance: {course?.code || "Course"}
               </h1>
-              <p className="text-xs text-slate-500">{course?.title}</p>
+              <p className="text-xs text-[#777770] font-medium">{course?.title}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs">
+        <div className="bg-white border border-[#e7e5df] rounded-[28px] p-7 shadow-xs">
           {errorMessage && (
-            <div className="mb-5 p-3 bg-rose-50 border border-rose-200 rounded-md text-xs text-rose-800 flex items-start gap-2">
+            <div className="mb-5 p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-xs font-semibold text-slate-700">
+              <label className="block text-xs font-bold text-[#111111]">
                 Lecture Topic or Session Title (Optional)
               </label>
               <input
@@ -119,27 +119,27 @@ export default function NewAttendanceSessionPage() {
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder="e.g. Week 4: Recursion & Binary Trees"
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700 bg-white"
+                className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
               />
-              <span className="text-[11px] text-slate-400">
+              <span className="text-[11px] text-[#888880] mt-1 block">
                 Helps identify this class in the semester attendance matrix
               </span>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700">
+              <label className="block text-xs font-bold text-[#111111]">
                 Check-in Window Duration
               </label>
-              <div className="mt-1.5 grid grid-cols-4 gap-2">
+              <div className="mt-2 grid grid-cols-4 gap-2.5">
                 {[15, 30, 45, 60].map((mins) => (
                   <button
                     key={mins}
                     type="button"
                     onClick={() => setDurationMinutes(mins)}
-                    className={`py-2 text-xs font-semibold rounded-md border text-center transition-colors cursor-pointer ${
+                    className={`py-2 text-xs font-bold rounded-full border text-center transition-all cursor-pointer ${
                       durationMinutes === mins
-                        ? "bg-sky-50 border-sky-700 text-sky-900"
-                        : "bg-white border-slate-300 text-slate-700 hover:bg-slate-50"
+                        ? "bg-[#111111] border-[#111111] text-white shadow-xs"
+                        : "bg-white border-[#e7e5df] text-[#555550] hover:bg-[#faf9f5]"
                     }`}
                   >
                     {mins} mins
@@ -149,59 +149,59 @@ export default function NewAttendanceSessionPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-bold text-[#111111] mb-2">
                 Student Identity Verification Method
               </label>
-              <div className="space-y-2">
-                <label className="flex items-start gap-3 p-3 border rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
+              <div className="space-y-2.5">
+                <label className={`flex items-start gap-3.5 p-4 border rounded-2xl cursor-pointer transition-all ${verificationMethod === "OPEN_CHECKIN" ? "border-[#111111] bg-[#faf9f5]" : "border-[#e7e5df] bg-white hover:border-[#ccc]"}`}>
                   <input
                     type="radio"
                     name="verificationMethod"
                     value="OPEN_CHECKIN"
                     checked={verificationMethod === "OPEN_CHECKIN"}
                     onChange={() => setVerificationMethod("OPEN_CHECKIN")}
-                    className="mt-0.5 text-sky-800 focus:ring-sky-700"
+                    className="mt-1 accent-black"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                    <span className="text-xs font-bold text-[#111111] flex items-center gap-2">
                       <span>In-Class QR Code & PIN</span>
-                      <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-semibold">Recommended</span>
+                      <span className="text-[10px] bg-[#d7f837] text-black px-2 py-0.5 rounded-full font-bold">Recommended</span>
                     </span>
-                    <span className="text-[11px] text-slate-500 leading-relaxed block">
+                    <span className="text-[11px] text-[#777770] leading-relaxed block mt-0.5">
                       Fastest & most seamless. Scanning the classroom QR code auto-verifies physical presence and pre-fills the PIN for students.
                     </span>
                   </div>
                 </label>
 
-                <label className="flex items-start gap-3 p-3 border rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
+                <label className={`flex items-start gap-3.5 p-4 border rounded-2xl cursor-pointer transition-all ${verificationMethod === "STUDENT_PIN" ? "border-[#111111] bg-[#faf9f5]" : "border-[#e7e5df] bg-white hover:border-[#ccc]"}`}>
                   <input
                     type="radio"
                     name="verificationMethod"
                     value="STUDENT_PIN"
                     checked={verificationMethod === "STUDENT_PIN"}
                     onChange={() => setVerificationMethod("STUDENT_PIN")}
-                    className="mt-0.5 text-sky-800 focus:ring-sky-700"
+                    className="mt-1 accent-black"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-900 block">Personal Student PIN</span>
-                    <span className="text-[11px] text-slate-500 leading-relaxed block">
+                    <span className="text-xs font-bold text-[#111111] block">Personal Student PIN</span>
+                    <span className="text-[11px] text-[#777770] leading-relaxed block mt-0.5">
                       Requires students to enter an individual security PIN previously assigned to their matriculation number.
                     </span>
                   </div>
                 </label>
 
-                <label className="flex items-start gap-3 p-3 border rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
+                <label className={`flex items-start gap-3.5 p-4 border rounded-2xl cursor-pointer transition-all ${verificationMethod === "EMAIL_OTP" ? "border-[#111111] bg-[#faf9f5]" : "border-[#e7e5df] bg-white hover:border-[#ccc]"}`}>
                   <input
                     type="radio"
                     name="verificationMethod"
                     value="EMAIL_OTP"
                     checked={verificationMethod === "EMAIL_OTP"}
                     onChange={() => setVerificationMethod("EMAIL_OTP")}
-                    className="mt-0.5 text-sky-800 focus:ring-sky-700"
+                    className="mt-1 accent-black"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-900 block">Institutional Email Passcode (OTP)</span>
-                    <span className="text-[11px] text-slate-500 leading-relaxed block">
+                    <span className="text-xs font-bold text-[#111111] block">Institutional Email Passcode (OTP)</span>
+                    <span className="text-[11px] text-[#777770] leading-relaxed block mt-0.5">
                       Dispatches a single-use numeric code to the student&apos;s registered institutional inbox.
                     </span>
                   </div>
@@ -210,11 +210,11 @@ export default function NewAttendanceSessionPage() {
             </div>
 
             {/* In-class display PIN */}
-            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-md">
+            <div className="p-4 bg-[#faf9f5] border border-[#e7e5df] rounded-2xl">
               <label className="flex items-center justify-between cursor-pointer">
                 <div>
-                  <span className="text-xs font-bold text-slate-900 block">Project In-Class Session PIN</span>
-                  <span className="text-[11px] text-slate-500 block">
+                  <span className="text-xs font-bold text-[#111111] block">Project In-Class Session PIN</span>
+                  <span className="text-[11px] text-[#777770] block mt-0.5">
                     Displays a 4-digit code on the classroom projector screen to verify physical attendance.
                   </span>
                 </div>
@@ -222,21 +222,21 @@ export default function NewAttendanceSessionPage() {
                   type="checkbox"
                   checked={enableInClassPin}
                   onChange={(e) => setEnableInClassPin(e.target.checked)}
-                  className="rounded text-sky-800 focus:ring-sky-700"
+                  className="rounded accent-black w-4 h-4 cursor-pointer"
                 />
               </label>
 
               {enableInClassPin && (
-                <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-700">Projected Code:</span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-base font-bold text-sky-900 bg-white px-3 py-1 rounded border border-slate-300 tracking-widest">
+                <div className="mt-3.5 pt-3.5 border-t border-[#edebe4] flex items-center justify-between">
+                  <span className="text-xs font-bold text-[#777770]">Projected Code:</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-mono text-base font-extrabold text-[#111111] bg-white px-3.5 py-1 rounded-full border border-[#e7e5df] tracking-widest shadow-xs">
                       {sessionPin}
                     </span>
                     <button
                       type="button"
                       onClick={() => setSessionPin(Math.floor(1000 + Math.random() * 9000).toString())}
-                      className="text-[11px] text-sky-700 hover:text-sky-800 font-semibold underline cursor-pointer"
+                      className="text-xs text-[#111111] hover:underline font-bold cursor-pointer"
                     >
                       Regenerate
                     </button>
@@ -246,7 +246,7 @@ export default function NewAttendanceSessionPage() {
             </div>
 
             <div className="pt-2">
-              <Button type="submit" variant="primary" className="w-full py-2.5 font-bold" isLoading={submitting}>
+              <Button type="submit" variant="primary" className="w-full py-3 font-bold" isLoading={submitting}>
                 Start Attendance & Display QR
               </Button>
             </div>

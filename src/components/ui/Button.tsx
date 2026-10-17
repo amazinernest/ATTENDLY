@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "destructive" | "ghost";
+  variant?: "primary" | "secondary" | "outline" | "destructive" | "ghost" | "accent";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
 }
@@ -10,20 +10,21 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, children, disabled, ...props }, ref) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-600 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded-md";
+      "inline-flex items-center justify-center font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none cursor-pointer";
 
     const variantStyles = {
-      primary: "bg-sky-700 text-white hover:bg-sky-800 active:bg-sky-900 shadow-sm",
-      secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200 active:bg-slate-300",
-      outline: "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100",
-      destructive: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-sm",
-      ghost: "text-slate-600 hover:text-slate-900 hover:bg-slate-100",
+      primary: "bg-[#111111] text-white hover:bg-black active:bg-stone-900 shadow-xs rounded-full hover:scale-[1.01] active:scale-[0.99]",
+      accent: "bg-[#d7f837] text-black hover:bg-[#cbf028] active:bg-[#bedf20] font-bold rounded-full shadow-xs hover:scale-[1.01] active:scale-[0.99]",
+      secondary: "bg-[#edebe4] text-stone-900 hover:bg-[#e4e2db] active:bg-[#dbd9d2] rounded-full",
+      outline: "border border-black/[0.12] bg-white text-stone-800 hover:bg-[#faf9f5] active:bg-[#f0eee8] rounded-full shadow-2xs",
+      destructive: "bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 shadow-xs rounded-full",
+      ghost: "text-stone-600 hover:text-stone-900 hover:bg-black/5 rounded-full",
     };
 
     const sizeStyles = {
-      sm: "h-8 px-3 text-xs gap-1.5",
-      md: "h-9 px-4 text-sm gap-2",
-      lg: "h-11 px-6 text-base gap-2.5",
+      sm: "h-8 px-3.5 text-xs gap-1.5",
+      md: "h-9 px-4 text-xs sm:text-sm gap-2",
+      lg: "h-11 px-6 text-sm sm:text-base gap-2.5",
     };
 
     return (

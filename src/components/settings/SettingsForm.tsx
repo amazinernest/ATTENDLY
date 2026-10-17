@@ -98,73 +98,73 @@ export function SettingsForm({ user, smtpConfigured }: SettingsFormProps) {
       )}
 
       {/* Lecturer Profile */}
-      <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
-          <User className="w-4 h-4 text-sky-800" />
+      <div className="bg-white border border-[#e7e5df] rounded-[28px] p-7 shadow-xs">
+        <h3 className="text-sm font-bold text-[#111111] mb-5 pb-3 border-b border-[#edebe4] flex items-center gap-2">
+          <User className="w-4 h-4 text-[#111111]" />
           <span>Lecturer Profile</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div>
-            <label className="block font-semibold text-slate-700">Full Name *</label>
+            <label className="block font-bold text-[#111111]">Full Name *</label>
             <input
               type="text"
               required
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700">Institutional Email</label>
+            <label className="block font-bold text-[#111111]">Institutional Email</label>
             <input
               type="email"
               disabled
               value={user.email}
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-200 bg-slate-50 text-slate-500 rounded-md cursor-not-allowed"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] bg-[#faf9f5] text-[#777770] rounded-xl cursor-not-allowed font-medium"
             />
-            <span className="text-[11px] text-slate-400">Email address cannot be changed directly</span>
+            <span className="text-[11px] text-[#888880] mt-1 block">Email address cannot be changed directly</span>
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700">University / Tertiary Institution</label>
+            <label className="block font-bold text-[#111111]">University / Tertiary Institution</label>
             <input
               type="text"
               value={formData.institution}
               onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
               placeholder="e.g. Obafemi Awolowo University"
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700">Department</label>
+            <label className="block font-bold text-[#111111]">Department</label>
             <input
               type="text"
               value={formData.department}
               onChange={(e) => setFormData({ ...formData, department: e.target.value })}
               placeholder="e.g. Computer Science & Engineering"
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
         </div>
       </div>
 
       {/* Attendance Defaults & System Preferences */}
-      <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-sky-800" />
+      <div className="bg-white border border-[#e7e5df] rounded-[28px] p-7 shadow-xs">
+        <h3 className="text-sm font-bold text-[#111111] mb-5 pb-3 border-b border-[#edebe4] flex items-center gap-2">
+          <Clock className="w-4 h-4 text-[#111111]" />
           <span>Attendance Preferences</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
           <div>
-            <label className="block font-semibold text-slate-700">Default Time Zone</label>
+            <label className="block font-bold text-[#111111]">Default Time Zone</label>
             <select
               value={formData.timeZone}
               onChange={(e) => setFormData({ ...formData, timeZone: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#111111] font-medium"
             >
               <option value="Africa/Lagos">Africa/Lagos (WAT, UTC+1)</option>
               <option value="UTC">UTC</option>
@@ -174,11 +174,11 @@ export function SettingsForm({ user, smtpConfigured }: SettingsFormProps) {
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700">Default Session Duration</label>
+            <label className="block font-bold text-[#111111]">Default Session Duration</label>
             <select
               value={formData.defaultSessionDuration}
               onChange={(e) => setFormData({ ...formData, defaultSessionDuration: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#111111] font-medium"
             >
               <option value="15">15 minutes</option>
               <option value="30">30 minutes</option>
@@ -188,71 +188,71 @@ export function SettingsForm({ user, smtpConfigured }: SettingsFormProps) {
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700">Default Attendance Threshold (%)</label>
+            <label className="block font-bold text-[#111111]">Default Attendance Threshold (%)</label>
             <input
               type="number"
               min="1"
               max="100"
               value={formData.defaultThreshold}
               onChange={(e) => setFormData({ ...formData, defaultThreshold: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
         </div>
       </div>
 
       {/* Security & Password */}
-      <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs">
-        <h3 className="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
-          <Lock className="w-4 h-4 text-sky-800" />
+      <div className="bg-white border border-[#e7e5df] rounded-[28px] p-7 shadow-xs">
+        <h3 className="text-sm font-bold text-[#111111] mb-5 pb-3 border-b border-[#edebe4] flex items-center gap-2">
+          <Lock className="w-4 h-4 text-[#111111]" />
           <span>Security & Password Update</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
           <div>
-            <label className="block font-semibold text-slate-700">Current Password</label>
+            <label className="block font-bold text-[#111111]">Current Password</label>
             <input
               type="password"
               value={formData.currentPassword}
               onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
               placeholder="Enter current password"
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700">New Password</label>
+            <label className="block font-bold text-[#111111]">New Password</label>
             <input
               type="password"
               minLength={8}
               value={formData.newPassword}
               onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
               placeholder="Min. 8 characters"
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700">Confirm New Password</label>
+            <label className="block font-bold text-[#111111]">Confirm New Password</label>
             <input
               type="password"
               minLength={8}
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               placeholder="Re-enter new password"
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1.5 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
         </div>
       </div>
 
       {/* System Diagnostics Box */}
-      <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600">
-        <div className="flex items-center gap-2 font-bold text-slate-800 mb-1">
-          <Info className="w-4 h-4 text-sky-800" />
+      <div className="p-6 bg-[#faf9f5] border border-[#e7e5df] rounded-[24px] text-xs text-[#555550]">
+        <div className="flex items-center gap-2 font-bold text-[#111111] mb-1.5">
+          <Info className="w-4 h-4 text-[#111111]" />
           <span>System Environment & Mail Dispatch Status</span>
         </div>
-        <p className="mt-1">
+        <p className="mt-1 leading-relaxed">
           {smtpConfigured
             ? "Production SMTP server is actively connected for transactional email dispatch."
             : "Running in local development mode: verification links and OTP codes are safely transparent and logged directly to the server terminal."}

@@ -285,26 +285,26 @@ export function CourseWorkspaceView({
   return (
     <div className="space-y-6">
       {/* Course Workspace Header */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-[#e7e5df] rounded-[28px] p-6 sm:p-7 shadow-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
+            <div className="flex items-center gap-2.5">
+              <span className="font-mono text-xs font-bold text-black bg-[#d7f837] px-3 py-1 rounded-full shadow-xs">
                 {course.code}
               </span>
               <Badge variant={course.status === "ACTIVE" ? "success" : "slate"}>
                 {course.status}
               </Badge>
-              <span className="text-xs text-slate-500">
-                Threshold: <strong>{course.attendanceThreshold}%</strong>
+              <span className="text-xs text-[#777770]">
+                Threshold: <strong className="text-[#111111]">{course.attendanceThreshold}%</strong>
               </span>
             </div>
 
-            <h1 className="mt-2 text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="mt-3 text-xl sm:text-2xl font-extrabold text-[#111111] tracking-tight">
               {course.title}
             </h1>
 
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-[#777770] mt-1 font-medium">
               {course.session} • {course.semester} • {course.department || "Departmental Course"}
             </p>
           </div>
@@ -312,7 +312,7 @@ export function CourseWorkspaceView({
           <div className="flex items-center gap-2.5 self-start md:self-auto">
             <Link
               to={`/courses/${course.id}/attendance/new`}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-sky-800 hover:bg-sky-900 text-white text-xs font-semibold rounded-md shadow-xs transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#111111] hover:bg-[#d7f837] hover:text-black text-white text-xs font-bold rounded-full shadow-sm transition-all"
             >
               <QrCode className="w-4 h-4" />
               <span>Start Attendance Session</span>
@@ -321,7 +321,7 @@ export function CourseWorkspaceView({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-4 border-t border-slate-100 mt-5 pt-3 overflow-x-auto text-xs font-semibold">
+        <div className="flex items-center gap-6 border-t border-[#edebe4] mt-6 pt-4 overflow-x-auto text-xs font-bold scrollbar-none">
           {[
             { id: "overview", label: "Overview", icon: BookOpen },
             { id: "roster", label: `Student Roster (${reportData.totalStudents})`, icon: Users },
@@ -335,13 +335,13 @@ export function CourseWorkspaceView({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 pb-2 border-b-2 whitespace-nowrap transition-colors ${
+                className={`flex items-center gap-2 pb-3 border-b-2 whitespace-nowrap transition-all cursor-pointer ${
                   active
-                    ? "border-sky-800 text-sky-900 font-bold"
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    ? "border-[#111111] text-[#111111]"
+                    : "border-transparent text-[#777770] hover:text-[#111111]"
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${active ? "text-sky-800" : "text-slate-400"}`} />
+                <Icon className={`w-3.5 h-3.5 ${active ? "text-[#111111]" : "text-[#999990]"}`} />
                 <span>{tab.label}</span>
               </button>
             );
@@ -354,54 +354,54 @@ export function CourseWorkspaceView({
         <div className="space-y-6">
           {/* Real Metrics Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            <div className="p-4 bg-white border border-slate-200 rounded-lg shadow-xs">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+            <div className="p-5 bg-white border border-[#e7e5df] rounded-[24px] shadow-xs">
+              <span className="text-[11px] font-bold text-[#777770] uppercase tracking-wider block">
                 Enrolled Students
               </span>
-              <span className="text-2xl font-bold text-slate-900 mt-1 block">
+              <span className="text-2xl font-extrabold text-[#111111] mt-1 block">
                 {reportData.totalStudents}
               </span>
-              <span className="text-[11px] text-slate-400">Class roster size</span>
+              <span className="text-[11px] text-[#999990]">Class roster size</span>
             </div>
 
-            <div className="p-4 bg-white border border-slate-200 rounded-lg shadow-xs">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+            <div className="p-5 bg-white border border-[#e7e5df] rounded-[24px] shadow-xs">
+              <span className="text-[11px] font-bold text-[#777770] uppercase tracking-wider block">
                 Sessions Conducted
               </span>
-              <span className="text-2xl font-bold text-slate-900 mt-1 block">
+              <span className="text-2xl font-extrabold text-[#111111] mt-1 block">
                 {reportData.totalSessions}
               </span>
-              <span className="text-[11px] text-slate-400">Total lectures held</span>
+              <span className="text-[11px] text-[#999990]">Total lectures held</span>
             </div>
 
-            <div className="p-4 bg-white border border-slate-200 rounded-lg shadow-xs">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+            <div className="p-5 bg-white border border-[#e7e5df] rounded-[24px] shadow-xs">
+              <span className="text-[11px] font-bold text-[#777770] uppercase tracking-wider block">
                 Overall Attendance
               </span>
-              <span className="text-2xl font-bold text-slate-900 mt-1 block">
+              <span className="text-2xl font-extrabold text-[#111111] mt-1 block">
                 {reportData.overallAttendanceRate}%
               </span>
-              <span className="text-[11px] text-slate-400">Average student check-in</span>
+              <span className="text-[11px] text-[#999990]">Average student check-in</span>
             </div>
 
-            <div className="p-4 bg-white border border-slate-200 rounded-lg shadow-xs">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+            <div className="p-5 bg-white border border-[#e7e5df] rounded-[24px] shadow-xs">
+              <span className="text-[11px] font-bold text-[#777770] uppercase tracking-wider block">
                 Below Threshold
               </span>
-              <span className={`text-2xl font-bold mt-1 block ${reportData.studentsBelowThresholdCount > 0 ? "text-rose-600" : "text-slate-900"}`}>
+              <span className={`text-2xl font-extrabold mt-1 block ${reportData.studentsBelowThresholdCount > 0 ? "text-rose-600" : "text-[#111111]"}`}>
                 {reportData.studentsBelowThresholdCount}
               </span>
-              <span className="text-[11px] text-slate-400">Students &lt; {course.attendanceThreshold}%</span>
+              <span className="text-[11px] text-[#999990]">Students &lt; {course.attendanceThreshold}%</span>
             </div>
           </div>
 
           {/* Quick Actions Card */}
-          <div className="p-5 bg-white border border-slate-200 rounded-lg shadow-xs flex flex-wrap items-center justify-between gap-3">
+          <div className="p-6 bg-white border border-[#e7e5df] rounded-[28px] shadow-xs flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Lecture Quick Actions</h3>
-              <p className="text-xs text-slate-500">Fast shortcuts for taking attendance and managing records</p>
+              <h3 className="text-sm font-bold text-[#111111]">Lecture Quick Actions</h3>
+              <p className="text-xs text-[#777770]">Fast shortcuts for taking attendance and managing records</p>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2.5">
               <Button
                 variant="outline"
                 size="sm"
@@ -415,7 +415,7 @@ export function CourseWorkspaceView({
                 href={`/api/courses/${course.id}/reports/excel`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold border border-slate-300 rounded text-slate-700 bg-white hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold border border-[#e7e5df] rounded-full text-[#111111] bg-white hover:bg-[#faf9f5] transition-all shadow-xs"
               >
                 <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-700" />
                 <span>Export Excel</span>
@@ -424,7 +424,7 @@ export function CourseWorkspaceView({
                 href={`/api/courses/${course.id}/reports/pdf`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold border border-slate-300 rounded text-slate-700 bg-white hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold border border-[#e7e5df] rounded-full text-[#111111] bg-white hover:bg-[#faf9f5] transition-all shadow-xs"
               >
                 <FileText className="w-3.5 h-3.5 text-rose-700" />
                 <span>Export PDF</span>
@@ -433,41 +433,41 @@ export function CourseWorkspaceView({
           </div>
 
           {/* Recent Course Sessions */}
-          <div className="bg-white border border-slate-200 rounded-lg shadow-xs p-5">
+          <div className="bg-white border border-[#e7e5df] rounded-[28px] shadow-xs p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-slate-900">Latest Attendance Sessions</h3>
+              <h3 className="text-sm font-bold text-[#111111]">Latest Attendance Sessions</h3>
               <button
                 onClick={() => setActiveTab("sessions")}
-                className="text-xs font-semibold text-sky-800 hover:underline"
+                className="text-xs font-bold text-[#111111] hover:underline"
               >
                 View all sessions ({course.attendanceSessions.length})
               </button>
             </div>
 
             {course.attendanceSessions.length === 0 ? (
-              <div className="text-center py-8 text-slate-400">
-                <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <div className="text-center py-10 text-[#888880]">
+                <Clock className="w-8 h-8 mx-auto mb-2 opacity-40 text-[#111111]" />
                 <p className="text-xs">No attendance sessions recorded yet for this course.</p>
                 <Link
                   to={`/courses/${course.id}/attendance/new`}
-                  className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-sky-800 hover:underline"
+                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-[#111111] hover:underline"
                 >
-                  <QrCode className="w-3 h-3" />
+                  <QrCode className="w-3.5 h-3.5 text-[#111111]" />
                   <span>Start First Session</span>
                 </Link>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100 text-xs">
+              <div className="divide-y divide-[#edebe4] text-xs">
                 {course.attendanceSessions.slice(0, 5).map((session: any) => (
                   <div
                     key={session.id}
-                    className="py-3 flex items-center justify-between hover:bg-slate-50 px-2 rounded"
+                    className="py-3.5 flex items-center justify-between hover:bg-[#faf9f5] px-3 rounded-xl transition-colors"
                   >
                     <div>
-                      <p className="font-semibold text-slate-800">
+                      <p className="font-bold text-[#111111]">
                         {session.topic || "Lecture Attendance Session"}
                       </p>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[11px] text-[#777770]">
                         {formatDate(session.sessionDate)} • {session._count.records} present
                       </p>
                     </div>
@@ -477,7 +477,7 @@ export function CourseWorkspaceView({
                       </Badge>
                       <Link
                         to={`/courses/${course.id}/attendance/${session.id}`}
-                        className="text-xs font-semibold text-sky-800 hover:underline"
+                        className="text-xs font-bold text-[#111111] hover:underline"
                       >
                         Open Session
                       </Link>
@@ -494,23 +494,23 @@ export function CourseWorkspaceView({
       {activeTab === "roster" && (
         <div className="space-y-4">
           {/* Controls: Search, Filter, Add, Import */}
-          <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="bg-white border border-[#e7e5df] rounded-[24px] p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2 w-full sm:w-auto flex-1 max-w-md">
               <div className="relative w-full">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <Search className="w-4 h-4 text-[#999990] absolute left-3.5 top-2.5" />
                 <input
                   type="text"
                   placeholder="Search student name or matric number..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+                  className="w-full pl-9 pr-4 py-2 text-xs border border-[#e7e5df] rounded-full focus:outline-none focus:ring-2 focus:ring-[#111111]"
                 />
               </div>
 
               <select
                 value={filterThreshold}
                 onChange={(e: any) => setFilterThreshold(e.target.value)}
-                className="px-2.5 py-1.5 text-xs border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="px-3.5 py-2 text-xs border border-[#e7e5df] rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-[#111111]"
               >
                 <option value="all">All Students</option>
                 <option value="deficient">Below Threshold (&lt;{course.attendanceThreshold}%)</option>
@@ -615,7 +615,7 @@ export function CourseWorkspaceView({
                           ) : (
                             <button
                               onClick={() => handleReEnrollStudent(s.studentId)}
-                              className="text-sky-800 hover:text-sky-900 font-semibold text-[11px]"
+                              className="text-[#111111] hover:underline font-bold text-[11px]"
                             >
                               Re-enroll
                             </button>
@@ -634,36 +634,36 @@ export function CourseWorkspaceView({
       {/* TAB 3: ATTENDANCE SESSIONS */}
       {activeTab === "sessions" && (
         <div className="space-y-4">
-          <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-xs flex items-center justify-between">
+          <div className="bg-white border border-[#e7e5df] rounded-[24px] p-5 shadow-xs flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Course Attendance Sessions</h3>
-              <p className="text-xs text-slate-500">History of all classes and live attendance registers</p>
+              <h3 className="text-sm font-bold text-[#111111]">Course Attendance Sessions</h3>
+              <p className="text-xs text-[#777770]">History of all classes and live attendance registers</p>
             </div>
             <Link
               to={`/courses/${course.id}/attendance/new`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-800 text-white rounded text-xs font-semibold hover:bg-sky-900 shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#111111] text-white rounded-full text-xs font-bold hover:bg-[#d7f837] hover:text-black shadow-xs transition-all"
             >
               <QrCode className="w-3.5 h-3.5" />
               <span>Start New Session</span>
             </Link>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-xs">
+          <div className="bg-white border border-[#e7e5df] rounded-[28px] overflow-hidden shadow-xs">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+              <thead className="bg-[#faf9f5] text-[#555550] font-bold border-b border-[#edebe4]">
                 <tr>
-                  <th className="px-5 py-3">Lecture Date</th>
-                  <th className="px-5 py-3">Topic / Description</th>
-                  <th className="px-5 py-3 text-center">Students Present</th>
-                  <th className="px-5 py-3 text-center">Attendance %</th>
-                  <th className="px-5 py-3 text-center">Status</th>
-                  <th className="px-5 py-3 text-right">Actions</th>
+                  <th className="px-5 py-3.5">Lecture Date</th>
+                  <th className="px-5 py-3.5">Topic / Description</th>
+                  <th className="px-5 py-3.5 text-center">Students Present</th>
+                  <th className="px-5 py-3.5 text-center">Attendance %</th>
+                  <th className="px-5 py-3.5 text-center">Status</th>
+                  <th className="px-5 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[#edebe4]">
                 {course.attendanceSessions.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-400">
+                    <td colSpan={6} className="text-center py-12 text-[#888880]">
                       No attendance sessions conducted for this course yet.
                     </td>
                   </tr>
@@ -673,17 +673,17 @@ export function CourseWorkspaceView({
                     const total = reportData.totalStudents;
                     const percent = total > 0 ? Math.round((present / total) * 100) : 0;
                     return (
-                      <tr key={session.id} className="hover:bg-slate-50/70 transition-colors">
-                        <td className="px-5 py-3.5 font-medium text-slate-900">
+                      <tr key={session.id} className="hover:bg-[#faf9f5] transition-colors">
+                        <td className="px-5 py-3.5 font-medium text-[#111111]">
                           {formatDate(session.sessionDate)}
                         </td>
-                        <td className="px-5 py-3.5 text-slate-700">
+                        <td className="px-5 py-3.5 text-[#555550]">
                           {session.topic || "Lecture Attendance Session"}
                         </td>
-                        <td className="px-5 py-3.5 text-center font-bold text-slate-900">
+                        <td className="px-5 py-3.5 text-center font-bold text-[#111111]">
                           {present} / {total}
                         </td>
-                        <td className="px-5 py-3.5 text-center font-bold text-sky-900">
+                        <td className="px-5 py-3.5 text-center font-extrabold text-[#111111]">
                           {percent}%
                         </td>
                         <td className="px-5 py-3.5 text-center">
@@ -694,7 +694,7 @@ export function CourseWorkspaceView({
                         <td className="px-5 py-3.5 text-right">
                           <Link
                             to={`/courses/${course.id}/attendance/${session.id}`}
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-sky-800 hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-bold text-[#111111] hover:underline"
                           >
                             <span>Open Session</span>
                             <ArrowRight className="w-3 h-3" />
@@ -713,21 +713,21 @@ export function CourseWorkspaceView({
       {/* TAB 4: REPORTS & EXPORTS */}
       {activeTab === "reports" && (
         <div className="space-y-6">
-          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-white border border-[#e7e5df] rounded-[28px] p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <h3 className="text-sm font-bold text-slate-900">
+              <h3 className="text-sm font-bold text-[#111111]">
                 Official Semester Attendance Reports
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-[#777770] mt-0.5">
                 Download verified semester registers formatted for departmental records and exam clearance
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <a
                 href={`/api/courses/${course.id}/reports/excel`}
                 download
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-md text-xs font-semibold shadow-xs transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-full text-xs font-bold shadow-xs transition-colors"
               >
                 <FileSpreadsheet className="w-4 h-4" />
                 <span>Download Excel (.xlsx)</span>
@@ -736,7 +736,7 @@ export function CourseWorkspaceView({
               <a
                 href={`/api/courses/${course.id}/reports/pdf`}
                 download
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-800 hover:bg-rose-900 text-white rounded-md text-xs font-semibold shadow-xs transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-rose-800 hover:bg-rose-900 text-white rounded-full text-xs font-bold shadow-xs transition-colors"
               >
                 <FileText className="w-4 h-4" />
                 <span>Download PDF (.pdf)</span>
@@ -804,53 +804,54 @@ export function CourseWorkspaceView({
 
       {/* TAB 5: COURSE SETTINGS */}
       {activeTab === "settings" && (
-        <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-xs max-w-2xl">
-          <h3 className="text-sm font-bold text-slate-900 mb-1">Course Configuration</h3>
-          <p className="text-xs text-slate-500 mb-5">
+        <div className="bg-white border border-[#e7e5df] rounded-[28px] p-7 shadow-xs max-w-2xl">
+          <h3 className="text-sm font-bold text-[#111111] mb-1">Course Configuration</h3>
+          <p className="text-xs text-[#777770] mb-6">
             Modify course requirements, attendance benchmarks, and academic information
           </p>
 
           {settingsMessage && (
-            <div className="mb-4 p-3 bg-sky-50 border border-sky-200 rounded text-xs text-sky-800">
-              {settingsMessage}
+            <div className="mb-5 p-3.5 bg-[#faf9f5] border border-[#d7f837] rounded-2xl text-xs text-[#111111] font-semibold flex items-center gap-2">
+              <Check className="w-4 h-4 text-black shrink-0" />
+              <span>{settingsMessage}</span>
             </div>
           )}
 
           <form onSubmit={handleSaveSettings} className="space-y-4 text-xs">
             <div>
-              <label className="block font-semibold text-slate-700">Course Title</label>
+              <label className="block font-bold text-[#111111]">Course Title</label>
               <input
                 type="text"
                 value={settingsForm.title}
                 onChange={(e) => setSettingsForm({ ...settingsForm, title: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
+                className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block font-semibold text-slate-700">Academic Session</label>
+                <label className="block font-bold text-[#111111]">Academic Session</label>
                 <input
                   type="text"
                   value={settingsForm.session}
                   onChange={(e) => setSettingsForm({ ...settingsForm, session: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
+                  className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700">Semester</label>
+                <label className="block font-bold text-[#111111]">Semester</label>
                 <input
                   type="text"
                   value={settingsForm.semester}
                   onChange={(e) => setSettingsForm({ ...settingsForm, semester: e.target.value })}
-                  className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
+                  className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700">
+              <label className="block font-bold text-[#111111]">
                 Attendance Threshold (%)
               </label>
               <input
@@ -861,14 +862,14 @@ export function CourseWorkspaceView({
                 onChange={(e) =>
                   setSettingsForm({ ...settingsForm, attendanceThreshold: e.target.value })
                 }
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
+                className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
               />
-              <span className="text-[11px] text-slate-400">
+              <span className="text-[11px] text-[#888880] mt-1 block">
                 Benchmark percentage for identifying deficient student attendance
               </span>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 flex justify-end">
+            <div className="pt-4 border-t border-[#edebe4] flex justify-end">
               <Button type="submit" variant="primary" isLoading={savingSettings}>
                 Save Changes
               </Button>
@@ -892,14 +893,14 @@ export function CourseWorkspaceView({
       >
         <div className="space-y-4">
           {importError && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded text-xs text-rose-800 flex items-start gap-2">
+            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <span>{importError}</span>
             </div>
           )}
 
           {importSuccess && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-800 flex items-start gap-2">
+            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-start gap-2">
               <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <span>{importSuccess}</span>
             </div>
@@ -908,12 +909,12 @@ export function CourseWorkspaceView({
           {!previewData ? (
             <div className="space-y-4">
               {/* Drag & Drop Upload Zone */}
-              <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-sky-700 transition-colors bg-slate-50/50">
-                <FileUp className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-                <p className="text-xs font-semibold text-slate-700">
+              <div className="border-2 border-dashed border-[#e7e5df] rounded-[24px] p-8 text-center hover:border-[#111111] transition-colors bg-[#faf9f5]">
+                <FileUp className="w-10 h-10 text-[#999990] mx-auto mb-3" />
+                <p className="text-xs font-bold text-[#111111]">
                   Drag and drop your class list file here, or click to browse
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">
+                <p className="text-[11px] text-[#777770] mt-1">
                   Supports Excel (.xlsx, .xls), CSV, Word (.docx), and selectable text PDFs (max 10MB)
                 </p>
                 <input
@@ -925,7 +926,7 @@ export function CourseWorkspaceView({
                 />
                 <label
                   htmlFor="class-list-file-input"
-                  className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-800 text-white text-xs font-semibold rounded cursor-pointer hover:bg-sky-900"
+                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-[#111111] text-white text-xs font-bold rounded-full cursor-pointer hover:bg-[#d7f837] hover:text-black transition-all shadow-xs"
                 >
                   <Upload className="w-3.5 h-3.5" />
                   <span>Choose File</span>
@@ -933,17 +934,17 @@ export function CourseWorkspaceView({
               </div>
 
               {isUploading && (
-                <div className="flex items-center justify-center gap-2 text-xs text-slate-600 py-3">
-                  <Loader2 className="w-4 h-4 text-sky-800 animate-spin" />
+                <div className="flex items-center justify-center gap-2 text-xs text-[#111111] py-3 font-semibold">
+                  <Loader2 className="w-4 h-4 text-[#111111] animate-spin" />
                   <span>Extracting student records and verifying leading zeros...</span>
                 </div>
               )}
 
-              <div className="pt-2 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100">
+              <div className="pt-2 flex items-center justify-between text-xs text-[#777770] border-t border-[#edebe4]">
                 <span>Need a standard spreadsheet template?</span>
                 <a
                   href="/api/courses/template/excel"
-                  className="font-semibold text-sky-800 hover:underline inline-flex items-center gap-1"
+                  className="font-bold text-[#111111] hover:underline inline-flex items-center gap-1"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download Blank Excel Template</span>
@@ -953,12 +954,12 @@ export function CourseWorkspaceView({
           ) : (
             /* Preview & Reconciliation Table */
             <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs bg-slate-50 p-3 rounded border border-slate-200">
+              <div className="flex items-center justify-between text-xs bg-[#faf9f5] p-3.5 rounded-2xl border border-[#e7e5df]">
                 <div>
-                  <span className="font-semibold text-slate-900">
+                  <span className="font-bold text-[#111111]">
                     File: {previewData.fileName}
                   </span>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-[11px] text-[#777770] mt-0.5">
                     Found <strong>{previewData.validRows.length}</strong> valid student records.
                   </p>
                 </div>
@@ -967,38 +968,38 @@ export function CourseWorkspaceView({
                     setPreviewData(null);
                     setImportFile(null);
                   }}
-                  className="text-xs text-sky-800 hover:underline font-semibold"
+                  className="text-xs text-[#111111] hover:underline font-bold"
                 >
                   Upload different file
                 </button>
               </div>
 
               {/* Preview table */}
-              <div className="max-h-60 overflow-y-auto border border-slate-200 rounded">
+              <div className="max-h-60 overflow-y-auto border border-[#e7e5df] rounded-2xl overflow-hidden">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-600 sticky top-0 border-b border-slate-200">
+                  <thead className="bg-[#faf9f5] text-[#555550] sticky top-0 border-b border-[#edebe4] font-bold">
                     <tr>
-                      <th className="px-3 py-2">Matric No.</th>
-                      <th className="px-3 py-2">Student Name</th>
-                      <th className="px-3 py-2">Department</th>
-                      <th className="px-3 py-2">Status</th>
+                      <th className="px-3 py-2.5">Matric No.</th>
+                      <th className="px-3 py-2.5">Student Name</th>
+                      <th className="px-3 py-2.5">Department</th>
+                      <th className="px-3 py-2.5">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-[#edebe4]">
                     {previewData.validRows.slice(0, 50).map((row: any, i: number) => (
-                      <tr key={i} className="hover:bg-slate-50">
-                        <td className="px-3 py-1.5 font-mono font-bold text-slate-900">
+                      <tr key={i} className="hover:bg-[#faf9f5]">
+                        <td className="px-3 py-2 font-mono font-bold text-[#111111]">
                           {row.matricNumber}
                         </td>
-                        <td className="px-3 py-1.5 text-slate-800">{row.fullName}</td>
-                        <td className="px-3 py-1.5 text-slate-500">{row.department || "—"}</td>
-                        <td className="px-3 py-1.5">
+                        <td className="px-3 py-2 text-[#222220] font-medium">{row.fullName}</td>
+                        <td className="px-3 py-2 text-[#777770]">{row.department || "—"}</td>
+                        <td className="px-3 py-2">
                           {row.isAlreadyEnrolled ? (
-                            <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] bg-[#edebe4] text-[#444440] px-2 py-0.5 rounded-full font-semibold">
                               Already Enrolled (Update)
                             </span>
                           ) : (
-                            <span className="text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-semibold">
+                            <span className="text-[10px] bg-[#d7f837] text-black px-2 py-0.5 rounded-full font-bold">
                               New Enrolment
                             </span>
                           )}
@@ -1009,14 +1010,14 @@ export function CourseWorkspaceView({
                 </table>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-[#edebe4] flex items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => {
                     setImportModalOpen(false);
                     setPreviewData(null);
                   }}
-                  className="px-3 py-1.5 text-xs text-slate-600 font-semibold hover:text-slate-900"
+                  className="px-4 py-2 text-xs text-[#777770] font-bold hover:text-[#111111]"
                 >
                   Cancel
                 </button>
@@ -1044,13 +1045,13 @@ export function CourseWorkspaceView({
       >
         <form onSubmit={handleAddStudent} className="space-y-4">
           {addError && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded text-xs text-rose-800">
+            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800">
               {addError}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-bold text-[#111111]">
               Matriculation Number *
             </label>
             <input
@@ -1061,24 +1062,24 @@ export function CourseWorkspaceView({
                 setNewStudent({ ...newStudent, matricNumber: e.target.value.toUpperCase() })
               }
               placeholder="e.g. CSC/2024/045"
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md font-mono uppercase focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl font-mono uppercase focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700">Full Name *</label>
+            <label className="block text-xs font-bold text-[#111111]">Full Name *</label>
             <input
               type="text"
               required
               value={newStudent.fullName}
               onChange={(e) => setNewStudent({ ...newStudent, fullName: e.target.value })}
               placeholder="Surname Firstname Middlename"
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-bold text-[#111111]">
               Institutional Email (Optional)
             </label>
             <input
@@ -1086,26 +1087,26 @@ export function CourseWorkspaceView({
               value={newStudent.email}
               onChange={(e) => setNewStudent({ ...newStudent, email: e.target.value })}
               placeholder="student@university.edu.ng"
-              className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+              className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700">Department</label>
+              <label className="block text-xs font-bold text-[#111111]">Department</label>
               <input
                 type="text"
                 value={newStudent.department}
                 onChange={(e) => setNewStudent({ ...newStudent, department: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700">Level</label>
+              <label className="block text-xs font-bold text-[#111111]">Level</label>
               <select
                 value={newStudent.level}
                 onChange={(e) => setNewStudent({ ...newStudent, level: e.target.value })}
-                className="mt-1 block w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sky-700"
+                className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#111111] font-medium"
               >
                 <option value="100">100 Level</option>
                 <option value="200">200 Level</option>
@@ -1117,11 +1118,11 @@ export function CourseWorkspaceView({
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+          <div className="pt-4 border-t border-[#edebe4] flex items-center justify-end gap-2.5">
             <button
               type="button"
               onClick={() => setAddStudentModalOpen(false)}
-              className="px-3 py-1.5 text-xs text-slate-600 font-semibold"
+              className="px-4 py-2 text-xs text-[#777770] font-bold hover:text-[#111111]"
             >
               Cancel
             </button>

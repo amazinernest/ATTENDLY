@@ -2,23 +2,25 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: "default" | "success" | "warning" | "destructive" | "outline" | "slate";
+  variant?: "default" | "accent" | "dark" | "success" | "warning" | "destructive" | "outline" | "slate";
 }
 
 export function Badge({ className, variant = "default", children, ...props }: BadgeProps) {
   const variantStyles = {
-    default: "bg-sky-50 text-sky-700 border-sky-200",
-    success: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    warning: "bg-amber-50 text-amber-700 border-amber-200",
-    destructive: "bg-rose-50 text-rose-700 border-rose-200",
-    outline: "bg-transparent text-slate-700 border-slate-300",
-    slate: "bg-slate-100 text-slate-700 border-slate-200",
+    default: "bg-[#d7f837] text-black border-black/10 font-bold",
+    accent: "bg-[#d7f837] text-black border-black/10 font-bold",
+    dark: "bg-[#111111] text-white border-transparent font-semibold",
+    success: "bg-emerald-50 text-emerald-800 border-emerald-200 font-semibold",
+    warning: "bg-amber-50 text-amber-900 border-amber-200 font-semibold",
+    destructive: "bg-rose-50 text-rose-800 border-rose-200 font-semibold",
+    outline: "bg-white/80 text-stone-700 border-black/10 font-medium",
+    slate: "bg-[#edebe4] text-stone-800 border-black/5 font-medium",
   };
 
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
+        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs border shadow-2xs",
         variantStyles[variant],
         className
       )}

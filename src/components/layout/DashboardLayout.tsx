@@ -15,7 +15,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ user, children }: DashboardLayoutProps) {
   return (
-    <div className="min-h-screen flex bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex bg-[#faf9f5] text-[#161616] font-sans antialiased selection:bg-[#d7f837] selection:text-black">
       {/* Persistent Left Sidebar */}
       <Sidebar user={user} />
 

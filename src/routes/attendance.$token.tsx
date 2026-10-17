@@ -288,10 +288,10 @@ function StudentCheckInContent() {
 
   if (loadingSession) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center p-4">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 text-sky-800 animate-spin mx-auto mb-3" />
-          <p className="text-xs font-semibold text-slate-600">Connecting to lecture hall register...</p>
+          <Loader2 className="w-8 h-8 text-[#111111] animate-spin mx-auto mb-3" />
+          <p className="text-xs font-bold text-[#111111]">Connecting to lecture hall register...</p>
         </div>
       </div>
     );
@@ -299,15 +299,15 @@ function StudentCheckInContent() {
 
   if (sessionError || !session) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6">
-        <div className="max-w-md mx-auto bg-white border border-slate-200 rounded-xl p-6 shadow-sm text-center">
+      <div className="min-h-screen bg-[#faf9f5] flex flex-col justify-center py-12 px-4 sm:px-6">
+        <div className="max-w-md mx-auto bg-white border border-[#e7e5df] rounded-[28px] p-8 shadow-sm text-center">
           <AlertCircle className="w-12 h-12 text-rose-600 mx-auto mb-3" />
-          <h2 className="text-base font-bold text-slate-900">Attendance Session Unavailable</h2>
-          <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+          <h2 className="text-base font-extrabold text-[#111111]">Attendance Session Unavailable</h2>
+          <p className="text-xs text-[#777770] mt-2 leading-relaxed">
             {sessionError || "The attendance session could not be found or the link has expired."}
           </p>
-          <div className="mt-5 pt-4 border-t border-slate-100">
-            <p className="text-[11px] text-slate-400">
+          <div className="mt-6 pt-4 border-t border-[#edebe4]">
+            <p className="text-[11px] text-[#888880]">
               Please notify your lecturer if you are physically in class and unable to connect.
             </p>
           </div>
@@ -319,31 +319,31 @@ function StudentCheckInContent() {
   const isClosed = session.status === "CLOSED";
 
   return (
-    <div className="min-h-screen bg-slate-100/70 flex flex-col justify-center py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#faf9f5] flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8">
       {/* Course Banner */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-sky-800 text-white shadow-sm mb-2.5">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#111111] text-[#d7f837] shadow-sm mb-3">
           <GraduationCap className="w-6 h-6" />
         </div>
-        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111111] tracking-tight">
           {session.courseCode}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-600 font-medium px-2">
+        <p className="text-xs sm:text-sm text-[#555550] font-medium px-2 mt-0.5">
           {session.courseTitle}
         </p>
         {session.lecturerName && (
-          <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+          <p className="text-[11px] text-[#777770] mt-0.5 font-medium">
             Lecturer: {session.lecturerName}
           </p>
         )}
-        <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 shadow-2xs">
-          <Clock className="w-3.5 h-3.5 text-sky-700" />
+        <div className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-white border border-[#e7e5df] text-[#111111] shadow-2xs">
+          <Clock className="w-3.5 h-3.5 text-[#111111]" />
           <span>{session.academicSession} • {session.semester}</span>
         </div>
       </div>
 
-      <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-6 px-5 sm:px-7 shadow-md border border-slate-200/80 rounded-2xl">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-7 px-6 sm:px-8 shadow-sm border border-[#e7e5df] rounded-[28px]">
           {confirmation ? (
             /* Celebration confirmation */
             <div className="text-center py-4 space-y-4 animate-in fade-in zoom-in-95 duration-200">
@@ -471,7 +471,7 @@ function StudentCheckInContent() {
                   )}
                 </div>
 
-                <div className="mt-1 relative">
+                <div className="mt-1.5 relative">
                   <input
                     type="text"
                     required
@@ -479,18 +479,18 @@ function StudentCheckInContent() {
                     value={matricNumber}
                     onChange={(e) => setMatricNumber(e.target.value.toUpperCase())}
                     placeholder="e.g. CSC/2024/001"
-                    className="block w-full px-3.5 py-2.5 text-base border border-slate-300 rounded-lg uppercase font-mono tracking-wide placeholder:normal-case placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-sky-700 bg-white"
+                    className="block w-full px-4 py-3 text-base border border-[#e7e5df] rounded-xl uppercase font-mono tracking-wide placeholder:normal-case placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
                   />
                   {studentLookup.isChecking && (
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <Loader2 className="w-4 h-4 text-sky-700 animate-spin" />
+                    <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
+                      <Loader2 className="w-4 h-4 text-[#111111] animate-spin" />
                     </div>
                   )}
                 </div>
 
                 {/* Instant Student Identification Feedback Pill */}
                 {studentLookup.found ? (
-                  <div className="mt-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-2.5 text-xs text-emerald-900">
+                  <div className="mt-2.5 p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-900">
                     <UserCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                     <div className="min-w-0 flex-1">
                       <p className="font-bold truncate">{studentLookup.studentName}</p>
@@ -500,12 +500,12 @@ function StudentCheckInContent() {
                     </div>
                   </div>
                 ) : studentLookup.error && matricNumber.trim().length >= 3 ? (
-                  <p className="mt-1.5 text-[11px] text-rose-600 flex items-center gap-1">
+                  <p className="mt-2 text-[11px] text-rose-600 flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>{studentLookup.error}</span>
                   </p>
                 ) : (
-                  <p className="mt-1 text-[11px] text-slate-400">
+                  <p className="mt-1.5 text-[11px] text-[#888880]">
                     Device will remember your matriculation number for future lectures.
                   </p>
                 )}
@@ -515,17 +515,17 @@ function StudentCheckInContent() {
               {session.requiresInClassPin && (
                 <div>
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold text-slate-700">
+                    <label className="block text-xs font-bold text-[#111111]">
                       In-Class PIN (Projected on Board) *
                     </label>
                     {pinFromUrl && sessionPin === pinFromUrl && (
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                         ✓ Auto-filled from QR code
                       </span>
                     )}
                   </div>
-                  <div className="mt-1 relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <div className="mt-1.5 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#888880]">
                       <KeyRound className="w-4 h-4" />
                     </div>
                     <input
@@ -535,7 +535,7 @@ function StudentCheckInContent() {
                       value={sessionPin}
                       onChange={(e) => setSessionPin(e.target.value.trim())}
                       placeholder="4-digit PIN on classroom screen"
-                      className="block w-full pl-9 pr-3 py-2.5 text-base border border-slate-300 rounded-lg font-mono tracking-widest placeholder:tracking-normal placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-sky-700 bg-white"
+                      className="block w-full pl-10 pr-4 py-3 text-base border border-[#e7e5df] rounded-xl font-mono tracking-widest placeholder:tracking-normal placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
                     />
                   </div>
                 </div>
@@ -545,17 +545,17 @@ function StudentCheckInContent() {
               {session.verificationMethod === "STUDENT_PIN" && (
                 <div>
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold text-slate-700">
+                    <label className="block text-xs font-bold text-[#111111]">
                       Personal Student Security PIN *
                     </label>
                     {studentLookup.devStudentPin && (
-                      <span className="text-[10px] font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-mono">
+                      <span className="text-[10px] font-bold text-[#111111] bg-[#faf9f5] px-2.5 py-0.5 rounded-full border border-[#d7f837] font-mono">
                         Dev / Test PIN: {studentLookup.devStudentPin}
                       </span>
                     )}
                   </div>
-                  <div className="mt-1 relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <div className="mt-1.5 relative">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#888880]">
                       <Lock className="w-4 h-4" />
                     </div>
                     <input
@@ -565,12 +565,12 @@ function StudentCheckInContent() {
                       value={studentPin}
                       onChange={(e) => setStudentPin(e.target.value)}
                       placeholder="Enter your personal 4-digit PIN"
-                      className="block w-full pl-9 pr-10 py-2.5 text-base border border-slate-300 rounded-lg font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-sky-700 bg-white"
+                      className="block w-full pl-10 pr-10 py-3 text-base border border-[#e7e5df] rounded-xl font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
                     />
                     <button
                       type="button"
                       onClick={() => setShowStudentPin(!showStudentPin)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#888880] hover:text-[#111111] focus:outline-none cursor-pointer"
                     >
                       {showStudentPin ? (
                         <EyeOff className="w-4 h-4" />
@@ -579,7 +579,7 @@ function StudentCheckInContent() {
                       )}
                     </button>
                   </div>
-                  <span className="text-[11px] text-slate-400 block mt-1">
+                  <span className="text-[11px] text-[#888880] block mt-1">
                     Confidential personal PIN assigned on course roster
                   </span>
                 </div>
@@ -587,9 +587,9 @@ function StudentCheckInContent() {
 
               {/* Email OTP Verification */}
               {session.verificationMethod === "EMAIL_OTP" && (
-                <div className="pt-2 border-t border-slate-100 space-y-3">
+                <div className="pt-2 border-t border-[#edebe4] space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold text-slate-700">
+                    <label className="block text-xs font-bold text-[#111111]">
                       Email Passcode *
                     </label>
                     {!otpSent && (
@@ -597,7 +597,7 @@ function StudentCheckInContent() {
                         type="button"
                         onClick={handleRequestOtp}
                         disabled={sendingOtp || !matricNumber.trim()}
-                        className="text-xs font-bold text-sky-800 hover:text-sky-900 disabled:opacity-50"
+                        className="text-xs font-bold text-[#111111] hover:underline disabled:opacity-50 cursor-pointer"
                       >
                         {sendingOtp ? "Sending code..." : "Send Code to My Email"}
                       </button>
@@ -606,11 +606,11 @@ function StudentCheckInContent() {
 
                   {otpSent ? (
                     <div>
-                      <p className="text-xs text-emerald-700 mb-2">
+                      <p className="text-xs text-emerald-700 mb-2 font-medium">
                         Passcode sent to <strong>{maskedEmail}</strong>.
                       </p>
                       {devOtp && (
-                        <p className="text-[11px] text-sky-800 bg-sky-50 p-2 rounded mb-2 border border-sky-200">
+                        <p className="text-[11px] text-[#111111] bg-[#faf9f5] p-2.5 rounded-xl mb-2 border border-[#d7f837] font-mono">
                           Dev Passcode: <strong>{devOtp}</strong>
                         </p>
                       )}
@@ -621,11 +621,11 @@ function StudentCheckInContent() {
                         value={otpCode}
                         onChange={(e) => setOtpCode(e.target.value.trim())}
                         placeholder="Enter 6-digit code"
-                        className="block w-full px-3 py-2 text-center text-lg font-mono tracking-widest border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-700"
+                        className="block w-full px-4 py-2.5 text-center text-lg font-mono tracking-widest border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-bold"
                       />
                     </div>
                   ) : (
-                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600">
+                    <div className="p-3.5 bg-[#faf9f5] border border-[#e7e5df] rounded-2xl text-xs text-[#555550]">
                       Tap <strong>Send Code to My Email</strong> to receive your check-in passcode.
                     </div>
                   )}
@@ -637,7 +637,7 @@ function StudentCheckInContent() {
                 <Button
                   type="submit"
                   variant="primary"
-                  className="w-full py-3.5 text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all rounded-xl"
+                  className="w-full py-3.5 text-sm sm:text-base font-bold shadow-sm transition-all"
                   isLoading={isSubmitting}
                   disabled={studentLookup.alreadyRecorded}
                 >
