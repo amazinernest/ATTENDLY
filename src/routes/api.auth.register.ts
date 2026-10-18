@@ -86,13 +86,12 @@ export async function action({ request }: { request: Request }) {
 
     const passwordHash = await hashPassword(password);
 
-    // If SMTP is not configured or in development mode, automatically verify email
-    const isSmtpConfigured = !!(
-      process.env.SMTP_HOST &&
-      process.env.SMTP_USER &&
-      process.env.SMTP_PASSWORD
+    // Check if email provider is configured (Resend API or SMTP)
+    const isEmailConfigured = !!(
+      process.env.RESEND_API_KEY ||
+      (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASSWORD)
     );
-    const shouldAutoVerify = !isSmtpConfigured || process.env.NODE_ENV !== "production";
+    const shouldRequireVerification = isEmailConfigured && process.env.NODE_ENV === "production";
 
     const user = await prisma.user.create({
       data: {
@@ -101,12 +100,13 @@ export async function action({ request }: { request: Request }) {
         passwordHash,
         institution: institution || null,
         department: department || null,
-        isEmailVerified: shouldAutoVerify,
+        isEmailVerified: !shouldRequireVerification,
         timeZone: "Africa/Lagos",
       },
     });
 
-    if (!shouldAutoVerify) {
+    // Always dispatch verification email if email service is configured
+    if (isEmailConfigured) {
       const rawToken = crypto.randomBytes(32).toString("hex");
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
@@ -118,13 +118,10 @@ export async function action({ request }: { request: Request }) {
         },
       });
 
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || "http://localhost:5173";
-      const verificationLink = `${appUrl}/verify-email?token=${rawToken}`;
-
       try {
         await sendVerificationEmail(user.email, rawToken);
-      } catch (emailError) {
-        console.error("[Email Dispatch Error]:", emailError);
+      } catch (emailError: any) {
+        console.error("[Email Dispatch Error]:", emailError?.message || emailError);
       }
     }
 
@@ -143,7 +140,7 @@ export async function action({ request }: { request: Request }) {
             institution: user.institution,
             isEmailVerified: user.isEmailVerified,
           },
-          requiresVerification: !shouldAutoVerify,
+          requiresVerification: shouldRequireVerification,
         },
         {
           status: 201,

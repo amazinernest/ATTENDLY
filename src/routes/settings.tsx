@@ -6,7 +6,10 @@ import { SettingsForm } from "@/components/settings/SettingsForm";
 
 export async function loader({ request }: { request: Request }) {
   const user = await requireUser(request);
-  const smtpConfigured = !!(process.env.SMTP_HOST && process.env.SMTP_USER);
+  const smtpConfigured = !!(
+    process.env.RESEND_API_KEY ||
+    (process.env.SMTP_HOST && process.env.SMTP_USER)
+  );
   return { user, smtpConfigured };
 }
 

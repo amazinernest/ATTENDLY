@@ -94,14 +94,13 @@ export async function action({ request }: { request: Request }) {
     // Credentials verified successfully - reset account rate limit window
     resetRateLimit(`login:account:${normalizedEmail}`);
 
-    // Auto-verify email in development or if SMTP is not configured
+    // Auto-verify email in development or if email provider is not configured
     if (!user.isEmailVerified) {
-      const isSmtpConfigured = !!(
-        process.env.SMTP_HOST &&
-        process.env.SMTP_USER &&
-        process.env.SMTP_PASSWORD
+      const isEmailConfigured = !!(
+        process.env.RESEND_API_KEY ||
+        (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASSWORD)
       );
-      if (!isSmtpConfigured || process.env.NODE_ENV !== "production") {
+      if (!isEmailConfigured || process.env.NODE_ENV !== "production") {
         await prisma.user.update({
           where: { id: user.id },
           data: { isEmailVerified: true },
