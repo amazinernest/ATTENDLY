@@ -24,5 +24,6 @@ export default [
   route("api/auth/forgot-password", "routes/api.auth.forgot-password.ts"),
   route("api/auth/reset-password", "routes/api.auth.reset-password.ts"),
   route("api/auth/verify-email", "routes/api.auth.verify-email.ts"),
+  route("api/health", "routes/api.health.ts"),
   route("api/*", "routes/api.$.ts"),
 ] satisfies RouteConfig;
