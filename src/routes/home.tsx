@@ -21,6 +21,18 @@ import {
   BookOpen,
   Award,
   FileCheck,
+  Shield,
+  Clock,
+  Users,
+  Check,
+  BarChart3,
+  FileText,
+  Fingerprint,
+  AlertTriangle,
+  Download,
+  Activity,
+  Layers,
+  Zap,
 } from "lucide-react";
 import { getUser } from "@/lib/session.server";
 
@@ -37,6 +49,11 @@ export default function HomePage() {
   const [activeFeatureTab, setActiveFeatureTab] = useState(0);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [activeModal, setActiveModal] = useState<string | null>(null);
+
+  // Interactive Live Demo Cockpit State
+  const [demoTab, setDemoTab] = useState<"projector" | "clearance" | "audit">("projector");
+  const [demoVerifiedCount, setDemoVerifiedCount] = useState(384);
+  const [demoTimeLeft, setDemoTimeLeft] = useState("04:38");
 
   // Lock body scroll when mobile menu or modal is active
   useEffect(() => {
@@ -62,65 +79,86 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Subtle live ticker effect for the demo cockpit
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDemoVerifiedCount((prev) => (prev < 408 ? prev + 1 : 384));
+    }, 4500);
+    return () => clearInterval(interval);
+  }, []);
+
   const closeMenu = () => setMobileMenuOpen(false);
 
   const features = [
     {
       code: "A01",
-      title: "Class List File Import",
+      title: "Universal Roster File Ingestion",
       tagline: "Excel, CSV, Word & PDF roster parsing with zero data loss",
       description:
-        "Directly import student rosters from Excel (.xlsx), CSV, Word (.docx), and PDF files. Preserves leading zeros in matriculation numbers and eliminates manual data entry.",
+        "Directly import student rosters from Excel (.xlsx), CSV, Word (.docx), and PDF documents. Preserves leading zeros in matriculation numbers (e.g., 004128) and handles variable header columns automatically.",
       badge: "Universal Roster Engine",
       stat: "100% Leading-Zero Integrity",
+      highlights: ["Automatic header detection", "Preserves 00XXXX matric prefixes", "Supports messy department rosters"],
     },
     {
       code: "A02",
       title: "Dynamic In-Class QR Check-In",
       tagline: "Live session QR projected in class with randomized PIN & OTP",
       description:
-        "Project a large dynamic session QR code in class. Students verify with their matriculation number and configured PIN or institutional email verification to eliminate proxy attendance.",
+        "Project a high-contrast dynamic session QR code onto the lecture hall screen. Students scan with their phone and verify in 3 seconds. Randomized in-class PIN prevents remote WhatsApp sharing.",
       badge: "Zero Proxy Technology",
       stat: "90s Hall Sign-in Speed",
+      highlights: ["Randomized 4-digit hall PIN", "Live in-hall attendance counter", "Zero app download required for students"],
     },
     {
       code: "A03",
       title: "Hardware Device-Locking Defense",
       tagline: "Physical device fingerprint binding exclusively to matric numbers",
       description:
-        "Each student's phone hardware fingerprint binds exclusively to their matric number. One physical device cannot sign in for another student, permanently stopping lecture proxies.",
+        "Each student's physical phone hardware fingerprint is cryptographically locked to their matriculation number upon first scan. One smartphone cannot sign in for another student under any circumstance.",
       badge: "Hardware-Level Shield",
       stat: "1 Device Per Student",
+      highlights: ["Cryptographic device UUID binding", "Permanent proxy lockout", "Automatic tampering audit flags"],
     },
     {
       code: "A04",
-      title: "Semester Reports & Exports",
+      title: "NUC 75% Senate Reports & Exports",
       tagline: "Automated 75% threshold alerts, attendance matrix & PDF export",
       description:
-        "Automatic calculation of attendance percentage per student, threshold alerts (e.g., 75%), session attendance matrix, and one-click export to official Excel and PDF documents.",
+        "Automatic computation of cumulative attendance percentages per student against the 75% examination clearance requirement. Export official multi-sheet Excel matrices and sealed PDF rosters with 1 click.",
       badge: "Accreditation Ready",
       stat: "One-Click Instant Export",
+      highlights: ["Instant cleared vs barred rosters", "Signed Senate-format PDF registers", "Multi-sheet Excel matrices"],
     },
   ];
 
   const testimonials = [
     {
-      headline: "Security and convenience really work together.",
+      headline: "400 students signed in under 90 seconds without chaotic paper sheets.",
       quote:
-        "With ClassMark, our lecture hall of 400 students is signed in within 90 seconds without chaotic paper sheets, and our exam clearance lists are generated instantly.",
+        "With ClassMark, our lecture hall of 400 engineering students is signed in within 90 seconds. We eliminated proxy signing entirely, and our semester examination clearance roster is ready before exams start.",
       name: "Dr. Chioma Adebayo",
-      role: "Senior Lecturer & Exam Officer, Computer Science",
-      institution: "Faculty of Science & Computing",
+      role: "Senior Lecturer & Faculty Exam Officer",
+      institution: "Faculty of Computing & Information Science",
       avatar: "/images/landing/chioma-portrait.jpg",
     },
     {
-      headline: "Proxy attendance eliminated across all faculties.",
+      headline: "Proxy attendance eliminated across all faculties. Fully NUC-audited.",
       quote:
-        "The hardware device locking coupled with random physical in-class PINs completely solved attendance fraud. We now have 100% audited records for our NUC accreditation.",
+        "The hardware device locking coupled with random physical in-class PINs completely solved student proxy fraud. Our department now possesses immutable, verified attendance ledgers for Senate and NUC accreditation.",
       name: "Prof. Babatunde Alabi",
-      role: "Head of Academic Planning",
+      role: "Head of Academic Planning & Quality Assurance",
       institution: "Directorate of Academic Affairs",
       avatar: "/images/landing/dean-portrait.jpg",
+    },
+    {
+      headline: "Preserved every leading zero in our 2,500-student university roster.",
+      quote:
+        "Previous software corrupted matriculation numbers starting with '00'. ClassMark imported our messy departmental Excel and Word rosters flawlessly with zero data loss or manual retyping.",
+      name: "Dr. David Ejembi",
+      role: "Dean of Faculty & Academic Board Member",
+      institution: "College of Applied Sciences",
+      avatar: "/images/landing/portrait-female.jpg",
     },
   ];
 
@@ -144,9 +182,12 @@ export default function HomePage() {
           <p>
             Under Nigerian National Universities Commission (NUC) academic guidelines, candidates are required to attain a minimum of <strong>70% to 75% lecture and laboratory attendance</strong> to be cleared for semester examinations.
           </p>
-          <div className="p-3.5 rounded-xl bg-[#edebe4] space-y-2">
-            <h5 className="font-bold text-[#111111]">Compliance Verification Criteria:</h5>
-            <ul className="list-disc pl-5 space-y-1">
+          <div className="p-4 rounded-2xl bg-[#edebe4] border border-black/[0.04] space-y-2">
+            <h5 className="font-bold text-[#111111] flex items-center gap-2">
+              <Award className="w-4 h-4 text-stone-800" />
+              Compliance Verification Criteria:
+            </h5>
+            <ul className="list-disc pl-5 space-y-1 text-stone-600">
               <li>Verified student attendance logs recorded per academic session.</li>
               <li>Complete date, time, and session duration tracking.</li>
               <li>Tamper-proof audit logs preventing retroactive proxy entries.</li>
@@ -154,7 +195,7 @@ export default function HomePage() {
             </ul>
           </div>
           <p>
-            ClassMark automatically enforces these criteria, computing semester percentage rankings and flagging below-threshold students before examination clearance.
+            ClassMark automatically enforces these criteria, computing semester percentage rankings and flagging below-threshold students before examination clearance slips are printed.
           </p>
         </div>
       ),
@@ -165,20 +206,26 @@ export default function HomePage() {
       content: (
         <div className="space-y-4 text-xs sm:text-sm text-stone-700 leading-relaxed">
           <p>
-            ClassMark eliminates the chaotic manual tallying of attendance sign-in sheets before final exams.
+            ClassMark eliminates the chaotic manual tallying of attendance sign-in sheets before final semester examinations.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="p-3 rounded-xl bg-white border border-black/10">
-              <span className="font-bold text-emerald-800 text-xs">Eligible Candidates (≥ 75%)</span>
-              <p className="text-xs text-stone-600 mt-1">Automatic clearance status with digital verification stamps.</p>
+            <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200/60">
+              <span className="font-bold text-emerald-900 text-xs flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                Eligible Candidates (≥ 75%)
+              </span>
+              <p className="text-xs text-emerald-700 mt-1">Automatic clearance status with digital verification stamps and printable hall passes.</p>
             </div>
-            <div className="p-3 rounded-xl bg-white border border-black/10">
-              <span className="font-bold text-rose-800 text-xs">Barred Candidates (&lt; 75%)</span>
-              <p className="text-xs text-stone-600 mt-1">Instant notification with complete breakdown of missed lectures.</p>
+            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200/60">
+              <span className="font-bold text-rose-900 text-xs flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                Barred Candidates (&lt; 75%)
+              </span>
+              <p className="text-xs text-rose-700 mt-1">Instant notification with complete breakdown of missed lectures and deficit calculations.</p>
             </div>
           </div>
           <p>
-            Department exam officers can generate printable official clearance rosters with a single click.
+            Department exam officers can generate printable official clearance rosters and Senate-format summary sheets with a single click.
           </p>
         </div>
       ),
@@ -191,11 +238,23 @@ export default function HomePage() {
           <p>
             Every attendance session generated on ClassMark produces a cryptographically validated session ledger with ISO 8601 timestamps, lecturer credentials, and verified student check-in metadata.
           </p>
-          <div className="p-3.5 rounded-xl bg-[#edebe4] space-y-1.5 text-xs font-mono">
-            <div>• GEO/IP Range Verification</div>
-            <div>• Unique Device Hardware Hash (UUID)</div>
-            <div>• Single Check-In Per Hardware Token</div>
-            <div>• Exportable Audit Log for Senate Accreditation</div>
+          <div className="p-4 rounded-2xl bg-[#edebe4] border border-black/[0.04] space-y-2 text-xs font-mono text-stone-800">
+            <div className="flex items-center gap-2">
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <span>GEO & Session IP Range Verification</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Unique Device Hardware Hash (UUID) Binding</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Single Check-In Per Physical Smartphone</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Immutable Audit Log for Senate & NUC Verification</span>
+            </div>
           </div>
         </div>
       ),
@@ -208,12 +267,12 @@ export default function HomePage() {
           <p>
             Traditional paper sheets and static QR codes suffer from widespread proxy signing, where absent students share links via WhatsApp or peer sign-ins.
           </p>
-          <p>
-            <strong>ClassMark&apos;s 3-Layer Defense:</strong>
+          <p className="font-semibold text-stone-900">
+            ClassMark&apos;s 3-Layer Defense:
           </p>
-          <ol className="list-decimal pl-5 space-y-2">
+          <ol className="list-decimal pl-5 space-y-2 text-stone-600">
             <li><strong>Hardware Fingerprinting:</strong> Each student&apos;s device is cryptographically bound to their matriculation number upon first scan. One phone cannot check in for another student.</li>
-            <li><strong>Dynamic In-Class PIN:</strong> The lecturer announces a randomized 4-digit code in the classroom that expires when the session ends.</li>
+            <li><strong>Dynamic In-Class PIN:</strong> The lecturer announces or displays a randomized 4-digit code in the classroom that expires when the session ends.</li>
             <li><strong>Session Expiry Windows:</strong> Sessions automatically close when the lecture concludes, stopping late proxy submissions.</li>
           </ol>
         </div>
@@ -265,23 +324,30 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#faf9f5] text-[#161616] font-sans antialiased selection:bg-[#d7f837] selection:text-black">
-      {/* Outer Padding Container matching the high-end framed layout */}
-      <div className="max-w-[1440px] mx-auto p-3 sm:p-5 lg:p-6 space-y-6 sm:space-y-8">
+      {/* Outer Padding Container strictly bounded to 1200px max width */}
+      <div className="max-w-[1200px] mx-auto px-3 sm:px-5 lg:px-6 py-4 sm:py-6 space-y-6 sm:space-y-8">
         
         {/* ========================================================= */}
-        {/* HERO CARD CONTAINER (Warm Gray Framed Card with Rounded Corners) */}
+        {/* HERO CARD CONTAINER (Warm Stone Framed Architecture) */}
         {/* ========================================================= */}
-        <section className="bg-[#edebe4] rounded-[28px] sm:rounded-[36px] lg:rounded-[42px] border border-black/[0.04] p-5 sm:p-8 lg:p-12 relative overflow-hidden shadow-xs">
+        <section className="bg-[#edebe4] rounded-[28px] sm:rounded-[36px] lg:rounded-[40px] border border-black/[0.05] p-5 sm:p-7 lg:p-10 relative overflow-hidden shadow-xs">
           
+          {/* Subtle Ambient Background Gradients */}
+          <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-gradient-to-br from-[#d7f837]/25 via-emerald-200/15 to-transparent rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-[360px] h-[360px] bg-gradient-to-tr from-stone-300/40 via-transparent to-transparent rounded-full blur-2xl pointer-events-none" />
+
           {/* Top Embedded Navbar inside Hero Card */}
-          <header className="flex items-center justify-between pb-8 sm:pb-12 border-b border-black/[0.06]">
+          <header className="relative z-10 flex items-center justify-between pb-6 sm:pb-8 border-b border-black/[0.06]">
             {/* Left: Navigation links */}
-            <nav className="hidden lg:flex items-center gap-7 text-[12px] font-semibold tracking-wider uppercase text-stone-600">
+            <nav className="hidden lg:flex items-center gap-6 text-[12px] font-semibold tracking-wider uppercase text-stone-600">
               <a href="#features" className="hover:text-black transition-colors">
-                Features
+                Capabilities
+              </a>
+              <a href="#cockpit-demo" className="hover:text-black transition-colors">
+                Live Simulator
               </a>
               <a href="#security" className="hover:text-black transition-colors">
-                Security
+                Anti-Proxy Shield
               </a>
               <a href="#workflow" className="hover:text-black transition-colors">
                 Workflow
@@ -289,9 +355,10 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={() => setActiveModal("nuc")}
-                className="hover:text-black transition-colors cursor-pointer uppercase tracking-wider text-[12px] font-semibold text-stone-600"
+                className="hover:text-black transition-colors cursor-pointer uppercase tracking-wider text-[12px] font-semibold text-stone-600 flex items-center gap-1.5"
               >
-                NUC Standards
+                <span>NUC Standard</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
               </button>
             </nav>
 
@@ -303,27 +370,35 @@ export default function HomePage() {
               <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-105 transition-transform">
                 <GraduationCap className="w-4 h-4 text-[#d7f837]" />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className="font-extrabold text-[#111111] tracking-tight text-lg sm:text-xl">
                   CLASSMARK
                 </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#d7f837]"></span>
+                <span className="w-2 h-2 rounded-full bg-[#d7f837]"></span>
               </div>
             </Link>
 
             {/* Right: Action Pill Buttons & Mobile Menu Trigger */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               <Link
                 to="/login"
-                className="inline-flex items-center gap-1.5 bg-[#d7f837] hover:bg-[#c9ea28] active:scale-95 text-black text-xs font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all shadow-xs"
+                className="hidden sm:inline-flex items-center gap-1.5 bg-white hover:bg-stone-50 border border-black/10 active:scale-95 text-stone-800 text-xs font-bold px-4 py-2 rounded-full transition-all shadow-2xs"
               >
                 <span>Sign In</span>
+              </Link>
+
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-1.5 bg-[#d7f837] hover:bg-[#c9ea28] active:scale-95 text-black text-xs font-bold px-4 py-2 sm:px-4 sm:py-2 rounded-full transition-all shadow-xs"
+              >
+                <span>Get Started</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
 
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white border border-black/5 flex items-center justify-center text-stone-800 transition-colors cursor-pointer shadow-2xs"
+                className="w-9 h-9 rounded-full bg-white/90 hover:bg-white border border-black/5 flex items-center justify-center text-stone-800 transition-colors cursor-pointer shadow-2xs lg:hidden"
                 aria-label="Toggle navigation menu"
                 aria-expanded={mobileMenuOpen}
               >
@@ -333,30 +408,37 @@ export default function HomePage() {
           </header>
 
           {/* Hero Content: 2-Column Split */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-8 lg:gap-12 items-center pt-6 sm:pt-10 lg:pt-14">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center pt-6 sm:pt-8 lg:pt-10">
             
-            {/* Left Column: Headline & Action CTAs */}
-            <div className="md:col-span-7 space-y-5 sm:space-y-7">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/[0.05] border border-black/[0.06] text-[11px] font-semibold uppercase tracking-wider text-stone-700">
-                <ShieldCheck className="w-3.5 h-3.5 text-black" />
-                <span>Designed for Nigerian Universities and Tertiary Institutions</span>
+            {/* Left Column: Investor Value Prop & Headline */}
+            <div className="lg:col-span-7 space-y-4 sm:space-y-6">
+              
+              {/* Institutional Pill Badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border border-black/[0.08] text-[11px] font-semibold text-stone-800 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-bold text-[#111111]">NUC-Compliant Architecture</span>
+                <span className="text-stone-400">·</span>
+                <span className="text-stone-600">Zero Proxy Fraud</span>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl lg:text-[56px] font-extrabold tracking-tight text-[#111111] leading-[1.06]">
-                Your Academic Attendance <br className="hidden sm:inline" />
-                Safe — Seamless and Secure
+              {/* Pitch-Grade Headline */}
+              <h1 className="text-3xl sm:text-5xl lg:text-[46px] font-extrabold tracking-tight text-[#111111] leading-[1.08]">
+                The Zero-Proxy University <br className="hidden sm:inline" />
+                Attendance Infrastructure.
               </h1>
 
-              <p className="text-sm sm:text-base text-stone-600 max-w-xl leading-relaxed font-normal">
-                Import class lists seamlessly, conduct secure QR-based lecture attendance, prevent proxy check-ins, and export verified semester reports in Excel and PDF formats.
+              {/* Subtitle */}
+              <p className="text-xs sm:text-sm lg:text-[15px] text-stone-600 max-w-xl leading-relaxed font-normal">
+                Replace chaotic paper sign-ins with 90-second dynamic QR verification. Hardware device locking permanently stops proxy attendance, while automated 75% examination clearance matrices eliminate weeks of manual departmental audits.
               </p>
 
+              {/* Action Buttons */}
               <div className="pt-2 flex flex-wrap items-center gap-3">
                 <Link
                   to="/login"
-                  className="inline-flex items-center gap-3 bg-[#111111] hover:bg-black text-white text-xs sm:text-sm font-semibold pl-5 pr-2.5 py-2.5 rounded-full shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="inline-flex items-center gap-3 bg-[#111111] hover:bg-black text-white text-xs sm:text-sm font-semibold pl-5 pr-2.5 py-2.5 rounded-full shadow-sm hover:scale-[1.01] active:scale-[0.99] transition-all"
                 >
-                  <span>Access Lecturer Workspace</span>
+                  <span>Launch Lecturer Workspace</span>
                   <span className="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shadow-xs">
                     <ArrowRight className="w-3.5 h-3.5" />
                   </span>
@@ -364,142 +446,511 @@ export default function HomePage() {
 
                 <Link
                   to="/register"
-                  className="inline-flex items-center gap-2 bg-white/90 hover:bg-white text-stone-800 text-xs sm:text-sm font-semibold px-5 py-3 rounded-full border border-black/5 hover:border-black/15 shadow-2xs transition-all"
+                  className="inline-flex items-center gap-2 bg-white hover:bg-stone-50 text-stone-800 text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-full border border-black/10 hover:border-black/20 shadow-2xs transition-all"
                 >
                   <UserPlus className="w-4 h-4 text-stone-600" />
                   <span>Create Account</span>
                 </Link>
               </div>
 
-              {/* Bottom indicators in hero */}
-              <div className="pt-4 sm:pt-6 flex flex-wrap items-center gap-4 sm:gap-6 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-500">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                  Dynamic QR Check-in
-                </span>
-                <span className="text-stone-300">/</span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#111111]"></span>
-                  Hardware Device Locking
-                </span>
-                <span className="text-stone-300">/</span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#d7f837]"></span>
-                  Excel & PDF Exports
-                </span>
+              {/* Institutional Traction Bar */}
+              <div className="pt-4 border-t border-black/[0.06] grid grid-cols-2 sm:grid-cols-4 gap-3 text-stone-700">
+                <div className="space-y-0.5">
+                  <div className="text-lg sm:text-xl font-extrabold text-[#111111] tracking-tight">
+                    90s
+                  </div>
+                  <div className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider">
+                    Hall Check-In Speed
+                  </div>
+                </div>
+
+                <div className="space-y-0.5">
+                  <div className="text-lg sm:text-xl font-extrabold text-[#111111] tracking-tight">
+                    0%
+                  </div>
+                  <div className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider">
+                    Proxy Tolerance
+                  </div>
+                </div>
+
+                <div className="space-y-0.5">
+                  <div className="text-lg sm:text-xl font-extrabold text-[#111111] tracking-tight">
+                    100%
+                  </div>
+                  <div className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider">
+                    Leading-Zero Fidelity
+                  </div>
+                </div>
+
+                <div className="space-y-0.5">
+                  <div className="text-lg sm:text-xl font-extrabold text-[#111111] tracking-tight">
+                    75%
+                  </div>
+                  <div className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider">
+                    NUC Exam Threshold
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Right Column: Hero Live Interactive Lecturer Cockpit Demo */}
+            <div id="cockpit-demo" className="lg:col-span-5 relative">
+              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-black/[0.08] shadow-xl">
+                
+                {/* Cockpit Window Top Bar */}
+                <div className="px-4 py-3 bg-[#111111] text-white flex items-center justify-between border-b border-stone-800">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <span className="text-[11px] font-mono text-stone-300 ml-2 font-bold">
+                      PROJECTOR COCKPIT
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-stone-800 text-[10px] font-mono text-emerald-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    <span>LIVE</span>
+                  </div>
+                </div>
+
+                {/* Course Bar */}
+                <div className="px-4 py-2.5 bg-[#f5f4ee] border-b border-black/[0.06] flex items-center justify-between text-xs">
+                  <div>
+                    <span className="font-extrabold text-[#111111]">CSC 201</span>
+                    <span className="text-stone-500 font-medium ml-1.5 hidden sm:inline">Data Structures & Algos</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-stone-600">
+                    <Clock className="w-3.5 h-3.5 text-stone-400" />
+                    <span>{demoTimeLeft}</span>
+                  </div>
+                </div>
+
+                {/* Cockpit Interactive Mode Tabs */}
+                <div className="px-3 pt-2 pb-1 bg-stone-50 border-b border-black/[0.05] flex items-center gap-1.5 text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => setDemoTab("projector")}
+                    className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                      demoTab === "projector"
+                        ? "bg-white text-black shadow-2xs border border-black/10"
+                        : "text-stone-600 hover:text-black"
+                    }`}
+                  >
+                    Dynamic QR
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDemoTab("clearance")}
+                    className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                      demoTab === "clearance"
+                        ? "bg-white text-black shadow-2xs border border-black/10"
+                        : "text-stone-600 hover:text-black"
+                    }`}
+                  >
+                    75% Exam Clearance
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDemoTab("audit")}
+                    className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                      demoTab === "audit"
+                        ? "bg-white text-black shadow-2xs border border-black/10"
+                        : "text-stone-600 hover:text-black"
+                    }`}
+                  >
+                    Audit Ledger
+                  </button>
+                </div>
+
+                {/* Cockpit Interactive Content */}
+                <div className="p-4 sm:p-5">
+                  {demoTab === "projector" && (
+                    <div className="space-y-4">
+                      {/* Dynamic In-Class QR Graphic with Hall PIN */}
+                      <div className="flex items-center gap-4 bg-[#edebe4] p-3.5 rounded-2xl border border-black/[0.05]">
+                        <div className="w-24 h-24 bg-white p-2 rounded-xl border border-black/10 flex items-center justify-center shrink-0 shadow-2xs relative">
+                          <QrCode className="w-full h-full text-[#111111]" />
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <span className="w-5 h-5 rounded-md bg-[#d7f837] text-black text-[9px] font-black flex items-center justify-center border border-black/20 shadow-2xs">
+                              CM
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1.5 flex-1">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-stone-500">
+                            Classroom Projector Code
+                          </div>
+                          <div className="text-xs font-semibold text-stone-700">
+                            Random in-class security PIN:
+                          </div>
+                          <div className="inline-block px-3 py-1 bg-black text-[#d7f837] rounded-lg font-mono font-black text-sm tracking-widest shadow-2xs">
+                            PIN: 8492
+                          </div>
+                          <div className="text-[10px] text-stone-500">
+                            Refreshes when session concludes
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Live Ticker Progress */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between text-xs font-bold">
+                          <span className="flex items-center gap-1.5 text-stone-800">
+                            <Users className="w-3.5 h-3.5 text-stone-500" />
+                            <span>Auditorium Attendance</span>
+                          </span>
+                          <span className="text-emerald-700 font-mono">
+                            {demoVerifiedCount} / 412 Verified (93%)
+                          </span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-stone-200 overflow-hidden">
+                          <div
+                            className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                            style={{ width: `${(demoVerifiedCount / 412) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Live In-Class Stream */}
+                      <div className="space-y-1.5 pt-1">
+                        <div className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">
+                          Live In-Hall Device Handshakes:
+                        </div>
+                        <div className="space-y-1 text-[11px] font-mono text-stone-700">
+                          <div className="p-1.5 rounded-lg bg-stone-50 border border-black/[0.04] flex items-center justify-between">
+                            <span className="font-bold text-[#111111]">001429 · Adebayo K.</span>
+                            <span className="text-emerald-600 text-[10px] font-semibold flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3" /> Hardware locked
+                            </span>
+                          </div>
+                          <div className="p-1.5 rounded-lg bg-stone-50 border border-black/[0.04] flex items-center justify-between">
+                            <span className="font-bold text-[#111111]">001580 · Okafor C.</span>
+                            <span className="text-emerald-600 text-[10px] font-semibold flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3" /> Hardware locked
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {demoTab === "clearance" && (
+                    <div className="space-y-3">
+                      <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200/60 text-xs text-amber-900 flex items-center justify-between">
+                        <span className="font-semibold">NUC Minimum Requirement:</span>
+                        <span className="font-bold">≥ 75% Total Lectures</span>
+                      </div>
+
+                      <div className="space-y-1.5 text-xs">
+                        <div className="p-2 rounded-xl bg-stone-50 border border-black/[0.04] flex items-center justify-between">
+                          <div>
+                            <div className="font-bold text-stone-900">001429 · Adebayo Kehinde</div>
+                            <div className="text-[10px] text-stone-500">22 of 24 sessions attended</div>
+                          </div>
+                          <div className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                            91.7% · CLEARED ✓
+                          </div>
+                        </div>
+
+                        <div className="p-2 rounded-xl bg-stone-50 border border-black/[0.04] flex items-center justify-between">
+                          <div>
+                            <div className="font-bold text-stone-900">001580 · Okafor Chinedu</div>
+                            <div className="text-[10px] text-stone-500">19 of 24 sessions attended</div>
+                          </div>
+                          <div className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                            79.2% · CLEARED ✓
+                          </div>
+                        </div>
+
+                        <div className="p-2 rounded-xl bg-stone-50 border border-black/[0.04] flex items-center justify-between">
+                          <div>
+                            <div className="font-bold text-stone-900">001602 · Danjuma Musa</div>
+                            <div className="text-[10px] text-stone-500">13 of 24 sessions attended</div>
+                          </div>
+                          <div className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[10px] font-bold">
+                            54.1% · BARRED ✕
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setActiveModal("exam")}
+                          className="flex-1 py-1.5 px-2 rounded-lg bg-black text-white text-[11px] font-bold text-center flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-[#d7f837]" />
+                          <span>Senate PDF Roster</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setActiveModal("nuc")}
+                          className="py-1.5 px-2.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-[11px] font-bold flex items-center gap-1 border border-black/5 cursor-pointer"
+                        >
+                          <Download className="w-3 h-3 text-stone-500" />
+                          <span>Excel</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {demoTab === "audit" && (
+                    <div className="space-y-3 text-xs">
+                      <div className="p-2.5 rounded-xl bg-stone-100 text-stone-700 text-[11px] space-y-1 font-mono">
+                        <div className="flex justify-between">
+                          <span className="text-stone-500">Session ID:</span>
+                          <span className="font-bold text-stone-900">SESS-2026-CSC201-08</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-stone-500">Hardware Cipher:</span>
+                          <span className="font-bold text-emerald-700">AES-256-GCM / SHA256</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-stone-500">Duplicate Devices:</span>
+                          <span className="font-bold text-emerald-700">0 (Blocked)</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1 text-[11px]">
+                        <div className="p-2 rounded-lg bg-stone-50 border border-black/[0.04] space-y-0.5">
+                          <div className="font-bold text-stone-900">Lecturer Manual Override Recorded</div>
+                          <div className="text-[10px] text-stone-500">
+                            Student 001389 marked present: &quot;Medical admission slip approved by Clinic&quot;
+                          </div>
+                          <div className="text-[9px] font-mono text-stone-400">Timestamp: 2026-10-18 10:14:02 GMT+1</div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setActiveModal("audit")}
+                        className="w-full py-1.5 rounded-lg bg-[#edebe4] hover:bg-[#e4e2db] text-stone-800 text-[11px] font-bold text-center transition-colors cursor-pointer"
+                      >
+                        View Full Accreditation Framework →
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer Strip */}
+                <div className="px-4 py-2 bg-stone-50 border-t border-black/[0.06] flex items-center justify-between text-[10px] text-stone-500 font-medium">
+                  <span className="flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Cryptographic Device Binding</span>
+                  </span>
+                  <span>100% Audit Precision</span>
+                </div>
+
               </div>
             </div>
 
-            {/* Right Column: Hero Real Academic Lecture Hall Showcase */}
-            <div className="md:col-span-5 relative">
-              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-black/10 bg-stone-200">
-                <img
-                  src="/images/landing/hero-lecture-hall.jpg"
-                  alt="Modern university lecture hall with tiered seating and presentation screen"
-                  className="w-full h-auto aspect-[4/3] object-cover hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
-                
-                {/* Floating pill badge on lecture hall photo */}
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3.5 py-2 rounded-xl bg-white/90 backdrop-blur-md border border-white/60 text-xs font-semibold text-stone-900 shadow-sm">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Lecture Session Active
-                  </span>
-                  <span className="text-[11px] font-mono text-stone-700 bg-stone-100 px-2 py-0.5 rounded font-bold">
-                    CSC 401 · 240 ENROLLED
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
         {/* ========================================================= */}
-        {/* SECTION 2: BENTO GRID ("Welcome to a Smarter Way of Living") */}
+        {/* SECTION 2: INVESTOR PROBLEM VS SOLUTION COMPARISON */}
         {/* ========================================================= */}
-        <section id="features" className="py-8 sm:py-14 space-y-8 sm:space-y-12 scroll-mt-20">
-          {/* Centered Heading */}
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#111111]">
-              Welcome to a Smarter Way of Attendance
+        <section className="py-6 sm:py-8 space-y-6">
+          <div className="text-center max-w-2xl mx-auto space-y-1.5">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-stone-500">
+              The Enterprise Opportunity
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111111]">
+              Why Paper Sign-In Sheets Fail Universities
             </h2>
-            <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-stone-500">
-              Engineered specifically for academic workflows, lecture halls, and departmental audits
+            <p className="text-xs sm:text-sm text-stone-600">
+              Traditional paper registers drain teaching hours, enable massive proxy fraud, and trigger accreditation risks.
             </p>
           </div>
 
-          {/* 4-Card Bento Grid with Authentic Academic Images */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-stretch">
             
-            {/* Bento Card 1: Students in lecture hall with phone */}
-            <div className="md:col-span-5 relative rounded-[28px] sm:rounded-[32px] overflow-hidden border border-black/[0.06] bg-stone-100 group shadow-xs min-h-[380px] sm:min-h-[440px] h-full flex flex-col justify-end">
+            {/* The Old Reality: Paper Sheets */}
+            <div className="bg-white p-5 sm:p-7 rounded-[24px] sm:rounded-[28px] border border-rose-200/80 shadow-xs space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-rose-100">
+                <span className="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-rose-600" />
+                  Traditional Paper Registers
+                </span>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">
+                  Compromised Integrity
+                </span>
+              </div>
+
+              <ul className="space-y-3 text-xs sm:text-[13px] text-stone-700">
+                <li className="flex items-start gap-2.5">
+                  <span className="w-4 h-4 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">✕</span>
+                  <div>
+                    <strong>20 to 30 minutes lost per lecture</strong> circulating paper sheets through tiered 400-seat lecture halls.
+                  </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-4 h-4 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">✕</span>
+                  <div>
+                    <strong>Up to 45% proxy attendance rate</strong> with students signing for absent peers or sharing codes on WhatsApp.
+                  </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-4 h-4 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">✕</span>
+                  <div>
+                    <strong>Lost, damaged, or spilled-on rosters</strong> with no audit trail or cryptographic recovery.
+                  </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-4 h-4 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">✕</span>
+                  <div>
+                    <strong>Weeks of grueling manual Excel tallying</strong> by exam officers trying to calculate the 75% exam clearance threshold.
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            {/* The ClassMark Standard */}
+            <div className="bg-[#edebe4] p-5 sm:p-7 rounded-[24px] sm:rounded-[28px] border border-black/[0.08] shadow-xs space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-black/[0.06]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#111111] flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  The ClassMark Standard
+                </span>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#d7f837] text-black">
+                  Zero Proxy Guaranteed
+                </span>
+              </div>
+
+              <ul className="space-y-3 text-xs sm:text-[13px] text-stone-800">
+                <li className="flex items-start gap-2.5">
+                  <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">✓</span>
+                  <div>
+                    <strong>90-second total hall sign-in</strong> with high-visibility dynamic QR projection and zero disruption to lecturing.
+                  </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">✓</span>
+                  <div>
+                    <strong>0% proxy attendance</strong> via hardware device binding (1 physical phone locks permanently to 1 matric number).
+                  </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">✓</span>
+                  <div>
+                    <strong>100% leading-zero integrity</strong> supporting universal roster ingestion across Excel, CSV, Word, and PDF.
+                  </div>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">✓</span>
+                  <div>
+                    <strong>Instant 1-click Senate reports</strong> with official printable clearance rosters and multi-sheet semester matrices.
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* SECTION 3: BENTO GRID CAPABILITIES */}
+        {/* ========================================================= */}
+        <section id="features" className="py-6 sm:py-10 space-y-6 sm:space-y-8 scroll-mt-20">
+          <div className="text-center max-w-2xl mx-auto space-y-1.5">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-stone-500">
+              Core Capabilities
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111111]">
+              Engineered for Modern University Scale
+            </h2>
+            <p className="text-xs sm:text-sm text-stone-600">
+              Purpose-built for African higher education workflows, large lecture theatres, and strict Senate compliance.
+            </p>
+          </div>
+
+          {/* 4-Card Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+            
+            {/* Bento Card 1: Universal Class List Import */}
+            <div className="md:col-span-5 relative rounded-[24px] sm:rounded-[28px] overflow-hidden border border-black/[0.06] bg-stone-100 group shadow-xs min-h-[340px] sm:min-h-[400px] flex flex-col justify-end">
               <img
                 src="/images/landing/students-lecture-phone.jpg"
                 alt="Students in university lecture hall using smartphones for attendance"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               
               {/* Frosted Glass Floating Badge */}
-              <div className="relative m-4 sm:m-6 p-4 rounded-2xl bg-white/40 backdrop-blur-md border border-white/50 text-white shadow-lg space-y-2">
+              <div className="relative m-4 sm:m-5 p-4 rounded-2xl bg-white/40 backdrop-blur-md border border-white/50 text-white shadow-lg space-y-2">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-full bg-[#d7f837] text-black flex items-center justify-center font-bold shadow-xs">
                     <UploadCloud className="w-3.5 h-3.5" />
                   </div>
                   <span className="text-xs font-bold text-white tracking-wide uppercase">
-                    Universal Class List Import
+                    Universal Roster Ingestion
                   </span>
                 </div>
                 <p className="text-xs text-white/95 leading-relaxed font-medium">
-                  Directly import student rosters from Excel (.xlsx), CSV, Word (.docx), and PDF files. Preserves leading zeros in matriculation numbers.
+                  Directly ingest student rosters from Excel (.xlsx), CSV, Word (.docx), and PDF. Preserves matriculation leading zeros (e.g. 004128) automatically.
                 </p>
               </div>
             </div>
 
             {/* Bento Card 2 & 3: Middle Column Split */}
-            <div className="md:col-span-4 flex flex-col gap-5 sm:gap-6 justify-between h-full">
+            <div className="md:col-span-4 flex flex-col gap-4 sm:gap-6 justify-between">
               
-              {/* Top: University Scholars collaborating in library/classroom */}
-              <div className="relative rounded-[28px] sm:rounded-[32px] overflow-hidden border border-black/[0.06] bg-stone-100 shadow-xs aspect-[4/3] group">
+              {/* Top: Photo of Scholars collaborating */}
+              <div className="relative rounded-[24px] sm:rounded-[28px] overflow-hidden border border-black/[0.06] bg-stone-100 shadow-xs aspect-[16/10] group">
                 <img
                   src="/images/landing/students-classroom.jpg"
                   alt="University students collaborating with laptops in class"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium">
-                  Verified Academic Roster
+                <div className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#d7f837]" />
+                  <span>Verified Roster Verification</span>
                 </div>
               </div>
 
-              {/* Bottom: Vibrant Lime Card matching screenshot */}
-              <div className="rounded-[28px] sm:rounded-[32px] bg-[#d7f837] p-6 sm:p-7 text-black flex flex-col justify-between shadow-xs border border-black/5 flex-1 min-h-[170px]">
-                <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center font-bold shadow-xs">
-                  <ShieldCheck className="w-4 h-4 text-[#d7f837]" />
+              {/* Bottom: Vibrant Lime Card */}
+              <div className="rounded-[24px] sm:rounded-[28px] bg-[#d7f837] p-5 sm:p-6 text-black flex flex-col justify-between shadow-xs border border-black/5 flex-1 min-h-[160px]">
+                <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold shadow-xs">
+                  <Fingerprint className="w-4 h-4 text-[#d7f837]" />
                 </div>
-                <div className="space-y-1 pt-4">
-                  <h3 className="font-extrabold text-base sm:text-lg tracking-tight leading-tight">
-                    Zero Proxy Attendance
+                <div className="space-y-1 pt-3">
+                  <h3 className="font-extrabold text-base tracking-tight leading-tight">
+                    Hardware Device-Locked Defense
                   </h3>
                   <p className="text-xs font-medium text-black/80 leading-snug">
-                    Hardware device-locked matriculation verification and physical classroom security.
+                    One physical smartphone binds exclusively to one matriculation number. Zero proxy sign-ins possible.
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Bento Card 4: Right Card with Large Stat */}
-            <div className="md:col-span-3 rounded-[28px] sm:rounded-[32px] bg-[#edebe4] p-6 sm:p-7 border border-black/[0.05] flex flex-col justify-between shadow-xs min-h-[380px] sm:min-h-[440px] h-full">
-              <div className="w-9 h-9 rounded-full bg-[#d7f837] text-black flex items-center justify-center font-bold shadow-xs">
-                <Sparkles className="w-4 h-4" />
+            <div className="md:col-span-3 rounded-[24px] sm:rounded-[28px] bg-[#edebe4] p-5 sm:p-6 border border-black/[0.05] flex flex-col justify-between shadow-xs min-h-[340px] sm:min-h-[400px]">
+              <div className="w-8 h-8 rounded-full bg-[#d7f837] text-black flex items-center justify-center font-bold shadow-xs">
+                <Award className="w-4 h-4" />
               </div>
-              <div className="space-y-2 pt-8 sm:pt-14">
-                <div className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#111111]">
-                  99%
+              <div className="space-y-2 pt-6">
+                <div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#111111]">
+                  75%
                 </div>
-                <p className="text-xs font-semibold text-stone-600 leading-relaxed">
-                  Seamless integration with faculty exam clearance and department archives.
+                <div className="text-xs font-bold text-stone-800 uppercase tracking-wider">
+                  NUC Senate Clearance
+                </div>
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Automatic candidate threshold alerts, barred roster generation, and sealed PDF registers.
                 </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveModal("nuc")}
+                    className="text-xs font-bold text-[#111111] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Read NUC Guidelines</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -507,138 +958,80 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================= */}
-        {/* SECTION 3: KEYNOTE QUOTE & STATS BANNER */}
+        {/* SECTION 4: STRAIGHTFORWARD 4-STEP LECTURER WORKFLOW */}
         {/* ========================================================= */}
-        <section className="bg-[#f4f3ed] rounded-[28px] sm:rounded-[36px] lg:rounded-[42px] p-6 sm:p-10 lg:p-14 border border-black/[0.05] shadow-xs space-y-8 sm:space-y-12">
-          
-          {/* Top Half: Dean Avatar + Testimonial Quote */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
-            {/* Left: Avatar & Info */}
-            <div className="lg:col-span-3 flex lg:flex-col items-center lg:items-start gap-4">
-              <img
-                src="/images/landing/dean-portrait.jpg"
-                alt="Dr. David Ejembi, Dean of Faculty"
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover ring-4 ring-white shadow-md"
-              />
-              <div>
-                <h4 className="font-extrabold text-stone-900 text-sm sm:text-base">
-                  Dr. David Ejembi
-                </h4>
-                <p className="text-xs text-stone-500 font-medium">
-                  Dean of Faculty / Lead Lecturer
-                </p>
-                <p className="text-[11px] text-stone-400 font-medium">
-                  University Academic Board
-                </p>
-              </div>
+        <section id="workflow" className="py-6 sm:py-8 space-y-6 scroll-mt-20">
+          <div className="text-center max-w-xl mx-auto space-y-1">
+            <h3 className="text-xs font-extrabold uppercase tracking-widest text-stone-400">
+              Streamlined Architecture
+            </h3>
+            <p className="text-xl sm:text-2xl font-bold tracking-tight text-[#111111]">
+              4-Step Complete Lecturer Workflow
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-black/[0.05] shadow-xs space-y-2.5">
+              <span className="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#d7f837] text-black">
+                Step 01
+              </span>
+              <h4 className="font-bold text-sm text-[#111111]">Create Course</h4>
+              <p className="text-xs text-stone-600 leading-relaxed">
+                Specify course code, title, semester, and attendance threshold (defaults to 75% for NUC exams).
+              </p>
             </div>
 
-            {/* Right: Large Quote */}
-            <div className="lg:col-span-9">
-              <p className="text-base sm:text-xl lg:text-2xl font-normal text-stone-800 leading-snug tracking-tight">
-                “The integration of anti-proxy verification into university lecture halls is revolutionizing institutional accountability. ClassMark not only eliminates proxy attendance but delivers effortless accreditation compliance.”
+            <div className="bg-white p-5 rounded-2xl border border-black/[0.05] shadow-xs space-y-2.5">
+              <span className="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#d7f837] text-black">
+                Step 02
+              </span>
+              <h4 className="font-bold text-sm text-[#111111]">Import Class Roster</h4>
+              <p className="text-xs text-stone-600 leading-relaxed">
+                Upload registered students via Excel (.xlsx), CSV, Word (.docx), or PDF with full matric zero preservation.
+              </p>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-black/[0.05] shadow-xs space-y-2.5">
+              <span className="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#d7f837] text-black">
+                Step 03
+              </span>
+              <h4 className="font-bold text-sm text-[#111111]">Display In-Class QR</h4>
+              <p className="text-xs text-stone-600 leading-relaxed">
+                Project dynamic session QR code with randomized in-class PIN. Students verify on their phones in 3 seconds.
+              </p>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-black/[0.05] shadow-xs space-y-2.5">
+              <span className="inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#d7f837] text-black">
+                Step 04
+              </span>
+              <h4 className="font-bold text-sm text-[#111111]">Export Senate Reports</h4>
+              <p className="text-xs text-stone-600 leading-relaxed">
+                Download verified semester registers, attendance matrices, and exam clearance slips in Excel and PDF formats.
               </p>
             </div>
           </div>
-
-          {/* Bottom Half: 4 White Rounded Stat Cards with Lime Icons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            <div className="bg-white rounded-2xl p-5 border border-black/[0.04] shadow-xs flex items-center gap-4">
-              <div className="w-11 h-11 rounded-full bg-[#d7f837] text-black flex items-center justify-center font-bold shrink-0">
-                <UploadCloud className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xl sm:text-2xl font-extrabold text-[#111111] tracking-tight">
-                  80M+
-                </div>
-                <div className="text-[11px] font-semibold text-stone-500">
-                  Total student check-ins processed
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-black/[0.04] shadow-xs flex items-center gap-4">
-              <div className="w-11 h-11 rounded-full bg-[#d7f837] text-black flex items-center justify-center font-bold shrink-0">
-                <GraduationCap className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xl sm:text-2xl font-extrabold text-[#111111] tracking-tight">
-                  50+
-                </div>
-                <div className="text-[11px] font-semibold text-stone-500">
-                  Academic departments & faculties
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-black/[0.04] shadow-xs flex items-center gap-4">
-              <div className="w-11 h-11 rounded-full bg-[#d7f837] text-black flex items-center justify-center font-bold shrink-0">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xl sm:text-2xl font-extrabold text-[#111111] tracking-tight">
-                  100%
-                </div>
-                <div className="text-[11px] font-semibold text-stone-500">
-                  Hardware device proxy prevention
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-5 border border-black/[0.04] shadow-xs flex items-center gap-4">
-              <div className="w-11 h-11 rounded-full bg-[#d7f837] text-black flex items-center justify-center font-bold shrink-0">
-                <FileSpreadsheet className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xl sm:text-2xl font-extrabold text-[#111111] tracking-tight">
-                  $120M+
-                </div>
-                <div className="text-[11px] font-semibold text-stone-500">
-                  Institution hours saved annually
-                </div>
-              </div>
-            </div>
-
-          </div>
         </section>
 
         {/* ========================================================= */}
-        {/* SECTION 4: INSTITUTIONAL PARTNERS LOGO BAR */}
+        {/* SECTION 5: DISCOVER CAPABILITIES SLIDER / DEEP DIVE */}
         {/* ========================================================= */}
-        <section className="py-2 sm:py-4">
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {partners.map((partner, index) => (
-              <div
-                key={index}
-                className="bg-white/80 hover:bg-white border border-black/[0.06] rounded-xl px-3 py-3 text-center flex items-center justify-center text-[11px] font-bold text-stone-600 shadow-2xs hover:border-black/20 transition-all cursor-default"
-              >
-                <span>{partner}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ========================================================= */}
-        {/* SECTION 5: DISCOVER CAPABILITIES SHOWCASE */}
-        {/* ========================================================= */}
-        <section id="workflow" className="py-8 sm:py-12 space-y-6 sm:space-y-8 scroll-mt-20">
-          
-          {/* Header Split */}
+        <section className="py-6 sm:py-10 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-stone-400">
+                Operational Modules
+              </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111111]">
-                Discover core academic attendance capabilities
+                Institutional Feature Breakdown
               </h2>
             </div>
             <div className="text-xs sm:text-sm text-stone-500 max-w-xs sm:text-right font-medium">
-              Engineered specifically for academic workflows, lecture halls, and departmental audits.
+              Built specifically for university exam officers, lecturers, and departmental quality assurance.
             </div>
           </div>
 
-          {/* Interactive Feature Slider / Tabs */}
           <div className="space-y-4">
-            
             {/* Tab navigation pills */}
             <div className="flex flex-wrap items-center gap-2">
               {features.map((feat, idx) => (
@@ -659,17 +1052,17 @@ export default function HomePage() {
             </div>
 
             {/* Feature Showcase Card */}
-            <div className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden bg-[#edebe4] border border-black/[0.05] p-6 sm:p-10 shadow-xs">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden bg-[#edebe4] border border-black/[0.05] p-5 sm:p-8 shadow-xs">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
                 
-                {/* Visual Image: Lecturer in front of lecture hall */}
-                <div className="lg:col-span-7 relative rounded-2xl sm:rounded-3xl overflow-hidden bg-stone-100 shadow-md">
+                {/* Visual Image */}
+                <div className="lg:col-span-7 relative rounded-2xl overflow-hidden bg-stone-100 shadow-sm">
                   <img
                     src="/images/landing/lecturer-hall.jpg"
                     alt={features[activeFeatureTab].title}
-                    className="w-full h-auto aspect-[16/9] object-cover hover:scale-105 transition-transform duration-700"
+                    className="w-full h-auto aspect-[16/10] object-cover hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute top-4 left-4">
+                  <div className="absolute top-3 left-3">
                     <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-xs text-[11px] font-bold text-stone-800 shadow-xs">
                       {features[activeFeatureTab].badge}
                     </span>
@@ -677,12 +1070,12 @@ export default function HomePage() {
                 </div>
 
                 {/* Content Details */}
-                <div className="lg:col-span-5 space-y-4 sm:space-y-6">
+                <div className="lg:col-span-5 space-y-4">
                   <div className="space-y-1">
                     <div className="text-xs font-bold text-stone-500 uppercase tracking-wider">
                       Module {features[activeFeatureTab].code}
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-extrabold text-[#111111] tracking-tight">
+                    <h3 className="text-lg sm:text-2xl font-extrabold text-[#111111] tracking-tight">
                       {features[activeFeatureTab].title}
                     </h3>
                   </div>
@@ -691,7 +1084,16 @@ export default function HomePage() {
                     {features[activeFeatureTab].description}
                   </p>
 
-                  <div className="p-3.5 rounded-xl bg-white/80 border border-black/[0.05] flex items-center justify-between text-xs font-bold text-stone-800">
+                  <ul className="space-y-1.5 text-xs text-stone-700">
+                    {features[activeFeatureTab].highlights.map((h, i) => (
+                      <li key={i} className="flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="p-3 rounded-xl bg-white/80 border border-black/[0.05] flex items-center justify-between text-xs font-bold text-stone-800">
                     <span>Performance Benchmark</span>
                     <span className="text-emerald-700 font-mono">
                       {features[activeFeatureTab].stat}
@@ -701,12 +1103,10 @@ export default function HomePage() {
                   <div className="flex items-center gap-3 pt-2">
                     <Link
                       to="/login"
-                      className="inline-flex items-center gap-2.5 bg-[#111111] hover:bg-black text-white text-xs font-semibold pl-4 pr-2 py-2 rounded-full transition-all shadow-xs"
+                      className="inline-flex items-center gap-2 bg-[#111111] hover:bg-black text-white text-xs font-semibold px-4 py-2 rounded-full transition-all shadow-xs"
                     >
-                      <span>Deploy Module</span>
-                      <span className="w-5 h-5 rounded-full bg-white text-black flex items-center justify-center text-xs">
-                        <ArrowRight className="w-3 h-3" />
-                      </span>
+                      <span>Explore In App</span>
+                      <ArrowRight className="w-3 h-3 text-[#d7f837]" />
                     </Link>
 
                     {/* Pagination Arrows */}
@@ -737,82 +1137,28 @@ export default function HomePage() {
 
               </div>
             </div>
-
           </div>
         </section>
 
         {/* ========================================================= */}
-        {/* SECTION 6: STRAIGHTFORWARD 4-STEP LECTURER WORKFLOW */}
+        {/* SECTION 6: INSTITUTIONAL TESTIMONIALS & TRUST */}
         {/* ========================================================= */}
-        <section className="py-6 sm:py-10 space-y-6">
-          <div className="text-center max-w-xl mx-auto space-y-1">
-            <h3 className="text-xs font-extrabold uppercase tracking-widest text-stone-400">
-              Workflow Architecture
-            </h3>
-            <p className="text-xl sm:text-2xl font-bold tracking-tight text-[#111111]">
-              Straightforward 4-Step Lecturer Process
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-black/[0.05] shadow-xs space-y-3">
-              <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#d7f837] text-black">
-                Step 01
-              </span>
-              <h4 className="font-bold text-sm text-[#111111]">Create Course</h4>
-              <p className="text-xs text-stone-500 leading-relaxed">
-                Specify course code, title, semester, and attendance threshold (e.g. 75%).
-              </p>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-black/[0.05] shadow-xs space-y-3">
-              <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#d7f837] text-black">
-                Step 02
-              </span>
-              <h4 className="font-bold text-sm text-[#111111]">Import Class Roster</h4>
-              <p className="text-xs text-stone-500 leading-relaxed">
-                Upload Excel (.xlsx), CSV, Word (.docx), or PDF list of registered students.
-              </p>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-black/[0.05] shadow-xs space-y-3">
-              <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#d7f837] text-black">
-                Step 03
-              </span>
-              <h4 className="font-bold text-sm text-[#111111]">Display Session QR</h4>
-              <p className="text-xs text-stone-500 leading-relaxed">
-                Students scan dynamic QR in lecture hall and verify via phone fingerprint & PIN.
-              </p>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-black/[0.05] shadow-xs space-y-3">
-              <span className="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#d7f837] text-black">
-                Step 04
-              </span>
-              <h4 className="font-bold text-sm text-[#111111]">Export Semester Report</h4>
-              <p className="text-xs text-stone-500 leading-relaxed">
-                Download verified semester matrix and clearance reports in Excel and PDF formats.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================= */}
-        {/* SECTION 7: TESTIMONIALS ("Here's what people says") */}
-        {/* ========================================================= */}
-        <section id="security" className="py-8 sm:py-14 scroll-mt-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <section id="security" className="py-6 sm:py-10 scroll-mt-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             
             {/* Left side text */}
-            <div className="lg:col-span-4 space-y-4">
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#111111] leading-tight">
-                Here&apos;s what people say
+            <div className="lg:col-span-4 space-y-3">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-stone-400">
+                Institutional Validation
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111111] leading-tight">
+                Trusted by University Academic Leadership
               </h2>
               <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-medium">
-                Trusted by lecturers, department heads, and academic directors across Nigerian tertiary institutions.
+                Adopted across computing, engineering, law, and medical faculties for audit-proof record integrity.
               </p>
 
-              <div className="pt-2 flex items-center gap-3">
+              <div className="pt-2 flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() =>
@@ -820,7 +1166,7 @@ export default function HomePage() {
                       prev > 0 ? prev - 1 : testimonials.length - 1
                     )
                   }
-                  className="w-10 h-10 rounded-full bg-white hover:bg-stone-100 border border-black/5 flex items-center justify-center text-stone-800 cursor-pointer shadow-2xs"
+                  className="w-9 h-9 rounded-full bg-white hover:bg-stone-100 border border-black/5 flex items-center justify-center text-stone-800 cursor-pointer shadow-2xs"
                   aria-label="Previous testimonial"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -832,7 +1178,7 @@ export default function HomePage() {
                       prev < testimonials.length - 1 ? prev + 1 : 0
                     )
                   }
-                  className="w-10 h-10 rounded-full bg-[#d7f837] hover:bg-[#cbf028] text-black flex items-center justify-center cursor-pointer shadow-2xs"
+                  className="w-9 h-9 rounded-full bg-[#d7f837] hover:bg-[#cbf028] text-black flex items-center justify-center cursor-pointer shadow-2xs"
                   aria-label="Next testimonial"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -841,23 +1187,23 @@ export default function HomePage() {
             </div>
 
             {/* Right side testimonial card */}
-            <div className="lg:col-span-8 bg-[#f4f3ed] rounded-[28px] sm:rounded-[36px] p-6 sm:p-10 border border-black/[0.05] shadow-xs space-y-6">
+            <div className="lg:col-span-8 bg-[#edebe4] rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 border border-black/[0.05] shadow-xs space-y-5">
               <div className="space-y-2">
-                <h3 className="font-extrabold text-base sm:text-xl text-[#111111] tracking-tight">
+                <h3 className="font-extrabold text-base sm:text-lg text-[#111111] tracking-tight">
                   “{testimonials[activeTestimonial].headline}”
                 </h3>
-                <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-medium">
+                <p className="text-xs sm:text-sm text-stone-700 leading-relaxed font-medium">
                   {testimonials[activeTestimonial].quote}
                 </p>
               </div>
 
               {/* Author row */}
               <div className="pt-4 border-t border-black/[0.06] flex items-center justify-between">
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-3">
                   <img
                     src={testimonials[activeTestimonial].avatar}
                     alt={testimonials[activeTestimonial].name}
-                    className="w-11 h-11 rounded-full object-cover ring-2 ring-white shadow-xs"
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-xs"
                   />
                   <div>
                     <h4 className="font-extrabold text-xs sm:text-sm text-[#111111]">
@@ -876,10 +1222,10 @@ export default function HomePage() {
                       key={idx}
                       type="button"
                       onClick={() => setActiveTestimonial(idx)}
-                      className={`w-2 h-2 rounded-full transition-all cursor-pointer ${
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
                         activeTestimonial === idx
                           ? "w-6 bg-black"
-                          : "bg-stone-300 hover:bg-stone-400"
+                          : "w-2 bg-stone-300 hover:bg-stone-400"
                       }`}
                       aria-label={`Go to slide ${idx + 1}`}
                     />
@@ -892,13 +1238,34 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================= */}
-        {/* SECTION 8: BOTTOM CTA BANNER ("Your Journey to Smarter Living Starts with One Click.") */}
+        {/* SECTION 7: INSTITUTIONAL PARTNERS TICKER */}
         {/* ========================================================= */}
-        <section className="bg-[#edebe4] rounded-[28px] sm:rounded-[36px] lg:rounded-[42px] p-5 sm:p-8 lg:p-10 border border-black/[0.05] shadow-xs">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+        <section className="py-2">
+          <div className="text-center pb-3">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
+              Compatible with Academic Records from Leading Tertiary Institutions
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
+            {partners.map((partner, index) => (
+              <div
+                key={index}
+                className="bg-white hover:bg-stone-50 border border-black/[0.05] rounded-xl px-2.5 py-2.5 text-center flex items-center justify-center text-[10px] font-bold text-stone-600 shadow-2xs transition-all cursor-default"
+              >
+                <span>{partner}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* SECTION 8: BOTTOM CTA BANNER */}
+        {/* ========================================================= */}
+        <section className="bg-[#edebe4] rounded-[24px] sm:rounded-[36px] p-5 sm:p-8 lg:p-10 border border-black/[0.05] shadow-xs">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             
             {/* Left: African university scholars working on computers */}
-            <div className="lg:col-span-4 rounded-2xl sm:rounded-3xl overflow-hidden bg-[#d7f837] shadow-sm flex items-center justify-center">
+            <div className="lg:col-span-4 rounded-2xl overflow-hidden bg-[#d7f837] shadow-sm flex items-center justify-center">
               <img
                 src="/images/landing/student-campus-lime.jpg"
                 alt="University students working in campus computing laboratory"
@@ -907,30 +1274,33 @@ export default function HomePage() {
             </div>
 
             {/* Right: Bold Call to Action Copy */}
-            <div className="lg:col-span-8 space-y-4 sm:space-y-6">
-              <h2 className="text-2xl sm:text-4xl lg:text-[42px] font-extrabold tracking-tight text-[#111111] leading-tight">
-                Your Journey to Smarter Attendance Starts with One Click.
+            <div className="lg:col-span-8 space-y-4">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-stone-500">
+                Institutional Modernization
+              </span>
+              <h2 className="text-2xl sm:text-3xl lg:text-[38px] font-extrabold tracking-tight text-[#111111] leading-tight">
+                Modernize University Attendance with Institutional Precision.
               </h2>
 
               <p className="text-xs sm:text-sm text-stone-600 max-w-xl leading-relaxed font-medium">
-                Import class lists seamlessly, conduct secure QR-based lecture attendance, prevent proxy check-ins, and export verified semester reports in Excel and PDF formats.
+                Eliminate proxy attendance, import your class lists in seconds, and automatically generate verified 75% examination clearance matrices for Senate accreditation.
               </p>
 
               <div className="pt-2 flex items-center gap-3">
                 <Link
-                  to="/login"
-                  className="inline-flex items-center gap-3 bg-[#111111] hover:bg-black text-white text-xs sm:text-sm font-semibold pl-5 pr-2.5 py-3 rounded-full shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  to="/register"
+                  className="inline-flex items-center gap-3 bg-[#111111] hover:bg-black text-white text-xs sm:text-sm font-semibold pl-5 pr-2.5 py-2.5 rounded-full shadow-sm hover:scale-[1.01] active:scale-[0.99] transition-all"
                 >
-                  <span>Access Workspace</span>
+                  <span>Start Free as a Lecturer</span>
                   <span className="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center shadow-xs">
                     <ArrowRight className="w-3.5 h-3.5" />
                   </span>
                 </Link>
 
                 <Link
-                  to="/register"
-                  className="w-11 h-11 rounded-2xl bg-[#d7f837] hover:bg-[#c9ea28] text-black flex items-center justify-center transition-all shadow-xs"
-                  aria-label="Create Lecturer Account"
+                  to="/login"
+                  className="w-10 h-10 rounded-2xl bg-[#d7f837] hover:bg-[#c9ea28] text-black flex items-center justify-center transition-all shadow-xs"
+                  aria-label="Sign In to Lecturer Account"
                 >
                   <ArrowUpRight className="w-5 h-5" />
                 </Link>
@@ -943,11 +1313,11 @@ export default function HomePage() {
         {/* ========================================================= */}
         {/* SECTION 9: DEEP BLACK ACCENT FOOTER */}
         {/* ========================================================= */}
-        <footer className="bg-[#0c0c0c] text-white rounded-[28px] sm:rounded-[36px] lg:rounded-[42px] p-8 sm:p-12 lg:p-16 border border-stone-800 space-y-12">
+        <footer className="bg-[#0c0c0c] text-white rounded-[24px] sm:rounded-[36px] p-6 sm:p-10 lg:p-12 border border-stone-800 space-y-10">
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
             {/* Column 1: Brand Info */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="lg:col-span-2 space-y-3.5">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-[#d7f837] text-black flex items-center justify-center font-bold text-xs shadow-xs">
                   <GraduationCap className="w-4 h-4" />
@@ -957,46 +1327,47 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-xs text-stone-400 leading-relaxed max-w-sm">
-                Production University Attendance Management Platform. Designed for Nigerian Universities and Tertiary Institutions.
+                Production-grade University Attendance Infrastructure. Purpose-built for African Universities and Tertiary Institutions.
               </p>
-              <div className="pt-2 text-[11px] font-mono text-stone-500">
-                ACC-ID: NUC-VERIFIED-2026
+              <div className="pt-1 text-[11px] font-mono text-stone-500 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span>NUC ACCREDITATION READY</span>
               </div>
             </div>
 
             {/* Column 2: Product */}
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <h5 className="text-xs font-bold uppercase tracking-wider text-stone-400">
-                Product
+                Capabilities
               </h5>
               <ul className="space-y-2 text-xs text-stone-400 font-medium">
                 <li>
                   <a href="#features" className="hover:text-white transition-colors">
-                    Roster File Import
+                    Universal Roster Ingestion
                   </a>
                 </li>
                 <li>
-                  <a href="#features" className="hover:text-white transition-colors">
+                  <a href="#cockpit-demo" className="hover:text-white transition-colors">
                     Dynamic QR Check-in
                   </a>
                 </li>
                 <li>
                   <a href="#security" className="hover:text-white transition-colors">
-                    Hardware Device Lock
+                    Hardware Device Binding
                   </a>
                 </li>
                 <li>
                   <a href="#workflow" className="hover:text-white transition-colors">
-                    Semester Excel & PDF
+                    Senate 75% Matrix
                   </a>
                 </li>
               </ul>
             </div>
 
             {/* Column 3: Platform */}
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <h5 className="text-xs font-bold uppercase tracking-wider text-stone-400">
-                Lecturer
+                Lecturers
               </h5>
               <ul className="space-y-2 text-xs text-stone-400 font-medium">
                 <li>
@@ -1006,7 +1377,7 @@ export default function HomePage() {
                 </li>
                 <li>
                   <Link to="/register" className="hover:text-white transition-colors">
-                    Register Account
+                    Create Free Account
                   </Link>
                 </li>
                 <li>
@@ -1016,16 +1387,16 @@ export default function HomePage() {
                 </li>
                 <li>
                   <a href="#workflow" className="hover:text-white transition-colors">
-                    Lecturer Guide
+                    Lecturer Workflow Guide
                   </a>
                 </li>
               </ul>
             </div>
 
             {/* Column 4: Institutional (All clickable modals) */}
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <h5 className="text-xs font-bold uppercase tracking-wider text-stone-400">
-                Institutional
+                Governance
               </h5>
               <ul className="space-y-2 text-xs text-stone-400 font-medium">
                 <li>
@@ -1052,7 +1423,7 @@ export default function HomePage() {
                     onClick={() => setActiveModal("audit")}
                     className="hover:text-[#d7f837] text-left transition-colors cursor-pointer"
                   >
-                    Department Audits
+                    Accreditation Audits
                   </button>
                 </li>
                 <li>
@@ -1061,15 +1432,15 @@ export default function HomePage() {
                     onClick={() => setActiveModal("security")}
                     className="hover:text-[#d7f837] text-left transition-colors cursor-pointer"
                   >
-                    Security Standards
+                    Device Security Specs
                   </button>
                 </li>
               </ul>
             </div>
           </div>
 
-          {/* Bottom Bar (All clickable modals) */}
-          <div className="pt-8 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-stone-500">
+          {/* Bottom Bar */}
+          <div className="pt-6 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-stone-500">
             <div>
               © 2026 ClassMark Attendance Platform. All rights reserved.
             </div>
@@ -1192,17 +1563,24 @@ export default function HomePage() {
                 className="w-full py-2.5 px-4 rounded-full bg-[#d7f837] text-black text-xs font-bold text-center flex items-center justify-center gap-2 shadow-xs"
               >
                 <UserPlus className="w-4 h-4" />
-                <span>Create Account</span>
+                <span>Create Free Account</span>
               </Link>
             </div>
 
-            <nav className="flex-1 space-y-3 text-sm font-semibold text-stone-700 pt-2">
+            <nav className="flex-1 space-y-2 text-sm font-semibold text-stone-700 pt-2">
               <a
                 href="#features"
                 onClick={closeMenu}
                 className="block px-3 py-2 rounded-xl hover:bg-stone-200/60 transition-colors"
               >
-                Core Features
+                Capabilities
+              </a>
+              <a
+                href="#cockpit-demo"
+                onClick={closeMenu}
+                className="block px-3 py-2 rounded-xl hover:bg-stone-200/60 transition-colors"
+              >
+                Live Simulator
               </a>
               <a
                 href="#security"
@@ -1216,7 +1594,7 @@ export default function HomePage() {
                 onClick={closeMenu}
                 className="block px-3 py-2 rounded-xl hover:bg-stone-200/60 transition-colors"
               >
-                4-Step Lecturer Process
+                4-Step Process
               </a>
               <button
                 type="button"
