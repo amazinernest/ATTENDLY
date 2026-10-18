@@ -34,6 +34,20 @@ const courseSchema = z.object({
   attendanceThreshold: z.number().min(1).max(100).default(75.0),
 });
 
+const courseUpdateSchema = z.object({
+  code: z.string().min(2, "Course code is required").max(30).optional(),
+  title: z.string().min(3, "Course title is required").max(200).optional(),
+  department: z.string().max(100).optional().nullable(),
+  faculty: z.string().max(100).optional().nullable(),
+  session: z.string().min(4, "Academic session is required").max(30).optional(),
+  semester: z.string().min(2, "Semester is required").max(50).optional(),
+  classGroup: z.string().max(50).optional().nullable(),
+  description: z.string().max(1000).optional().nullable(),
+  expectedSessions: z.number().int().positive().optional().nullable(),
+  attendanceThreshold: z.number().min(1).max(100).optional(),
+  status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
+});
+
 const studentActionSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("add"),
@@ -146,6 +160,33 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     });
 
     return Response.json({ courses });
+  }
+
+  // 1b. GET /api/courses/:courseId
+  if (parts.length === 2 && parts[0] === "courses") {
+    const user = await getUser(request);
+    if (!user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const courseId = parts[1];
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: {
+        _count: {
+          select: {
+            enrolments: { where: { status: "ACTIVE" } },
+            attendanceSessions: true,
+          },
+        },
+      },
+    });
+
+    if (!course || course.lecturerId !== user.id) {
+      return Response.json({ error: "Course not found or unauthorized" }, { status: 404 });
+    }
+
+    return Response.json({ course });
   }
 
   // 2. GET /api/courses/template/excel
@@ -544,6 +585,163 @@ export async function action({ request, params }: ActionFunctionArgs) {
     } catch (err) {
       console.error("[Create Course Error]:", err);
       return Response.json({ error: "Failed to create course." }, { status: 500 });
+    }
+  }
+
+  // 1b. PUT / PATCH / DELETE /api/courses/:courseId (or POST /api/courses/:courseId/delete)
+  if (
+    (parts.length === 2 && parts[0] === "courses") ||
+    (parts.length === 3 && parts[0] === "courses" && parts[2] === "delete")
+  ) {
+    const user = await getUser(request);
+    if (!user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const courseId = parts[1];
+    const course = await prisma.course.findUnique({ where: { id: courseId } });
+    if (!course || course.lecturerId !== user.id) {
+      return Response.json({ error: "Course not found or access denied." }, { status: 404 });
+    }
+
+    // Check if it's a deletion request (DELETE method or /delete route)
+    const isExplicitDeleteRoute = parts.length === 3 && parts[2] === "delete";
+    let isDeleteAction = request.method === "DELETE" || isExplicitDeleteRoute;
+
+    let body: any = {};
+    if (request.method !== "GET") {
+      try {
+        body = await request.json();
+      } catch {
+        body = {};
+      }
+    }
+
+    if (body.action === "delete" || body._method === "DELETE") {
+      isDeleteAction = true;
+    }
+
+    // Handle DELETE
+    if (isDeleteAction) {
+      try {
+        await prisma.auditLog.create({
+          data: {
+            userId: user.id,
+            action: "COURSE_DELETED",
+            details: JSON.stringify({
+              courseId: course.id,
+              code: course.code,
+              title: course.title,
+              session: course.session,
+              semester: course.semester,
+            }),
+          },
+        });
+
+        await prisma.course.delete({
+          where: { id: courseId },
+        });
+
+        return Response.json({
+          success: true,
+          message: `Course ${course.code} has been successfully deleted.`,
+        });
+      } catch (err) {
+        console.error("[Delete Course Error]:", err);
+        return Response.json({ error: "Failed to delete course." }, { status: 500 });
+      }
+    }
+
+    // Handle UPDATE (PUT / PATCH / POST)
+    try {
+      const result = courseUpdateSchema.safeParse(body);
+      if (!result.success) {
+        return Response.json(
+          { error: "Validation failed", details: result.error.flatten().fieldErrors },
+          { status: 400 }
+        );
+      }
+
+      const data = result.data;
+      const targetCode = data.code !== undefined ? data.code.trim().toUpperCase() : course.code;
+      const targetSession = data.session !== undefined ? data.session.trim() : course.session;
+      const targetSemester = data.semester !== undefined ? data.semester.trim() : course.semester;
+
+      // Uniqueness check across other courses for this lecturer
+      if (
+        targetCode !== course.code ||
+        targetSession !== course.session ||
+        targetSemester !== course.semester
+      ) {
+        const duplicate = await prisma.course.findUnique({
+          where: {
+            lecturerId_code_session_semester: {
+              lecturerId: user.id,
+              code: targetCode,
+              session: targetSession,
+              semester: targetSemester,
+            },
+          },
+        });
+
+        if (duplicate && duplicate.id !== course.id) {
+          return Response.json(
+            {
+              error: `A course with code ${targetCode} already exists for academic session ${targetSession} (${targetSemester}).`,
+            },
+            { status: 409 }
+          );
+        }
+      }
+
+      const updateData: {
+        code?: string;
+        title?: string;
+        department?: string | null;
+        faculty?: string | null;
+        session?: string;
+        semester?: string;
+        classGroup?: string | null;
+        description?: string | null;
+        expectedSessions?: number | null;
+        attendanceThreshold?: number;
+        status?: "ACTIVE" | "ARCHIVED";
+      } = {};
+
+      if (data.code !== undefined) updateData.code = targetCode;
+      if (data.title !== undefined) updateData.title = data.title.trim();
+      if (data.department !== undefined) updateData.department = data.department?.trim() || null;
+      if (data.faculty !== undefined) updateData.faculty = data.faculty?.trim() || null;
+      if (data.session !== undefined) updateData.session = targetSession;
+      if (data.semester !== undefined) updateData.semester = targetSemester;
+      if (data.classGroup !== undefined) updateData.classGroup = data.classGroup?.trim() || null;
+      if (data.description !== undefined) updateData.description = data.description?.trim() || null;
+      if (data.expectedSessions !== undefined) updateData.expectedSessions = data.expectedSessions;
+      if (data.attendanceThreshold !== undefined) updateData.attendanceThreshold = data.attendanceThreshold;
+      if (data.status !== undefined) updateData.status = data.status;
+
+      const updatedCourse = await prisma.course.update({
+        where: { id: courseId },
+        data: updateData,
+      });
+
+      await prisma.auditLog.create({
+        data: {
+          userId: user.id,
+          courseId: course.id,
+          action: "COURSE_UPDATED",
+          details: JSON.stringify({ changes: updateData }),
+        },
+      });
+
+      return Response.json({
+        success: true,
+        course: updatedCourse,
+        message: `Course ${updatedCourse.code} updated successfully.`,
+      });
+    } catch (err) {
+      console.error("[Update Course Error]:", err);
+      return Response.json({ error: "Failed to update course." }, { status: 500 });
     }
   }
 

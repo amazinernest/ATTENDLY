@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
+import { DeleteCourseModal } from "@/components/courses/DeleteCourseModal";
 import { formatDate } from "@/lib/utils";
 
 interface CourseWorkspaceProps {
@@ -74,15 +75,22 @@ export function CourseWorkspaceView({
 
   // Edit Course Settings States
   const [settingsForm, setSettingsForm] = useState({
+    code: course.code,
     title: course.title,
     department: course.department || "",
     faculty: course.faculty || "",
     session: course.session,
     semester: course.semester,
+    classGroup: course.classGroup || "",
+    description: course.description || "",
+    expectedSessions: course.expectedSessions ? course.expectedSessions.toString() : "",
     attendanceThreshold: course.attendanceThreshold.toString(),
+    status: course.status || "ACTIVE",
   });
   const [savingSettings, setSavingSettings] = useState(false);
   const [settingsMessage, setSettingsMessage] = useState<string | null>(null);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   // Handle file selection for import
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -239,19 +247,24 @@ export function CourseWorkspaceView({
     e.preventDefault();
     setSavingSettings(true);
     setSettingsMessage(null);
+    setSettingsError(null);
 
     try {
-      const res = await fetch(`/api/courses`, {
-        method: "POST", // or update
+      const res = await fetch(`/api/courses/${course.id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          code: course.code,
-          title: settingsForm.title,
-          department: settingsForm.department,
-          faculty: settingsForm.faculty,
-          session: settingsForm.session,
-          semester: settingsForm.semester,
+          code: settingsForm.code.trim().toUpperCase(),
+          title: settingsForm.title.trim(),
+          department: settingsForm.department.trim() || null,
+          faculty: settingsForm.faculty.trim() || null,
+          session: settingsForm.session.trim(),
+          semester: settingsForm.semester.trim(),
+          classGroup: settingsForm.classGroup.trim() || null,
+          description: settingsForm.description.trim() || null,
+          expectedSessions: settingsForm.expectedSessions ? parseInt(settingsForm.expectedSessions, 10) : null,
           attendanceThreshold: parseFloat(settingsForm.attendanceThreshold) || 75.0,
+          status: settingsForm.status,
         }),
       });
 
@@ -260,10 +273,10 @@ export function CourseWorkspaceView({
         setSettingsMessage("Course settings updated successfully.");
         revalidator.revalidate();
       } else {
-        setSettingsMessage(data.error || "Failed to update settings.");
+        setSettingsError(data.error || "Failed to update settings.");
       }
     } catch {
-      setSettingsMessage("Network error occurred.");
+      setSettingsError("Network error occurred.");
     } finally {
       setSavingSettings(false);
     }
@@ -309,7 +322,7 @@ export function CourseWorkspaceView({
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 self-start md:self-auto">
+          <div className="flex items-center gap-2 self-start md:self-auto flex-wrap">
             <Link
               to={`/courses/${course.id}/attendance/new`}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#111111] hover:bg-[#d7f837] hover:text-black text-white text-xs font-bold rounded-full shadow-sm transition-all"
@@ -317,6 +330,29 @@ export function CourseWorkspaceView({
               <QrCode className="w-4 h-4" />
               <span>Start Attendance Session</span>
             </Link>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("settings")}
+              className={`inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold rounded-full border transition-all cursor-pointer ${
+                activeTab === "settings"
+                  ? "bg-[#111111] text-white border-black"
+                  : "bg-white text-stone-700 border-black/10 hover:bg-stone-50"
+              }`}
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span>Course Settings</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setDeleteModalOpen(true)}
+              className="p-2.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 border border-black/10 hover:border-rose-200 rounded-full transition-all cursor-pointer"
+              title="Delete Course"
+              aria-label="Delete Course"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -804,77 +840,216 @@ export function CourseWorkspaceView({
 
       {/* TAB 5: COURSE SETTINGS */}
       {activeTab === "settings" && (
-        <div className="bg-white border border-[#e7e5df] rounded-[28px] p-7 shadow-xs max-w-2xl">
-          <h3 className="text-sm font-bold text-[#111111] mb-1">Course Configuration</h3>
-          <p className="text-xs text-[#777770] mb-6">
-            Modify course requirements, attendance benchmarks, and academic information
-          </p>
+        <div className="bg-white border border-[#e7e5df] rounded-[28px] p-7 shadow-xs max-w-3xl space-y-8">
+          <div>
+            <h3 className="text-base font-extrabold text-[#111111] mb-1 tracking-tight">
+              Course Configuration & Metadata
+            </h3>
+            <p className="text-xs text-[#777770]">
+              Modify course details, academic semester, required attendance threshold, and course status
+            </p>
+          </div>
 
           {settingsMessage && (
-            <div className="mb-5 p-3.5 bg-[#faf9f5] border border-[#d7f837] rounded-2xl text-xs text-[#111111] font-semibold flex items-center gap-2">
-              <Check className="w-4 h-4 text-black shrink-0" />
+            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 font-semibold flex items-center gap-2">
+              <Check className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>{settingsMessage}</span>
             </div>
           )}
 
-          <form onSubmit={handleSaveSettings} className="space-y-4 text-xs">
-            <div>
-              <label className="block font-bold text-[#111111]">Course Title</label>
-              <input
-                type="text"
-                value={settingsForm.title}
-                onChange={(e) => setSettingsForm({ ...settingsForm, title: e.target.value })}
-                className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
-              />
+          {settingsError && (
+            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 font-semibold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <span>{settingsError}</span>
             </div>
+          )}
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold text-[#111111]">Academic Session</label>
+          <form onSubmit={handleSaveSettings} className="space-y-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="sm:col-span-1">
+                <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                  Course Code *
+                </label>
                 <input
                   type="text"
+                  required
+                  value={settingsForm.code}
+                  onChange={(e) => setSettingsForm({ ...settingsForm, code: e.target.value.toUpperCase() })}
+                  className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl font-mono uppercase focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-bold"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                  Course Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={settingsForm.title}
+                  onChange={(e) => setSettingsForm({ ...settingsForm, title: e.target.value })}
+                  className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                  Academic Session *
+                </label>
+                <input
+                  type="text"
+                  required
                   value={settingsForm.session}
                   onChange={(e) => setSettingsForm({ ...settingsForm, session: e.target.value })}
-                  className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
+                  className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#111111]">Semester</label>
-                <input
-                  type="text"
+                <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                  Semester *
+                </label>
+                <select
                   value={settingsForm.semester}
                   onChange={(e) => setSettingsForm({ ...settingsForm, semester: e.target.value })}
-                  className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
+                  className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#111111] font-medium"
+                >
+                  <option value="First Semester">First Semester</option>
+                  <option value="Second Semester">Second Semester</option>
+                  <option value="Harmattan Semester">Harmattan Semester</option>
+                  <option value="Rain Semester">Rain Semester</option>
+                  <option value="Summer/Special Term">Summer/Special Term</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                  Department (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={settingsForm.department}
+                  onChange={(e) => setSettingsForm({ ...settingsForm, department: e.target.value })}
+                  className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                  Faculty (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={settingsForm.faculty}
+                  onChange={(e) => setSettingsForm({ ...settingsForm, faculty: e.target.value })}
+                  className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block font-bold text-[#111111]">
-                Attendance Threshold (%)
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="100"
-                value={settingsForm.attendanceThreshold}
-                onChange={(e) =>
-                  setSettingsForm({ ...settingsForm, attendanceThreshold: e.target.value })
-                }
-                className="mt-1 block w-full px-4 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
-              />
-              <span className="text-[11px] text-[#888880] mt-1 block">
-                Benchmark percentage for identifying deficient student attendance
-              </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                  Expected Lectures
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="60"
+                  value={settingsForm.expectedSessions}
+                  onChange={(e) => setSettingsForm({ ...settingsForm, expectedSessions: e.target.value })}
+                  placeholder="14"
+                  className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                  Threshold (%) *
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  required
+                  value={settingsForm.attendanceThreshold}
+                  onChange={(e) =>
+                    setSettingsForm({ ...settingsForm, attendanceThreshold: e.target.value })
+                  }
+                  className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                  Course Status *
+                </label>
+                <select
+                  value={settingsForm.status}
+                  onChange={(e) =>
+                    setSettingsForm({
+                      ...settingsForm,
+                      status: e.target.value as "ACTIVE" | "ARCHIVED",
+                    })
+                  }
+                  className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#111111] font-medium"
+                >
+                  <option value="ACTIVE">ACTIVE</option>
+                  <option value="ARCHIVED">ARCHIVED</option>
+                </select>
+              </div>
             </div>
 
-            <div className="pt-4 border-t border-[#edebe4] flex justify-end">
+            <div>
+              <label className="block font-bold text-[#111111] uppercase tracking-wider text-[11px]">
+                Course Description (Optional)
+              </label>
+              <textarea
+                rows={2}
+                value={settingsForm.description}
+                onChange={(e) => setSettingsForm({ ...settingsForm, description: e.target.value })}
+                placeholder="Course outline or lecture summary..."
+                className="mt-1.5 block w-full px-3.5 py-2.5 text-xs border border-[#e7e5df] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#111111] bg-white font-medium"
+              />
+            </div>
+
+            <div className="pt-3 border-t border-[#edebe4] flex justify-end">
               <Button type="submit" variant="primary" isLoading={savingSettings}>
-                Save Changes
+                <Check className="w-4 h-4 mr-1 text-[#d7f837]" />
+                <span>Save Course Changes</span>
               </Button>
             </div>
           </form>
+
+          {/* DANGER ZONE: Delete Course */}
+          <div className="pt-6 border-t border-rose-200">
+            <div className="p-5 sm:p-6 bg-rose-50/70 border border-rose-200 rounded-[24px]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h4 className="text-sm font-extrabold text-rose-950 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-rose-600" />
+                    <span>Danger Zone: Permanent Deletion</span>
+                  </h4>
+                  <p className="text-xs text-rose-800/90 mt-1 max-w-md font-medium leading-relaxed">
+                    Permanently delete this course, including student enrolments, attendance sessions, and check-in history. This cannot be undone.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => setDeleteModalOpen(true)}
+                  className="self-start sm:self-auto shrink-0 py-2.5 px-4 text-xs font-bold"
+                >
+                  <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                  <span>Delete Course</span>
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -1132,6 +1307,16 @@ export function CourseWorkspaceView({
           </div>
         </form>
       </Modal>
+
+      {/* MODAL 3: Delete Course Modal */}
+      <DeleteCourseModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        course={course}
+        onSuccess={() => {
+          navigate("/courses");
+        }}
+      />
     </div>
   );
 }

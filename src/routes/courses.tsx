@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, useLoaderData } from "react-router";
+import React, { useState } from "react";
+import { Link, useLoaderData, useRevalidator } from "react-router";
 import {
   BookOpen,
   PlusCircle,
@@ -7,11 +7,15 @@ import {
   Calendar,
   Layers,
   ArrowRight,
+  Edit2,
+  Trash2,
 } from "lucide-react";
 import { requireUser } from "@/lib/session.server";
 import prisma from "@/lib/db";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Badge } from "@/components/ui/Badge";
+import { EditCourseModal } from "@/components/courses/EditCourseModal";
+import { DeleteCourseModal } from "@/components/courses/DeleteCourseModal";
 
 export async function loader({ request }: { request: Request }) {
   const user = await requireUser(request);
@@ -48,6 +52,9 @@ export async function loader({ request }: { request: Request }) {
 
 export default function CoursesPage() {
   const { user, courses, isArchivedTab } = useLoaderData<typeof loader>();
+  const revalidator = useRevalidator();
+  const [courseToEdit, setCourseToEdit] = useState<any | null>(null);
+  const [courseToDelete, setCourseToDelete] = useState<any | null>(null);
 
   return (
     <DashboardLayout user={user}>
@@ -132,12 +139,35 @@ export default function CoursesPage() {
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2">
-                      <span className="text-xs font-extrabold text-black bg-[#d7f837] px-2.5 py-1 rounded-full font-mono shadow-2xs">
-                        {course.code}
-                      </span>
-                      <Badge variant={course.status === "ACTIVE" ? "success" : "slate"}>
-                        {course.status}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-extrabold text-black bg-[#d7f837] px-2.5 py-1 rounded-full font-mono shadow-2xs">
+                          {course.code}
+                        </span>
+                        <Badge variant={course.status === "ACTIVE" ? "success" : "slate"}>
+                          {course.status}
+                        </Badge>
+                      </div>
+
+                      <div className="flex items-center gap-1 text-stone-400">
+                        <button
+                          type="button"
+                          onClick={() => setCourseToEdit(course)}
+                          className="p-1.5 hover:text-black hover:bg-[#edebe4] rounded-full transition-colors"
+                          title="Edit course"
+                          aria-label={`Edit ${course.code}`}
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCourseToDelete(course)}
+                          className="p-1.5 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors"
+                          title="Delete course"
+                          aria-label={`Delete ${course.code}`}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
 
                     <h3 className="mt-3 font-extrabold text-[#111111] text-base leading-snug">
@@ -182,13 +212,23 @@ export default function CoursesPage() {
                       <span>Take Attendance</span>
                     </Link>
 
-                    <Link
-                      to={`/courses/${course.id}`}
-                      className="inline-flex items-center gap-1 px-3.5 py-1.5 text-xs font-bold text-white bg-[#111111] hover:bg-black rounded-full transition-all shadow-2xs hover:scale-[1.02]"
-                    >
-                      <span>Manage</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setCourseToEdit(course)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-stone-700 bg-[#edebe4] hover:bg-[#e4e2db] rounded-full transition-all shadow-2xs hover:scale-[1.02]"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                        <span>Edit</span>
+                      </button>
+                      <Link
+                        to={`/courses/${course.id}`}
+                        className="inline-flex items-center gap-1 px-3.5 py-1.5 text-xs font-bold text-white bg-[#111111] hover:bg-black rounded-full transition-all shadow-2xs hover:scale-[1.02]"
+                      >
+                        <span>Manage</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
@@ -196,6 +236,20 @@ export default function CoursesPage() {
           </div>
         )}
       </div>
+
+      <EditCourseModal
+        isOpen={!!courseToEdit}
+        onClose={() => setCourseToEdit(null)}
+        course={courseToEdit}
+        onSuccess={() => revalidator.revalidate()}
+      />
+
+      <DeleteCourseModal
+        isOpen={!!courseToDelete}
+        onClose={() => setCourseToDelete(null)}
+        course={courseToDelete}
+        onSuccess={() => revalidator.revalidate()}
+      />
     </DashboardLayout>
   );
 }
