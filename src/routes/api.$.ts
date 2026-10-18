@@ -139,6 +139,16 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const path = (params["*"] || "").replace(/^\/+|\/+$/g, "");
   const parts = path.split("/");
 
+  // 0. GET /api/health
+  if (parts.length === 1 && parts[0] === "health") {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      return Response.json({ status: "ok", database: "connected", timestamp: new Date().toISOString() });
+    } catch (err: any) {
+      return Response.json({ status: "error", message: err?.message || "Database connection error" }, { status: 500 });
+    }
+  }
+
   // 1. GET /api/courses
   if (parts.length === 1 && parts[0] === "courses") {
     const user = await getUser(request);
