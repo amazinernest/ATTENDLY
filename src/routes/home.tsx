@@ -21,6 +21,7 @@ import {
   BookOpen,
   Award,
   FileCheck,
+  UserCheck,
 } from "lucide-react";
 import { getUser } from "@/lib/session.server";
 
@@ -312,7 +313,15 @@ export default function HomePage() {
             </Link>
 
             {/* Right: Action Pill Buttons & Mobile Menu Trigger */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link
+                to="/student/check"
+                className="hidden sm:inline-flex items-center gap-1.5 bg-white/90 hover:bg-white text-stone-800 text-xs font-semibold px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full border border-black/10 transition-all shadow-2xs hover:border-black/20"
+              >
+                <UserCheck className="w-3.5 h-3.5 text-stone-600" />
+                <span>Student Portal</span>
+              </Link>
+
               <Link
                 to="/login"
                 className="inline-flex items-center gap-1.5 bg-[#d7f837] hover:bg-[#c9ea28] active:scale-95 text-black text-xs font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all shadow-xs"
@@ -1193,6 +1202,14 @@ export default function HomePage() {
               >
                 <UserPlus className="w-4 h-4" />
                 <span>Create Account</span>
+              </Link>
+              <Link
+                to="/student/check"
+                onClick={closeMenu}
+                className="w-full py-2.5 px-4 rounded-full bg-white border border-black/10 text-stone-800 text-xs font-bold text-center flex items-center justify-center gap-2 shadow-2xs hover:bg-stone-50"
+              >
+                <UserCheck className="w-4 h-4 text-[#0369a1]" />
+                <span>Student Attendance Status</span>
               </Link>
             </div>
 

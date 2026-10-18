@@ -31,31 +31,66 @@ export async function sendEmail({
   subject: string;
   html: string;
   text: string;
-}): Promise<{ success: boolean; simulated?: boolean }> {
+}): Promise<{ success: boolean; simulated?: boolean; messageId?: string }> {
+  // 1. Resend REST API (Zero-port restriction, fast delivery)
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (resendApiKey) {
+    try {
+      const from = process.env.EMAIL_FROM || "ClassMark <onboarding@resend.dev>";
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey.trim()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: [to],
+          subject,
+          html,
+          text,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = (await response.json().catch(() => ({}))) as any;
+        console.error("[Resend API Delivery Error]:", errorData);
+        throw new Error(`Resend email delivery failed: ${errorData.message || response.statusText}`);
+      }
+
+      const data = (await response.json().catch(() => ({}))) as any;
+      return { success: true, simulated: false, messageId: data.id };
+    } catch (error) {
+      console.error("[Email Delivery Error via Resend]:", error);
+      throw error;
+    }
+  }
+
+  // 2. Standard SMTP via Nodemailer
   if (transporter) {
     try {
-      await transporter.sendMail({
+      const info = await transporter.sendMail({
         from: emailFrom,
         to,
         subject,
         text,
         html,
       });
-      return { success: true, simulated: false };
+      return { success: true, simulated: false, messageId: info.messageId };
     } catch (error) {
-      console.error("[Email Delivery Error]:", error);
+      console.error("[Email Delivery Error via SMTP]:", error);
       throw new Error("Failed to deliver email through SMTP server.");
     }
-  } else {
-    // In local development / unconfigured environments:
-    console.log(`\n========================================================`);
-    console.log(`[CLASSMARK LOCAL EMAIL DISPATCH] (SMTP not configured)`);
-    console.log(`To: ${to}`);
-    console.log(`Subject: ${subject}`);
-    console.log(`Message Body:\n${text}`);
-    console.log(`========================================================\n`);
-    return { success: true, simulated: true };
   }
+
+  // 3. Fallback: Simulated console dispatch in development
+  console.log(`\n========================================================`);
+  console.log(`[CLASSMARK LOCAL EMAIL DISPATCH] (SMTP/Resend not configured)`);
+  console.log(`To: ${to}`);
+  console.log(`Subject: ${subject}`);
+  console.log(`Message Body:\n${text}`);
+  console.log(`========================================================\n`);
+  return { success: true, simulated: true };
 }
 
 export async function sendVerificationEmail(email: string, token: string): Promise<void> {

@@ -650,10 +650,21 @@ function StudentCheckInContent() {
                 </Button>
               </div>
 
-              <div className="pt-1 text-center">
-                <span className="text-[11px] text-slate-400">
+              <div className="pt-1 text-center space-y-2">
+                <p className="text-[11px] text-slate-400">
                   Physical presence required. Institutional attendance policy applies.
-                </span>
+                </p>
+                <div className="pt-2 border-t border-black/5">
+                  <a
+                    href="/student/check"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-semibold text-[#0369a1] hover:underline inline-flex items-center gap-1.5"
+                  >
+                    <UserCheck className="w-3.5 h-3.5" />
+                    <span>Check your full semester attendance & exam eligibility</span>
+                  </a>
+                </div>
               </div>
             </form>
           )}
