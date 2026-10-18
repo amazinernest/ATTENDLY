@@ -9,6 +9,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
         status: "ok",
         database: "connected",
         service: "ClassMark Attendance API",
+        emailService: process.env.RESEND_API_KEY ? "Resend API" : (process.env.SMTP_HOST ? "SMTP" : "Simulated/None"),
+        emailSender: process.env.EMAIL_FROM || "ClassMark <noreply@classmarker.online>",
+        appVersion: "1.0.2",
         timestamp: new Date().toISOString(),
       },
       {

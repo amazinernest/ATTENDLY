@@ -105,6 +105,9 @@ export async function action({ request }: { request: Request }) {
       },
     });
 
+    let emailDispatched = false;
+    let emailErrorDetails: string | null = null;
+
     // Always dispatch verification email if email service is configured
     if (isEmailConfigured) {
       const rawToken = crypto.randomBytes(32).toString("hex");
@@ -120,8 +123,10 @@ export async function action({ request }: { request: Request }) {
 
       try {
         await sendVerificationEmail(user.email, rawToken);
+        emailDispatched = true;
       } catch (emailError: any) {
-        console.error("[Email Dispatch Error]:", emailError?.message || emailError);
+        emailErrorDetails = emailError?.message || "Email dispatch failed";
+        console.error("[Email Dispatch Error]:", emailErrorDetails);
       }
     }
 
@@ -141,6 +146,8 @@ export async function action({ request }: { request: Request }) {
             isEmailVerified: user.isEmailVerified,
           },
           requiresVerification: shouldRequireVerification,
+          emailDispatched,
+          emailError: emailErrorDetails,
         },
         {
           status: 201,
