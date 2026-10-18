@@ -47,7 +47,7 @@ model User {
   department              String?
   isEmailVerified         Boolean   @default(false)
   timeZone                String    @default("Africa/Lagos")
-  defaultThreshold        Float     @default(75.0)
+  defaultThreshold        Float     @default(60.0)
   defaultSessionDuration  Int       @default(30) // in minutes
   defaultVerificationMethod VerificationMethod @default(STUDENT_PIN)
   createdAt               DateTime  @default(now())
@@ -97,7 +97,7 @@ model Course {
   classGroup          String?
   description         String?
   expectedSessions    Int?
-  attendanceThreshold Float        @default(75.0)
+  attendanceThreshold Float        @default(60.0)
   status              CourseStatus @default(ACTIVE)
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt

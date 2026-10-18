@@ -26,7 +26,7 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
     classGroup: "",
     description: "",
     expectedSessions: "14",
-    attendanceThreshold: "75",
+    attendanceThreshold: "60",
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +55,7 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
         classGroup: formData.classGroup.trim() || undefined,
         description: formData.description.trim() || undefined,
         expectedSessions: formData.expectedSessions ? parseInt(formData.expectedSessions, 10) : undefined,
-        attendanceThreshold: parseFloat(formData.attendanceThreshold) || 75.0,
+        attendanceThreshold: parseFloat(formData.attendanceThreshold) || 60.0,
       };
 
       const res = await fetch("/api/courses", {
@@ -225,10 +225,10 @@ export function NewCourseForm({ user }: NewCourseFormProps) {
                 max="100"
                 value={formData.attendanceThreshold}
                 onChange={handleChange}
-                placeholder="75"
+                placeholder="60"
                 className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-medium"
               />
-              <span className="text-[11px] text-stone-400 mt-1 block font-medium">Standard NUC benchmark (e.g. 75% for exam eligibility)</span>
+              <span className="text-[11px] text-stone-400 mt-1 block font-medium">Standard university benchmark (e.g. 60% for exam eligibility)</span>
             </div>
           </div>
 

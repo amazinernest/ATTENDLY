@@ -31,7 +31,7 @@ const courseSchema = z.object({
   classGroup: z.string().max(50).optional(),
   description: z.string().max(1000).optional(),
   expectedSessions: z.number().int().positive().optional().nullable(),
-  attendanceThreshold: z.number().min(1).max(100).default(75.0),
+  attendanceThreshold: z.number().min(1).max(100).default(60.0),
 });
 
 const courseUpdateSchema = z.object({
@@ -124,7 +124,7 @@ const settingsSchema = z.object({
   institution: z.string().max(150).optional(),
   department: z.string().max(100).optional(),
   timeZone: z.string().default("Africa/Lagos"),
-  defaultThreshold: z.number().min(1).max(100).default(75.0),
+  defaultThreshold: z.number().min(1).max(100).default(60.0),
   defaultSessionDuration: z.number().int().min(5).max(300).default(30),
   defaultVerificationMethod: z.enum(["STUDENT_PIN", "EMAIL_OTP", "OPEN_CHECKIN"]).default("STUDENT_PIN"),
   currentPassword: z.string().optional(),

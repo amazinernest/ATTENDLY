@@ -97,9 +97,9 @@ export default function HomePage() {
   const studentsMock = [
     { matric: "001429", name: "Adebayo Kehinde", attended: 22, total: 24, percent: 91.7, status: "CLEARED", device: "iPhone 14 Pro" },
     { matric: "001580", name: "Okafor Chinedu", attended: 20, total: 24, percent: 83.3, status: "CLEARED", device: "Galaxy S23" },
-    { matric: "001602", name: "Danjuma Musa", attended: 14, total: 24, percent: 58.3, status: "BARRED", device: "Pixel 7" },
-    { matric: "001715", name: "Balogun Aisha", attended: 23, total: 24, percent: 95.8, status: "CLEARED", device: "iPhone 13" },
-    { matric: "001890", name: "Eze Emeka", attended: 16, total: 24, percent: 66.7, status: "BARRED", device: "Redmi Note 12" },
+    { matric: "001715", name: "Balogun Aisha", attended: 18, total: 24, percent: 75.0, status: "CLEARED", device: "iPhone 13" },
+    { matric: "001890", name: "Eze Emeka", attended: 15, total: 24, percent: 62.5, status: "CLEARED", device: "Redmi Note 12" },
+    { matric: "001602", name: "Danjuma Musa", attended: 11, total: 24, percent: 45.8, status: "BARRED", device: "Pixel 7" },
   ];
 
   const filteredStudents = studentsMock.filter((s) => {
@@ -108,44 +108,47 @@ export default function HomePage() {
     return true;
   });
 
-  const partners = [
-    "University of Lagos",
-    "University of Ibadan",
-    "Ahmadu Bello Univ",
-    "Obafemi Awolowo Univ",
-    "Covenant University",
-    "FUTA Akure",
-    "Univ of Nigeria, Nsukka",
-    "University of Benin",
+  const capabilities = [
+    ".XLSX & .CSV Ingest",
+    ".DOCX & .PDF Parsing",
+    "00XXXX Leading Zeros",
+    "1-Phone Hardware Lock",
+    "4-Digit In-Class PIN",
+    "60% Exam Gate Matrix",
+    "Printable Hall Slips",
+    "Lecturer Audit Trail",
   ];
 
-  const modalContents: Record<string, { title: string; subtitle: string; content: React.ReactNode }> = {
-    nuc: {
-      title: "NUC Attendance & Accreditation Standards",
-      subtitle: "National Universities Commission Compliance Framework",
-      content: (
-        <div className="space-y-4 text-xs sm:text-sm text-stone-300 leading-relaxed">
-          <p>
-            Under Nigerian National Universities Commission (NUC) academic guidelines, undergraduate candidates are required to attain a minimum of <strong className="text-white">70% to 75% lecture and laboratory attendance</strong> to qualify for semester examinations.
-          </p>
-          <div className="p-4 rounded-xl bg-white/[0.04] border border-white/10 space-y-2">
-            <h5 className="font-bold text-white flex items-center gap-2">
-              <Award className="w-4 h-4 text-[#d7f837]" />
-              Compliance Verification Criteria:
-            </h5>
-            <ul className="list-disc pl-5 space-y-1 text-stone-400">
-              <li>Tamper-proof student attendance logs recorded per academic session.</li>
-              <li>Complete date, time, and session duration tracking.</li>
-              <li>Hardware-backed anti-proxy defense preventing retroactive tampering.</li>
-              <li>Exportable official semester attendance matrix in Excel and signed PDF formats.</li>
-            </ul>
-          </div>
-          <p>
-            ClassMark automatically enforces these criteria, computing semester percentage rankings and flagging below-threshold students before final examination clearance slips are printed.
-          </p>
+  const policyModalContent = {
+    title: "University Attendance Regulations & Exam Eligibility",
+    subtitle: "Automated 60% Minimum Attendance Policy",
+    content: (
+      <div className="space-y-4 text-xs sm:text-sm text-stone-300 leading-relaxed">
+        <p>
+          Under university academic regulations, students are required to attain a minimum of <strong className="text-white">60% lecture and laboratory attendance</strong> to qualify to sit for semester examinations.
+        </p>
+        <div className="p-4 rounded-xl bg-white/[0.04] border border-white/10 space-y-2">
+          <h5 className="font-bold text-white flex items-center gap-2">
+            <Award className="w-4 h-4 text-[#d7f837]" />
+            Clearance Criteria:
+          </h5>
+          <ul className="list-disc pl-5 space-y-1 text-stone-400">
+            <li>Verified student attendance logs recorded per lecture session.</li>
+            <li>Complete date, time, and session duration tracking.</li>
+            <li>Hardware-backed anti-proxy defense preventing peer sign-ins.</li>
+            <li>Exportable official semester attendance matrix in Excel and signed PDF formats.</li>
+          </ul>
         </div>
-      ),
-    },
+        <p>
+          ClassMark automatically computes semester attendance percentages and separates eligible candidates from below-threshold students before examination hall lists are printed.
+        </p>
+      </div>
+    ),
+  };
+
+  const modalContents: Record<string, { title: string; subtitle: string; content: React.ReactNode }> = {
+    policy: policyModalContent,
+    nuc: policyModalContent,
     exam: {
       title: "Semester Examination Clearance Engine",
       subtitle: "Automated Candidate Validation & Exam Hall Slips",
@@ -158,26 +161,26 @@ export default function HomePage() {
             <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30">
               <span className="font-bold text-emerald-400 text-xs flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                Eligible Candidates (≥ 75%)
+                Eligible Candidates (≥ 60%)
               </span>
               <p className="text-xs text-stone-300 mt-1">Automatic clearance status with digital verification stamps and printable hall passes.</p>
             </div>
             <div className="p-3.5 rounded-xl bg-rose-950/40 border border-rose-500/30">
               <span className="font-bold text-rose-400 text-xs flex items-center gap-1.5">
                 <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
-                Barred Candidates (&lt; 75%)
+                Barred Candidates (&lt; 60%)
               </span>
               <p className="text-xs text-stone-300 mt-1">Instant notification with complete breakdown of missed lectures and deficit calculations.</p>
             </div>
           </div>
           <p>
-            Department exam officers can generate printable official clearance rosters and Senate-format summary sheets with a single click.
+            Department exam officers can generate printable official clearance rosters and departmental summary sheets with a single click.
           </p>
         </div>
       ),
     },
     audit: {
-      title: "Departmental Audit & Accreditation Trail",
+      title: "Departmental Audit & Verification Trail",
       subtitle: "Immutable Session History & Verification Hashes",
       content: (
         <div className="space-y-4 text-xs sm:text-sm text-stone-300 leading-relaxed">
@@ -199,7 +202,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-3.5 h-3.5 text-[#d7f837]" />
-              <span>Immutable Audit Log for Senate & NUC Verification</span>
+              <span>Immutable Audit Log for Faculty & Departmental Verification</span>
             </div>
           </div>
         </div>
@@ -399,10 +402,10 @@ export default function HomePage() {
                         </a>
                       </div>
 
-                      {/* Column 2: Governance & Accreditation */}
+                      {/* Column 2: Examination & Compliance */}
                       <div className="space-y-1">
                         <div className="text-[10px] font-mono uppercase tracking-wider text-stone-500 font-bold px-2.5 pb-1">
-                          Governance & Senate
+                          Examination & Compliance
                         </div>
 
                         <button
@@ -420,8 +423,8 @@ export default function HomePage() {
                           </div>
                           <div>
                             <div className="text-xs font-bold text-white group-hover:text-[#d7f837] transition-colors flex items-center gap-1.5">
-                              <span>75% Exam Clearance</span>
-                              <span className="text-[9px] font-mono px-1 rounded bg-[#d7f837]/15 text-[#d7f837]">NUC</span>
+                              <span>60% Exam Clearance</span>
+                              <span className="text-[9px] font-mono px-1 rounded bg-[#d7f837]/15 text-[#d7f837]">60% RULE</span>
                             </div>
                             <p className="text-[11px] text-stone-400 leading-snug mt-0.5">
                               Automated eligible vs barred student matrix before exams.
@@ -442,7 +445,7 @@ export default function HomePage() {
                           </div>
                           <div>
                             <div className="text-xs font-bold text-white group-hover:text-[#d7f837] transition-colors">
-                              Official Senate Registers
+                              Official Exam Registers
                             </div>
                             <p className="text-[11px] text-stone-400 leading-snug mt-0.5">
                               1-click signed PDF rosters & multi-sheet Excel exports.
@@ -477,17 +480,17 @@ export default function HomePage() {
                     <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-stone-400">
                       <span className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        <span>NUC Accreditation Ready</span>
+                        <span>60% Exam Policy Engine</span>
                       </span>
                       <button
                         type="button"
                         onClick={() => {
                           setMegaMenuOpen(false);
-                          setActiveModal("nuc");
+                          setActiveModal("policy");
                         }}
                         className="text-[#d7f837] hover:underline font-semibold cursor-pointer"
                       >
-                        View NUC Guidelines →
+                        View Exam Clearance Policy →
                       </button>
                     </div>
                   </div>
@@ -500,13 +503,13 @@ export default function HomePage() {
               Workflow
             </a>
 
-            {/* NUC Standards Modal Trigger */}
+            {/* Exam Policy Modal Trigger */}
             <button
               type="button"
-              onClick={() => setActiveModal("nuc")}
+              onClick={() => setActiveModal("policy")}
               className="hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 text-stone-300"
             >
-              <span>NUC Standards</span>
+              <span>Exam Policy</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             </button>
           </nav>
@@ -561,7 +564,7 @@ export default function HomePage() {
             </h1>
 
             <p className="text-sm sm:text-base lg:text-lg text-stone-400 max-w-2xl mx-auto leading-relaxed font-normal">
-              A high-performance attendance application for university lecturers. Ingest messy rosters in seconds, eliminate proxies with hardware device binding, and automate 75% NUC Senate clearance reports in 1 click.
+              A high-performance attendance application for university lecturers. Ingest messy rosters in seconds, eliminate proxies with hardware device binding, and automate 60% examination clearance reports in 1 click.
             </p>
           </div>
 
@@ -603,7 +606,7 @@ export default function HomePage() {
             <div className="hidden sm:inline text-stone-700">•</div>
             <div className="flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5 text-emerald-400" />
-              <span>NUC 75% Senate Compliant</span>
+              <span>60% Exam Threshold Engine</span>
             </div>
           </div>
         </section>
@@ -677,7 +680,7 @@ export default function HomePage() {
                 }`}
               >
                 <Award className="w-3.5 h-3.5" />
-                <span>75% Exam Clearance</span>
+                <span>60% Exam Clearance</span>
               </button>
 
               <button
@@ -883,19 +886,19 @@ export default function HomePage() {
                 </div>
               )}
 
-              {/* TAB 3: 75% EXAM CLEARANCE */}
+              {/* TAB 3: 60% EXAM CLEARANCE */}
               {activeTab === "clearance" && (
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.06]">
                     <div>
                       <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                        <span>NUC Senate Examination Clearance Engine</span>
+                        <span>University Examination Clearance Engine</span>
                         <span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono">
-                          THRESHOLD: 75%
+                          THRESHOLD: 60%
                         </span>
                       </h4>
                       <p className="text-xs text-stone-400">
-                        Automatically partitions eligible candidates from barred students for Senate approval.
+                        Automatically partitions eligible candidates from barred students based on the 60% benchmark.
                       </p>
                     </div>
 
@@ -916,7 +919,7 @@ export default function HomePage() {
                           selectedStudentFilter === "cleared" ? "bg-emerald-500 text-black font-bold" : "text-stone-400 hover:text-white"
                         }`}
                       >
-                        Cleared (3)
+                        Cleared (4)
                       </button>
                       <button
                         type="button"
@@ -925,7 +928,7 @@ export default function HomePage() {
                           selectedStudentFilter === "barred" ? "bg-rose-500 text-white font-bold" : "text-stone-400 hover:text-white"
                         }`}
                       >
-                        Barred (2)
+                        Barred (1)
                       </button>
                     </div>
                   </div>
@@ -940,7 +943,7 @@ export default function HomePage() {
                       <div className="text-xl font-bold text-emerald-300 mt-1">372 Candidates (90.3%)</div>
                     </div>
                     <div className="p-3.5 rounded-xl bg-rose-500/5 border border-rose-500/20">
-                      <div className="text-[10px] uppercase font-mono text-rose-400">Barred (Deficient Attendance)</div>
+                      <div className="text-[10px] uppercase font-mono text-rose-400">Barred (&lt; 60% Attendance)</div>
                       <div className="text-xl font-bold text-rose-300 mt-1">40 Candidates (9.7%)</div>
                     </div>
                   </div>
@@ -964,7 +967,7 @@ export default function HomePage() {
                             </span>
                           ) : (
                             <span className="px-2.5 py-0.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-400 text-[10px] font-bold">
-                              BARRED (DEFICIENT) ✕
+                              BARRED (&lt; 60%) ✕
                             </span>
                           )}
                         </div>
@@ -979,11 +982,11 @@ export default function HomePage() {
                       className="px-4 py-2 rounded-xl bg-white text-black font-extrabold text-xs flex items-center gap-2 hover:bg-stone-200 transition-colors cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span>Download Sealed Senate PDF</span>
+                      <span>Download Exam Clearance PDF</span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => setActiveModal("nuc")}
+                      onClick={() => setActiveModal("policy")}
                       className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 text-xs font-semibold flex items-center gap-2 cursor-pointer"
                     >
                       <FileSpreadsheet className="w-3.5 h-3.5 text-[#d7f837]" />
@@ -1045,7 +1048,7 @@ export default function HomePage() {
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
                 <span>ClassMark Engine v2.4 (Active)</span>
               </span>
-              <span>NUC Accreditation Compliant</span>
+              <span>60% Examination Policy Compliant</span>
             </div>
 
           </div>
@@ -1156,38 +1159,38 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Module 3: 75% NUC Clearance Engine */}
+            {/* Module 3: 60% Exam Clearance Engine */}
             <div className="p-6 sm:p-7 rounded-2xl bg-[#0f1017] border border-white/[0.08] space-y-4 hover:border-white/20 transition-all">
               <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
                 <BarChart3 className="w-5 h-5" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white">Automated 75% NUC Senate Engine</h3>
+                <h3 className="text-lg font-bold text-white">Automated 60% Examination Clearance Engine</h3>
                 <p className="text-xs text-stone-400 leading-relaxed">
-                  Eliminates weeks of manual attendance tallying before examinations. Instantly computes cumulative percentage per student against the official 75% accreditation threshold.
+                  Eliminates weeks of manual attendance tallying before examinations. Instantly computes cumulative percentage per student against the 60% university exam qualification threshold.
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-black/40 border border-white/5 font-mono text-xs text-stone-300 space-y-1">
-                <div className="text-emerald-400">✓ Automated barred candidate roster</div>
+                <div className="text-emerald-400">✓ Automated barred candidate roster (&lt; 60%)</div>
                 <div className="text-emerald-400">✓ Printable examination eligibility slips</div>
                 <div className="text-emerald-400">✓ Pre-exam clearance verified in 1 second</div>
               </div>
             </div>
 
-            {/* Module 4: 1-Click Senate Reports */}
+            {/* Module 4: 1-Click Exam Registers */}
             <div className="p-6 sm:p-7 rounded-2xl bg-[#0f1017] border border-white/[0.08] space-y-4 hover:border-white/20 transition-all">
               <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
                 <FileText className="w-5 h-5" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-lg font-bold text-white">Official Sealed Senate PDF & Excel</h3>
+                <h3 className="text-lg font-bold text-white">Official Exam Registers & Excel Matrices</h3>
                 <p className="text-xs text-stone-400 leading-relaxed">
-                  Export complete semester registers, attendance matrices, and summary reports formatted directly for Senate accreditation boards and external academic external examiners.
+                  Export complete semester registers, attendance matrices, and summary reports formatted directly for faculty boards, heads of department, and exam officers.
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-black/40 border border-white/5 font-mono text-xs text-stone-300 space-y-1">
-                <div className="text-emerald-400">✓ Multi-sheet Excel matrices</div>
-                <div className="text-emerald-400">✓ Official signed PDF format with seal</div>
+                <div className="text-emerald-400">✓ Multi-sheet Excel attendance matrices</div>
+                <div className="text-emerald-400">✓ Official signed PDF format for exam halls</div>
                 <div className="text-emerald-400">✓ Complete manual override audit logs</div>
               </div>
             </div>
@@ -1196,21 +1199,21 @@ export default function HomePage() {
         </section>
 
         {/* ========================================================= */}
-        {/* SECTION: INSTITUTIONAL TRUST TICKER */}
+        {/* SECTION: VERIFIABLE TECHNICAL CAPABILITIES STRIP */}
         {/* ========================================================= */}
         <section className="py-4 space-y-4">
           <div className="text-center">
             <span className="text-[10px] font-mono uppercase tracking-widest text-stone-500">
-              Compatible with Academic Records from Leading Tertiary Institutions
+              Battle-Tested Architecture Built for University Realities
             </span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
-            {partners.map((partner, index) => (
+            {capabilities.map((cap, index) => (
               <div
                 key={index}
-                className="bg-[#0f1017] hover:bg-[#151620] border border-white/[0.06] rounded-xl px-3 py-2.5 text-center flex items-center justify-center text-[10px] font-mono text-stone-400 shadow-sm transition-all cursor-default"
+                className="bg-[#0f1017] hover:bg-[#151620] border border-white/[0.06] rounded-xl px-3 py-2.5 text-center flex items-center justify-center text-[10px] font-mono text-stone-300 shadow-sm transition-all cursor-default hover:border-[#d7f837]/30"
               >
-                <span>{partner}</span>
+                <span>{cap}</span>
               </div>
             ))}
           </div>
@@ -1230,7 +1233,7 @@ export default function HomePage() {
               Bring Modern Attendance Infrastructure to Your Faculty.
             </h2>
             <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
-              Join forward-thinking lecturers, deans, and exam officers transforming lecture halls with zero proxies and instant 75% exam clearance.
+              Join forward-thinking lecturers, deans, and exam officers transforming lecture halls with zero proxies and instant 60% exam clearance.
             </p>
           </div>
 
@@ -1272,7 +1275,7 @@ export default function HomePage() {
               </p>
               <div className="pt-1 text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>NUC Senate Accreditation Framework Ready</span>
+                <span>60% Exam Benchmark Compliant</span>
               </div>
             </div>
 
@@ -1299,7 +1302,7 @@ export default function HomePage() {
                 </li>
                 <li>
                   <a href="#cockpit" className="hover:text-white transition-colors">
-                    Senate 75% Matrix
+                    60% Attendance Matrix
                   </a>
                 </li>
               </ul>
@@ -1334,19 +1337,19 @@ export default function HomePage() {
               </ul>
             </div>
 
-            {/* Col 4: Governance (Clickable Modals) */}
+            {/* Col 4: Examination & Compliance (Clickable Modals) */}
             <div className="space-y-2">
               <div className="font-bold text-white uppercase text-[11px] tracking-wider">
-                Governance
+                Compliance & Regulations
               </div>
               <ul className="space-y-1.5 text-stone-400">
                 <li>
                   <button
                     type="button"
-                    onClick={() => setActiveModal("nuc")}
+                    onClick={() => setActiveModal("policy")}
                     className="hover:text-[#d7f837] text-left transition-colors cursor-pointer"
                   >
-                    NUC Guidelines
+                    Exam Clearance Policy
                   </button>
                 </li>
                 <li>
@@ -1355,7 +1358,7 @@ export default function HomePage() {
                     onClick={() => setActiveModal("exam")}
                     className="hover:text-[#d7f837] text-left transition-colors cursor-pointer"
                   >
-                    Exam Clearance
+                    Exam Clearance Slips
                   </button>
                 </li>
                 <li>
@@ -1364,7 +1367,7 @@ export default function HomePage() {
                     onClick={() => setActiveModal("audit")}
                     className="hover:text-[#d7f837] text-left transition-colors cursor-pointer"
                   >
-                    Accreditation Audits
+                    Departmental Audits
                   </button>
                 </li>
                 <li>
@@ -1540,17 +1543,17 @@ export default function HomePage() {
 
               <div className="space-y-1 pt-2 border-t border-white/[0.06]">
                 <div className="text-[10px] font-mono uppercase tracking-wider text-stone-500 font-bold px-3">
-                  Governance
+                  Compliance & Regulations
                 </div>
                 <button
                   type="button"
                   onClick={() => {
                     closeMenu();
-                    setActiveModal("nuc");
+                    setActiveModal("policy");
                   }}
                   className="block w-full text-left px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-stone-300 cursor-pointer"
                 >
-                  NUC Guidelines
+                  Exam Clearance Policy
                 </button>
                 <button
                   type="button"
@@ -1560,7 +1563,7 @@ export default function HomePage() {
                   }}
                   className="block w-full text-left px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-stone-300 cursor-pointer"
                 >
-                  Exam Clearance
+                  Exam Clearance Slips
                 </button>
                 <button
                   type="button"
@@ -1570,7 +1573,7 @@ export default function HomePage() {
                   }}
                   className="block w-full text-left px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-stone-300 cursor-pointer"
                 >
-                  Accreditation Audit
+                  Departmental Audit
                 </button>
               </div>
 

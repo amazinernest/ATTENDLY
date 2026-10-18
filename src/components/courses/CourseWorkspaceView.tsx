@@ -263,7 +263,7 @@ export function CourseWorkspaceView({
           classGroup: settingsForm.classGroup.trim() || null,
           description: settingsForm.description.trim() || null,
           expectedSessions: settingsForm.expectedSessions ? parseInt(settingsForm.expectedSessions, 10) : null,
-          attendanceThreshold: parseFloat(settingsForm.attendanceThreshold) || 75.0,
+          attendanceThreshold: parseFloat(settingsForm.attendanceThreshold) || 60.0,
           status: settingsForm.status,
         }),
       });

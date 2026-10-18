@@ -43,7 +43,7 @@ export function EditCourseModal({
     classGroup: "",
     description: "",
     expectedSessions: "14",
-    attendanceThreshold: "75",
+    attendanceThreshold: "60",
     status: "ACTIVE" as "ACTIVE" | "ARCHIVED",
   });
 
@@ -62,7 +62,7 @@ export function EditCourseModal({
         classGroup: course.classGroup || "",
         description: course.description || "",
         expectedSessions: course.expectedSessions ? course.expectedSessions.toString() : "",
-        attendanceThreshold: course.attendanceThreshold ? course.attendanceThreshold.toString() : "75",
+        attendanceThreshold: course.attendanceThreshold ? course.attendanceThreshold.toString() : "60",
         status: course.status || "ACTIVE",
       });
       setErrorMessage(null);
@@ -94,7 +94,7 @@ export function EditCourseModal({
         classGroup: formData.classGroup.trim() || null,
         description: formData.description.trim() || null,
         expectedSessions: formData.expectedSessions ? parseInt(formData.expectedSessions, 10) : null,
-        attendanceThreshold: parseFloat(formData.attendanceThreshold) || 75.0,
+        attendanceThreshold: parseFloat(formData.attendanceThreshold) || 60.0,
         status: formData.status,
       };
 
@@ -270,7 +270,7 @@ export function EditCourseModal({
               required
               value={formData.attendanceThreshold}
               onChange={handleChange}
-              placeholder="75"
+              placeholder="60"
               className="mt-1.5 block w-full px-3.5 py-2.5 text-sm border border-black/[0.1] rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-black bg-stone-50/50 font-medium"
             />
           </div>
