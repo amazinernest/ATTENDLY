@@ -147,7 +147,7 @@ export async function calculateCourseAttendance(
     const eligibleSessions = totalSessions - excused;
     const percentage =
       eligibleSessions > 0
-        ? Math.round(((attended) / eligibleSessions) * 1000) / 10
+        ? Math.round(((attended) / eligibleSessions) * 10000) / 100
         : null;
 
     let classification: "EXCELLENT" | "GOOD" | "FAIR" | "LOW" | "NA" = "NA";
@@ -192,7 +192,7 @@ export async function calculateCourseAttendance(
 
   const overallAttendanceRate =
     totalStudentSessionsOpportunities > 0
-      ? Math.round((totalStudentSessionsAttended / totalStudentSessionsOpportunities) * 1000) / 10
+      ? Math.round((totalStudentSessionsAttended / totalStudentSessionsOpportunities) * 10000) / 100
       : 0;
 
   return {

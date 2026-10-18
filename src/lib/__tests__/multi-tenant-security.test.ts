@@ -98,4 +98,55 @@ describe("Multi-Lecturer Tenant Isolation & Security", () => {
     const closed = await closeAttendanceSession(sessionB.id, lecturerBId);
     expect(closed.status).toBe("CLOSED");
   });
+
+  it("prevents Lecturer B from accessing Lecturer A's course or creating sessions via API endpoints", async () => {
+    const { loader, action } = await import("../../routes/api.$");
+    const { sessionStorage } = await import("../session.server");
+
+    // Establish Lecturer B's session cookie
+    const sessionB = await sessionStorage.getSession();
+    sessionB.set("userId", lecturerBId);
+    const cookieB = await sessionStorage.commitSession(sessionB);
+
+    // 1. Lecturer B attempting to GET Lecturer A's course must return 404
+    const getCourseReq = new Request(`http://localhost/api/courses/${courseAId}`, {
+      headers: { Cookie: cookieB },
+    });
+    const getCourseRes = await loader({
+      request: getCourseReq,
+      params: { "*": `courses/${courseAId}` },
+      context: {},
+    } as any);
+    expect(getCourseRes.status).toBe(404);
+
+    // 2. Lecturer B attempting to create a session on Lecturer A's course must return 404
+    const postSessionReq = new Request(`http://localhost/api/courses/${courseAId}/sessions`, {
+      method: "POST",
+      headers: {
+        Cookie: cookieB,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        durationMinutes: 30,
+        verificationMethod: "STUDENT_PIN",
+      }),
+    });
+    const postSessionRes = await action({
+      request: postSessionReq,
+      params: { "*": `courses/${courseAId}/sessions` },
+      context: {},
+    } as any);
+    expect(postSessionRes.status).toBe(404);
+
+    // 3. Lecturer B attempting to GET Lecturer A's Excel export report must return 404
+    const getReportReq = new Request(`http://localhost/api/courses/${courseAId}/reports/excel`, {
+      headers: { Cookie: cookieB },
+    });
+    const getReportRes = await loader({
+      request: getReportReq,
+      params: { "*": `courses/${courseAId}/reports/excel` },
+      context: {},
+    } as any);
+    expect(getReportRes.status).toBe(404);
+  });
 });

@@ -298,9 +298,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       const reportData = await calculateCourseAttendance(courseId, user.id);
       return Response.json({ success: true, report: reportData });
     } catch (err: any) {
+      const status = err.message?.includes("unauthorized") || err.message?.includes("not found") ? 404 : 500;
       return Response.json(
         { error: err.message || "Failed to calculate course attendance records." },
-        { status: 500 }
+        { status }
       );
     }
   }
@@ -330,9 +331,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         },
       });
     } catch (err: any) {
+      const status = err.message?.includes("unauthorized") || err.message?.includes("not found") ? 404 : 500;
       return Response.json(
         { error: err.message || "Failed to generate Excel attendance report." },
-        { status: 500 }
+        { status }
       );
     }
   }
@@ -362,9 +364,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
         },
       });
     } catch (err: any) {
+      const status = err.message?.includes("unauthorized") || err.message?.includes("not found") ? 404 : 500;
       return Response.json(
         { error: err.message || "Failed to generate PDF attendance report." },
-        { status: 500 }
+        { status }
       );
     }
   }

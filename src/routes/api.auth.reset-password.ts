@@ -1,6 +1,8 @@
 import { z } from "zod";
 import prisma from "@/lib/db";
 import { hashPassword } from "@/lib/auth";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { applySecurityHeaders } from "@/lib/security-headers";
 
 const resetSchema = z
   .object({
@@ -15,7 +17,26 @@ const resetSchema = z
 
 export async function action({ request }: { request: Request }) {
   if (request.method !== "POST") {
-    return Response.json({ error: "Method not allowed" }, { status: 405 });
+    return applySecurityHeaders(Response.json({ error: "Method not allowed" }, { status: 405 }));
+  }
+
+  // Rate limit password resets: max 10 attempts per 15 minutes per IP
+  const clientIp = getClientIp(request);
+  const ipLimit = checkRateLimit(`reset-password:ip:${clientIp}`, {
+    maxRequests: 10,
+    windowMs: 15 * 60 * 1000,
+  });
+
+  if (!ipLimit.success) {
+    return applySecurityHeaders(
+      Response.json(
+        { error: "Too many password reset attempts. Please wait a few minutes." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(ipLimit.retryAfterSeconds) },
+        }
+      )
+    );
   }
 
   try {
@@ -23,9 +44,11 @@ export async function action({ request }: { request: Request }) {
     const result = resetSchema.safeParse(body);
 
     if (!result.success) {
-      return Response.json(
-        { error: "Validation failed", details: result.error.flatten().fieldErrors },
-        { status: 400 }
+      return applySecurityHeaders(
+        Response.json(
+          { error: "Validation failed", details: result.error.flatten().fieldErrors },
+          { status: 400 }
+        )
       );
     }
 
@@ -37,16 +60,20 @@ export async function action({ request }: { request: Request }) {
     });
 
     if (!resetRecord || resetRecord.usedAt !== null) {
-      return Response.json(
-        { error: "This password reset link is invalid or has already been used." },
-        { status: 400 }
+      return applySecurityHeaders(
+        Response.json(
+          { error: "This password reset link is invalid or has already been used." },
+          { status: 400 }
+        )
       );
     }
 
     if (resetRecord.expiresAt < new Date()) {
-      return Response.json(
-        { error: "This password reset link has expired. Please request a new one." },
-        { status: 410 }
+      return applySecurityHeaders(
+        Response.json(
+          { error: "This password reset link has expired. Please request a new one." },
+          { status: 410 }
+        )
       );
     }
 
@@ -63,15 +90,19 @@ export async function action({ request }: { request: Request }) {
       }),
     ]);
 
-    return Response.json({
-      success: true,
-      message: "Your password has been successfully reset. You may now sign in.",
-    });
+    return applySecurityHeaders(
+      Response.json({
+        success: true,
+        message: "Your password has been successfully reset. You may now sign in.",
+      })
+    );
   } catch (error) {
     console.error("[Reset Password Error]:", error);
-    return Response.json(
-      { error: "Failed to reset password. Please try again." },
-      { status: 500 }
+    return applySecurityHeaders(
+      Response.json(
+        { error: "Failed to reset password. Please try again." },
+        { status: 500 }
+      )
     );
   }
 }

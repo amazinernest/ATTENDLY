@@ -67,74 +67,166 @@ export function generateStudentPin(): string {
  * Parses Excel (.xlsx, .xls) buffer ensuring text cells preserve leading zeros
  */
 export async function parseExcelBuffer(buffer: Buffer, fileName: string): Promise<ParseResult> {
-  const workbook = XLSX.read(buffer, { type: "buffer", raw: false, cellText: true });
-  const sheetName = workbook.SheetNames[0];
-  if (!sheetName) {
+  try {
+    const ext = fileName.toLowerCase().split(".").pop();
+    // Validate ZIP magic header (PK) for .xlsx files to detect misleading extensions or corrupted workbooks
+    if (ext === "xlsx" && (buffer.length < 4 || buffer[0] !== 0x50 || buffer[1] !== 0x4b)) {
+      return {
+        success: false,
+        validRows: [],
+        invalidRows: [
+          {
+            rowNumber: 1,
+            reason: "Failed to read Excel workbook: The file is not a valid .xlsx spreadsheet (corrupted or misleading extension).",
+            rawData: {},
+          },
+        ],
+        detectedColumns: [],
+        totalExtracted: 0,
+        fileName,
+      };
+    }
+
+    const workbook = XLSX.read(buffer, { type: "buffer", raw: false, cellText: true });
+    const sheetName = workbook.SheetNames[0];
+    if (!sheetName) {
+      return {
+        success: false,
+        validRows: [],
+        invalidRows: [{ rowNumber: 1, reason: "Workbook contains no worksheets", rawData: {} }],
+        detectedColumns: [],
+        totalExtracted: 0,
+        fileName,
+      };
+    }
+
+    const sheet = workbook.Sheets[sheetName];
+    // Parse rows as raw string matrix
+    const matrix: string[][] = XLSX.utils.sheet_to_json(sheet, {
+      header: 1,
+      defval: "",
+      raw: false,
+    });
+
+    return processMatrixData(matrix, fileName);
+  } catch (err: any) {
     return {
       success: false,
       validRows: [],
-      invalidRows: [{ rowNumber: 1, reason: "Workbook contains no worksheets", rawData: {} }],
+      invalidRows: [
+        {
+          rowNumber: 1,
+          reason: `Failed to read Excel workbook: ${err.message || "Corrupted or invalid spreadsheet file"}`,
+          rawData: {},
+        },
+      ],
       detectedColumns: [],
       totalExtracted: 0,
       fileName,
     };
   }
-
-  const sheet = workbook.Sheets[sheetName];
-  // Parse rows as raw string matrix
-  const matrix: string[][] = XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-    defval: "",
-    raw: false,
-  });
-
-  return processMatrixData(matrix, fileName);
 }
 
 /**
  * Parses CSV buffer with delimiter auto-detection
  */
 export async function parseCsvBuffer(buffer: Buffer, fileName: string): Promise<ParseResult> {
-  const content = buffer.toString("utf-8");
-  const workbook = XLSX.read(content, { type: "string", raw: false });
-  const sheetName = workbook.SheetNames[0];
-  const sheet = workbook.Sheets[sheetName];
-  const matrix: string[][] = XLSX.utils.sheet_to_json(sheet, {
-    header: 1,
-    defval: "",
-    raw: false,
-  });
-  return processMatrixData(matrix, fileName);
+  try {
+    const content = buffer.toString("utf-8");
+    if (!content.trim()) {
+      return {
+        success: false,
+        validRows: [],
+        invalidRows: [{ rowNumber: 1, reason: "The uploaded CSV file is empty", rawData: {} }],
+        detectedColumns: [],
+        totalExtracted: 0,
+        fileName,
+      };
+    }
+
+    const workbook = XLSX.read(content, { type: "string", raw: false });
+    const sheetName = workbook.SheetNames[0];
+    if (!sheetName) {
+      return {
+        success: false,
+        validRows: [],
+        invalidRows: [{ rowNumber: 1, reason: "CSV contains no readable records", rawData: {} }],
+        detectedColumns: [],
+        totalExtracted: 0,
+        fileName,
+      };
+    }
+
+    const sheet = workbook.Sheets[sheetName];
+    const matrix: string[][] = XLSX.utils.sheet_to_json(sheet, {
+      header: 1,
+      defval: "",
+      raw: false,
+    });
+    return processMatrixData(matrix, fileName);
+  } catch (err: any) {
+    return {
+      success: false,
+      validRows: [],
+      invalidRows: [
+        {
+          rowNumber: 1,
+          reason: `Failed to parse CSV file: ${err.message || "Corrupted or invalid CSV structure"}`,
+          rawData: {},
+        },
+      ],
+      detectedColumns: [],
+      totalExtracted: 0,
+      fileName,
+    };
+  }
 }
 
 /**
  * Parses Word (.docx) document extracting HTML tables
  */
 export async function parseDocxBuffer(buffer: Buffer, fileName: string): Promise<ParseResult> {
-  const { value: html } = await mammoth.convertToHtml({ buffer });
+  try {
+    const { value: html } = await mammoth.convertToHtml({ buffer });
 
-  // Extract table rows from generated HTML
-  const rowMatches = html.match(/<tr[\s\S]*?<\/tr>/gi);
-  if (!rowMatches || rowMatches.length === 0) {
-    // If no HTML table is found, fall back to line by line text parsing
-    const { value: rawText } = await mammoth.extractRawText({ buffer });
-    return parseTextLines(rawText, fileName);
-  }
+    // Extract table rows from generated HTML
+    const rowMatches = html.match(/<tr[\s\S]*?<\/tr>/gi);
+    if (!rowMatches || rowMatches.length === 0) {
+      // If no HTML table is found, fall back to line by line text parsing
+      const { value: rawText } = await mammoth.extractRawText({ buffer });
+      return parseTextLines(rawText, fileName);
+    }
 
-  const matrix: string[][] = [];
-  for (const rowHtml of rowMatches) {
-    const cellMatches = rowHtml.match(/<t[dh][\s\S]*?<\/t[dh]>/gi);
-    if (cellMatches) {
-      const rowCells = cellMatches.map((cell) =>
-        cell.replace(/<[^>]+>/g, "").trim()
-      );
-      if (rowCells.some((c) => c.length > 0)) {
-        matrix.push(rowCells);
+    const matrix: string[][] = [];
+    for (const rowHtml of rowMatches) {
+      const cellMatches = rowHtml.match(/<t[dh][\s\S]*?<\/t[dh]>/gi);
+      if (cellMatches) {
+        const rowCells = cellMatches.map((cell) =>
+          cell.replace(/<[^>]+>/g, "").trim()
+        );
+        if (rowCells.some((c) => c.length > 0)) {
+          matrix.push(rowCells);
+        }
       }
     }
-  }
 
-  return processMatrixData(matrix, fileName);
+    return processMatrixData(matrix, fileName);
+  } catch (err: any) {
+    return {
+      success: false,
+      validRows: [],
+      invalidRows: [
+        {
+          rowNumber: 1,
+          reason: `Failed to extract records from Word document: ${err.message || "Corrupted or invalid .docx file"}`,
+          rawData: {},
+        },
+      ],
+      detectedColumns: [],
+      totalExtracted: 0,
+      fileName,
+    };
+  }
 }
 
 /**
@@ -142,11 +234,26 @@ export async function parseDocxBuffer(buffer: Buffer, fileName: string): Promise
  */
 export async function parsePdfBuffer(buffer: Buffer, fileName: string): Promise<ParseResult> {
   try {
-    // dynamic import for pdf-parse to handle edge or node environment
+    // Dynamic import for pdf-parse supporting both v2 (PDFParse class) and v1 (function)
     const pdfModule: any = await import("pdf-parse");
-    const pdfParse = typeof pdfModule === "function" ? pdfModule : (pdfModule.default || pdfModule);
-    const data = await pdfParse(buffer);
-    if (!data.text || data.text.trim().length === 0) {
+    let extractedText = "";
+
+    if (pdfModule?.PDFParse) {
+      const parser = new pdfModule.PDFParse({ data: buffer });
+      const res = await parser.getText();
+      extractedText = typeof res === "string" ? res : (res?.text || "");
+      if (typeof parser.destroy === "function") {
+        await parser.destroy();
+      }
+    } else if (typeof pdfModule === "function") {
+      const data = await pdfModule(buffer);
+      extractedText = data?.text || "";
+    } else if (typeof pdfModule?.default === "function") {
+      const data = await pdfModule.default(buffer);
+      extractedText = data?.text || "";
+    }
+
+    if (!extractedText || extractedText.trim().length === 0) {
       return {
         success: false,
         validRows: [],
@@ -163,7 +270,7 @@ export async function parsePdfBuffer(buffer: Buffer, fileName: string): Promise<
       };
     }
 
-    return parseTextLines(data.text, fileName);
+    return parseTextLines(extractedText, fileName);
   } catch (err: any) {
     return {
       success: false,
@@ -400,6 +507,14 @@ function processMatrixData(matrix: string[][], fileName: string): ParseResult {
       faculty: rawFaculty || undefined,
       level: rawLevel || undefined,
       studentPin: rawPin || generateStudentPin(),
+    });
+  }
+
+  if (validRows.length === 0 && invalidRows.length === 0) {
+    invalidRows.push({
+      rowNumber: 1,
+      reason: "No student records could be identified. Please ensure the file contains columns for Matriculation Number and Full Name.",
+      rawData: {},
     });
   }
 

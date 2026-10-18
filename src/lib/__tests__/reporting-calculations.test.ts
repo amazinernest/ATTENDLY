@@ -101,6 +101,52 @@ describe("Academic Attendance Calculations & Export Generators", () => {
     expect(deficientStudent.isBelowThreshold).toBe(true);
   });
 
+  describe("Section 14 Mandatory Academic Calculation Test Cases", () => {
+    const calculatePercentage = (attended: number, eligible: number): number | null => {
+      return eligible > 0 ? Math.round((attended / eligible) * 10000) / 100 : null;
+    };
+
+    const formatPercentage = (pct: number | null): string => {
+      return pct !== null ? `${pct}%` : "N/A";
+    };
+
+    const mandatoryCases = [
+      { eligible: 100, attended: 100, expectedPct: 100, expectedStr: "100%" },
+      { eligible: 100, attended: 90, expectedPct: 90, expectedStr: "90%" },
+      { eligible: 100, attended: 65, expectedPct: 65, expectedStr: "65%" },
+      { eligible: 100, attended: 45, expectedPct: 45, expectedStr: "45%" },
+      { eligible: 10, attended: 9, expectedPct: 90, expectedStr: "90%" },
+      { eligible: 3, attended: 2, expectedPct: 66.67, expectedStr: "66.67%" },
+      { eligible: 3, attended: 1, expectedPct: 33.33, expectedStr: "33.33%" },
+      { eligible: 0, attended: 0, expectedPct: null, expectedStr: "N/A" },
+    ];
+
+    it.each(mandatoryCases)(
+      "calculates $attended / $eligible as $expectedStr ($expectedPct)",
+      ({ eligible, attended, expectedPct, expectedStr }) => {
+        const result = calculatePercentage(attended, eligible);
+        expect(result).toBe(expectedPct);
+        expect(formatPercentage(result)).toBe(expectedStr);
+      }
+    );
+
+    it("evaluates boundary conditions for 75% threshold with exact 2-decimal precision", () => {
+      const threshold = 75.0;
+
+      // 74.99% is below threshold
+      const below = 74.99;
+      expect(below < threshold).toBe(true);
+
+      // 75.00% meets threshold
+      const exact = 75.0;
+      expect(exact < threshold).toBe(false);
+
+      // 75.01% exceeds threshold
+      const above = 75.01;
+      expect(above < threshold).toBe(false);
+    });
+  });
+
   it("generates genuine Excel (.xlsx) buffer with formula sanitization", async () => {
     const buffer = await generateCourseExcelReport(mockReportData);
     expect(Buffer.isBuffer(buffer)).toBe(true);

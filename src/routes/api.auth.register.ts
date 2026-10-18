@@ -4,6 +4,8 @@ import prisma from "@/lib/db";
 import { hashPassword } from "@/lib/auth";
 import { sessionStorage } from "@/lib/session.server";
 import { sendVerificationEmail } from "@/lib/email";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { applySecurityHeaders } from "@/lib/security-headers";
 
 const registerSchema = z
   .object({
@@ -22,7 +24,26 @@ const registerSchema = z
 
 export async function action({ request }: { request: Request }) {
   if (request.method !== "POST") {
-    return Response.json({ error: "Method not allowed" }, { status: 405 });
+    return applySecurityHeaders(Response.json({ error: "Method not allowed" }, { status: 405 }));
+  }
+
+  // Rate limit registration: max 12 attempts per hour per IP to block bot farms
+  const clientIp = getClientIp(request);
+  const ipLimit = checkRateLimit(`register:ip:${clientIp}`, {
+    maxRequests: 12,
+    windowMs: 60 * 60 * 1000,
+  });
+
+  if (!ipLimit.success) {
+    return applySecurityHeaders(
+      Response.json(
+        { error: "Too many registration attempts. Please wait an hour before trying again." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(ipLimit.retryAfterSeconds) },
+        }
+      )
+    );
   }
 
   try {
@@ -38,9 +59,11 @@ export async function action({ request }: { request: Request }) {
         fieldErrors.fullName?.[0] ||
         "Please check your input details and try again.";
 
-      return Response.json(
-        { error: firstError, details: fieldErrors },
-        { status: 400 }
+      return applySecurityHeaders(
+        Response.json(
+          { error: firstError, details: fieldErrors },
+          { status: 400 }
+        )
       );
     }
 
@@ -53,9 +76,11 @@ export async function action({ request }: { request: Request }) {
     });
 
     if (existing) {
-      return Response.json(
-        { error: "An account with this email address already exists. Please sign in instead." },
-        { status: 409 }
+      return applySecurityHeaders(
+        Response.json(
+          { error: "An account with this email address already exists. Please sign in instead." },
+          { status: 409 }
+        )
       );
     }
 
@@ -107,37 +132,41 @@ export async function action({ request }: { request: Request }) {
     const session = await sessionStorage.getSession(request.headers.get("Cookie"));
     session.set("userId", user.id);
 
-    return Response.json(
-      {
-        success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          fullName: user.fullName,
-          institution: user.institution,
-          isEmailVerified: user.isEmailVerified,
+    return applySecurityHeaders(
+      Response.json(
+        {
+          success: true,
+          user: {
+            id: user.id,
+            email: user.email,
+            fullName: user.fullName,
+            institution: user.institution,
+            isEmailVerified: user.isEmailVerified,
+          },
+          requiresVerification: !shouldAutoVerify,
         },
-        requiresVerification: !shouldAutoVerify,
-      },
-      {
-        status: 201,
-        headers: {
-          "Set-Cookie": await sessionStorage.commitSession(session),
-        },
-      }
+        {
+          status: 201,
+          headers: {
+            "Set-Cookie": await sessionStorage.commitSession(session),
+          },
+        }
+      )
     );
   } catch (error: any) {
     console.error("[Register Action Error]:", error);
     if (error?.code === "P2002") {
-      return Response.json(
-        { error: "An account with this email address already exists. Please sign in instead." },
-        { status: 409 }
+      return applySecurityHeaders(
+        Response.json(
+          { error: "An account with this email address already exists. Please sign in instead." },
+          { status: 409 }
+        )
       );
     }
     const message =
       process.env.NODE_ENV !== "production" && error?.message
         ? `Registration error: ${error.message}`
         : "Registration failed due to a server error. Please try again.";
-    return Response.json({ error: message }, { status: 500 });
+    return applySecurityHeaders(Response.json({ error: message }, { status: 500 }));
   }
 }
