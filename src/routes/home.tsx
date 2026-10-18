@@ -62,18 +62,6 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Auto-close menu when viewport is resized to desktop width (lg: 1024px+)
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 1024px)");
-    const handleMediaChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        setMobileMenuOpen(false);
-      }
-    };
-    mediaQuery.addEventListener("change", handleMediaChange);
-    return () => mediaQuery.removeEventListener("change", handleMediaChange);
-  }, []);
-
   const closeMenu = () => setMobileMenuOpen(false);
 
   const features = [
@@ -1161,15 +1149,15 @@ export default function HomePage() {
       )}
 
       {/* ========================================================= */}
-      {/* MOBILE & TABLET DRAWER OVERLAY */}
+      {/* NAVIGATION DRAWER OVERLAY */}
       {/* ========================================================= */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
+        <div className="fixed inset-0 z-50 flex">
           <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
             onClick={closeMenu}
           />
-          <div className="relative ml-auto w-80 max-w-[85vw] bg-[#faf9f5] shadow-2xl flex flex-col h-full z-10 p-6 space-y-6">
+          <div className="relative ml-auto w-80 max-w-[85vw] bg-[#faf9f5] shadow-2xl flex flex-col h-full z-10 p-6 space-y-6 animate-in slide-in-from-right duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-black/[0.06]">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs">
@@ -1182,7 +1170,7 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={closeMenu}
-                className="w-8 h-8 rounded-full bg-white border border-black/5 flex items-center justify-center text-stone-700 cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white hover:bg-stone-100 border border-black/5 flex items-center justify-center text-stone-700 cursor-pointer transition-colors"
                 aria-label="Close navigation"
               >
                 <X className="w-4 h-4" />
