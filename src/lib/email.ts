@@ -4,7 +4,7 @@ const smtpHost = process.env.SMTP_HOST;
 const smtpPort = parseInt(process.env.SMTP_PORT || "587", 10);
 const smtpUser = process.env.SMTP_USER;
 const smtpPass = process.env.SMTP_PASSWORD;
-const emailFrom = process.env.EMAIL_FROM || "ClassMark <noreply@omnicbt.online>";
+const emailFrom = process.env.EMAIL_FROM || "ClassMark <noreply@classmarker.online>";
 const appUrl =
   process.env.NEXT_PUBLIC_APP_URL ||
   process.env.APP_URL ||
@@ -39,11 +39,10 @@ export async function sendEmail({
   const resendApiKey = process.env.RESEND_API_KEY;
   if (resendApiKey) {
     try {
-      let from = process.env.EMAIL_FROM || "ClassMark <noreply@omnicbt.online>";
-      // onboarding@resend.dev blocks sending to external recipients on Resend.
-      // If onboarding@resend.dev is configured, automatically fall back to the account's verified domain:
+      let from = process.env.EMAIL_FROM || "ClassMark <noreply@classmarker.online>";
+      // If onboarding@resend.dev is configured, automatically upgrade to the verified classmarker.online domain:
       if (from.includes("onboarding@resend.dev")) {
-        from = "ClassMark <noreply@omnicbt.online>";
+        from = "ClassMark <noreply@classmarker.online>";
       }
 
       const response = await fetch("https://api.resend.com/emails", {
