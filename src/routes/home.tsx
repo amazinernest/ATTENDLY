@@ -18,6 +18,7 @@ import {
   UserPlus,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   BookOpen,
   Award,
   FileCheck,
@@ -49,6 +50,7 @@ export async function loader({ request }: { request: Request }) {
 
 export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   // App Cockpit Simulation State
@@ -69,11 +71,12 @@ export default function HomePage() {
     };
   }, [mobileMenuOpen, activeModal]);
 
-  // Handle ESC key to close mobile menu or modal
+  // Handle ESC key to close mobile menu, modal, or mega menu
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setMobileMenuOpen(false);
+        setMegaMenuOpen(false);
         setActiveModal(null);
       }
     };
@@ -294,20 +297,210 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Center: Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-7 text-xs font-medium text-stone-400">
-            <a href="#cockpit" className="hover:text-white transition-colors">
-              Live Cockpit
-            </a>
-            <a href="#features" className="hover:text-white transition-colors">
-              App Architecture
-            </a>
-            <a href="#security" className="hover:text-white transition-colors">
-              Device-Lock Shield
-            </a>
+          {/* Center: Desktop Nav with Mega Menu */}
+          <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-stone-400">
+            {/* Mega Menu Trigger & Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setMegaMenuOpen(true)}
+            >
+              <button
+                type="button"
+                onClick={() => setMegaMenuOpen(!megaMenuOpen)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all cursor-pointer ${
+                  megaMenuOpen
+                    ? "text-white bg-white/10"
+                    : "text-stone-300 hover:text-white hover:bg-white/5"
+                }`}
+                aria-expanded={megaMenuOpen}
+              >
+                <span className="font-semibold">Platform</span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    megaMenuOpen ? "rotate-180 text-[#d7f837]" : "text-stone-400"
+                  }`}
+                />
+              </button>
+
+              {/* Mega Menu Dropdown */}
+              {megaMenuOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setMegaMenuOpen(false)} 
+                  />
+                  <div 
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[620px] max-w-[90vw] bg-[#0c0d14]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.85)] p-5 z-50 animate-in fade-in zoom-in-95 duration-150"
+                    onMouseLeave={() => setMegaMenuOpen(false)}
+                  >
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Column 1: Core Capabilities */}
+                      <div className="space-y-1">
+                        <div className="text-[10px] font-mono uppercase tracking-wider text-stone-500 font-bold px-2.5 pb-1">
+                          Core Capabilities
+                        </div>
+
+                        <a
+                          href="#cockpit"
+                          onClick={() => {
+                            setMegaMenuOpen(false);
+                            setActiveTab("projector");
+                          }}
+                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.05] transition-colors group"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-[#d7f837]/10 border border-[#d7f837]/20 flex items-center justify-center text-[#d7f837] shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <Radio className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-white group-hover:text-[#d7f837] transition-colors flex items-center gap-1.5">
+                              <span>Live Projector Cockpit</span>
+                              <span className="text-[9px] font-mono px-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">LIVE</span>
+                            </div>
+                            <p className="text-[11px] text-stone-400 leading-snug mt-0.5">
+                              Dynamic in-hall QR code, classroom PIN & real-time counter.
+                            </p>
+                          </div>
+                        </a>
+
+                        <a
+                          href="#security"
+                          onClick={() => setMegaMenuOpen(false)}
+                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.05] transition-colors group"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <Fingerprint className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-white group-hover:text-[#d7f837] transition-colors">
+                              Device-Lock Shield
+                            </div>
+                            <p className="text-[11px] text-stone-400 leading-snug mt-0.5">
+                              Cryptographic hardware binding stopping proxy attendance.
+                            </p>
+                          </div>
+                        </a>
+
+                        <a
+                          href="#features"
+                          onClick={() => setMegaMenuOpen(false)}
+                          className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.05] transition-colors group"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <UploadCloud className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-white group-hover:text-[#d7f837] transition-colors">
+                              Universal Roster Ingest
+                            </div>
+                            <p className="text-[11px] text-stone-400 leading-snug mt-0.5">
+                              Ingests Excel, Word, PDF & CSV with leading zero fidelity.
+                            </p>
+                          </div>
+                        </a>
+                      </div>
+
+                      {/* Column 2: Governance & Accreditation */}
+                      <div className="space-y-1">
+                        <div className="text-[10px] font-mono uppercase tracking-wider text-stone-500 font-bold px-2.5 pb-1">
+                          Governance & Senate
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMegaMenuOpen(false);
+                            setActiveTab("clearance");
+                            const el = document.getElementById("cockpit");
+                            if (el) el.scrollIntoView({ behavior: "smooth" });
+                          }}
+                          className="w-full text-left flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.05] transition-colors group cursor-pointer"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <Award className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-white group-hover:text-[#d7f837] transition-colors flex items-center gap-1.5">
+                              <span>75% Exam Clearance</span>
+                              <span className="text-[9px] font-mono px-1 rounded bg-[#d7f837]/15 text-[#d7f837]">NUC</span>
+                            </div>
+                            <p className="text-[11px] text-stone-400 leading-snug mt-0.5">
+                              Automated eligible vs barred student matrix before exams.
+                            </p>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMegaMenuOpen(false);
+                            setActiveModal("exam");
+                          }}
+                          className="w-full text-left flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.05] transition-colors group cursor-pointer"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-[#d7f837]/10 border border-[#d7f837]/20 flex items-center justify-center text-[#d7f837] shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <FileSpreadsheet className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-white group-hover:text-[#d7f837] transition-colors">
+                              Official Senate Registers
+                            </div>
+                            <p className="text-[11px] text-stone-400 leading-snug mt-0.5">
+                              1-click signed PDF rosters & multi-sheet Excel exports.
+                            </p>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMegaMenuOpen(false);
+                            setActiveModal("audit");
+                          }}
+                          className="w-full text-left flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.05] transition-colors group cursor-pointer"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <ShieldCheck className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-white group-hover:text-[#d7f837] transition-colors">
+                              Tamper-Proof Audit Trail
+                            </div>
+                            <p className="text-[11px] text-stone-400 leading-snug mt-0.5">
+                              Cryptographic session validation & manual override logs.
+                            </p>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Bottom Footer Strip of Mega Menu */}
+                    <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-stone-400">
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span>NUC Accreditation Ready</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMegaMenuOpen(false);
+                          setActiveModal("nuc");
+                        }}
+                        className="text-[#d7f837] hover:underline font-semibold cursor-pointer"
+                      >
+                        View NUC Guidelines →
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Simple Workflow Link */}
             <a href="#workflow" className="hover:text-white transition-colors">
               Workflow
             </a>
+
+            {/* NUC Standards Modal Trigger */}
             <button
               type="button"
               onClick={() => setActiveModal("nuc")}
@@ -321,17 +514,17 @@ export default function HomePage() {
           {/* Right: Actions */}
           <div className="flex items-center gap-2.5">
             <Link
-              to="/login"
-              className="text-xs font-semibold text-stone-300 hover:text-white px-3 py-1.5 transition-colors hidden sm:inline-block"
+              to="/register"
+              className="text-xs font-semibold text-stone-400 hover:text-white px-3 py-1.5 transition-colors hidden sm:inline-block"
             >
-              Sign In
+              Register
             </Link>
             <Link
-              to="/register"
+              to="/login"
               className="inline-flex items-center gap-1.5 bg-[#d7f837] hover:bg-[#cbf028] text-black text-xs font-extrabold px-4 py-2 rounded-full transition-all shadow-[0_0_20px_rgba(215,248,55,0.2)] hover:shadow-[0_0_25px_rgba(215,248,55,0.35)] active:scale-95"
             >
-              <span>Launch App</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Sign In</span>
             </Link>
 
             <button
@@ -1297,55 +1490,99 @@ export default function HomePage() {
 
             <div className="space-y-2">
               <Link
-                to="/register"
-                onClick={closeMenu}
-                className="w-full py-2.5 px-4 rounded-xl bg-[#d7f837] text-black text-xs font-bold text-center flex items-center justify-center gap-2 shadow-sm"
-              >
-                <UserPlus className="w-4 h-4" />
-                <span>Launch App</span>
-              </Link>
-              <Link
                 to="/login"
                 onClick={closeMenu}
-                className="w-full py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold text-center flex items-center justify-center gap-2"
+                className="w-full py-2.5 px-4 rounded-xl bg-[#d7f837] text-black text-xs font-extrabold text-center flex items-center justify-center gap-2 shadow-sm"
               >
-                <LogIn className="w-4 h-4 text-[#d7f837]" />
+                <LogIn className="w-4 h-4" />
                 <span>Sign In</span>
+              </Link>
+              <Link
+                to="/register"
+                onClick={closeMenu}
+                className="w-full py-2.5 px-4 rounded-xl bg-white/5 border border-white/10 text-stone-200 text-xs font-semibold text-center flex items-center justify-center gap-2 hover:bg-white/10"
+              >
+                <UserPlus className="w-4 h-4 text-[#d7f837]" />
+                <span>Create Free Account</span>
               </Link>
             </div>
 
-            <nav className="flex-1 space-y-2 text-sm font-medium text-stone-300 pt-2">
-              <a
-                href="#cockpit"
-                onClick={closeMenu}
-                className="block px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
-              >
-                Live Cockpit
-              </a>
-              <a
-                href="#features"
-                onClick={closeMenu}
-                className="block px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
-              >
-                App Architecture
-              </a>
-              <a
-                href="#security"
-                onClick={closeMenu}
-                className="block px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
-              >
-                Device-Lock Shield
-              </a>
-              <button
-                type="button"
-                onClick={() => {
-                  closeMenu();
-                  setActiveModal("nuc");
-                }}
-                className="block w-full text-left px-3 py-2 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-stone-300 cursor-pointer"
-              >
-                NUC Standards
-              </button>
+            <nav className="flex-1 space-y-3 text-sm font-medium text-stone-300 pt-2">
+              <div className="space-y-1">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-stone-500 font-bold px-3">
+                  Platform
+                </div>
+                <a
+                  href="#cockpit"
+                  onClick={() => {
+                    closeMenu();
+                    setActiveTab("projector");
+                  }}
+                  className="block px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors"
+                >
+                  Live QR Cockpit
+                </a>
+                <a
+                  href="#security"
+                  onClick={closeMenu}
+                  className="block px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors"
+                >
+                  Device-Lock Shield
+                </a>
+                <a
+                  href="#features"
+                  onClick={closeMenu}
+                  className="block px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors"
+                >
+                  Universal Roster Ingest
+                </a>
+              </div>
+
+              <div className="space-y-1 pt-2 border-t border-white/[0.06]">
+                <div className="text-[10px] font-mono uppercase tracking-wider text-stone-500 font-bold px-3">
+                  Governance
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeMenu();
+                    setActiveModal("nuc");
+                  }}
+                  className="block w-full text-left px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-stone-300 cursor-pointer"
+                >
+                  NUC Guidelines
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeMenu();
+                    setActiveModal("exam");
+                  }}
+                  className="block w-full text-left px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-stone-300 cursor-pointer"
+                >
+                  Exam Clearance
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeMenu();
+                    setActiveModal("audit");
+                  }}
+                  className="block w-full text-left px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium text-stone-300 cursor-pointer"
+                >
+                  Accreditation Audit
+                </button>
+              </div>
+
+              <div className="pt-2 border-t border-white/[0.06]">
+                <a
+                  href="#workflow"
+                  onClick={closeMenu}
+                  className="block px-3 py-1.5 rounded-xl hover:bg-white/5 transition-colors"
+                >
+                  4-Step Workflow
+                </a>
+              </div>
             </nav>
 
             <div className="text-[11px] font-mono text-stone-500 pt-4 border-t border-white/[0.08]">
