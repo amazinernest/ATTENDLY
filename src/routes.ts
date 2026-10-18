@@ -16,7 +16,6 @@ export default [
   route("courses/:courseId/attendance/:sessionId", "routes/courses.$courseId.attendance.$sessionId.tsx"),
   route("students/:studentId", "routes/students.$studentId.tsx"),
   route("attendance/:token", "routes/attendance.$token.tsx"),
-  route("student/check", "routes/student.check.tsx"),
   route("settings", "routes/settings.tsx"),
   route("api/auth/login", "routes/api.auth.login.ts"),
   route("api/auth/register", "routes/api.auth.register.ts"),
