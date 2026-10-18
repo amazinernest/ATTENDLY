@@ -81,7 +81,7 @@ export default function LoginPage() {
           <span className="w-2 h-2 rounded-full bg-[#d7f837]"></span>
         </Link>
         <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#111111]">
-          Lecturer Portal Sign In
+          Sign In
         </h2>
         <p className="text-xs sm:text-sm text-stone-500 font-medium max-w-xs mx-auto">
           Manage university course registers, anti-proxy QR sessions, and semester reports

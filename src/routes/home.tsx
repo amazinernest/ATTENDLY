@@ -329,7 +329,7 @@ export default function HomePage() {
                 to="/login"
                 className="inline-flex items-center gap-1.5 bg-[#d7f837] hover:bg-[#c9ea28] active:scale-95 text-black text-xs font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all shadow-xs"
               >
-                <span>Lecturer Sign In</span>
+                <span>Sign In</span>
               </Link>
 
               <button
@@ -1196,7 +1196,7 @@ export default function HomePage() {
                 className="w-full py-3 px-4 rounded-full bg-[#111111] text-white text-xs font-bold text-center flex items-center justify-center gap-2 shadow-xs"
               >
                 <LogIn className="w-4 h-4 text-[#d7f837]" />
-                <span>Lecturer Sign In</span>
+                <span>Sign In</span>
               </Link>
               <Link
                 to="/register"
